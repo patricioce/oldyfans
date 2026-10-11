@@ -74,3 +74,23 @@ ul.products li.product .ct-media-container img{box-shadow:0 14px 24px rgba(0,0,0
   .single-product{padding-bottom:84px}
   .topbar-track::before{font-size:13px}
 }
+
+/* ===== Carrito y checkout (agregado: optimización de conversión) ===== */
+/* País fijo: solo vendemos en Argentina */
+.woocommerce-checkout #billing_country_field,.woocommerce-checkout #shipping_country_field{display:none!important}
+/* Email primero (permite recuperar carritos abandonados) */
+.woocommerce-billing-fields__field-wrapper{display:flex;flex-direction:column}
+#billing_email_field{order:-1}
+/* Sin notas del pedido */
+.woocommerce-additional-fields{display:none!important}
+/* Títulos más claros */
+.woocommerce-billing-fields>h3{font-size:0!important}
+.woocommerce-billing-fields>h3::after{content:"Tus datos";font-size:30px}
+/* Mercado Pago: sin bloque promocional */
+.mp-checkout-pro-benefits-title,.mp-checkout-pro-benefits{display:none!important}
+/* Botón de pago protagonista */
+#place_order{width:100%;min-height:58px;font-size:18px!important}
+.woocommerce-privacy-policy-text{font-size:13px;color:#555555}
+/* Carrito: "Actualizar" secundario */
+.woocommerce-cart .actions button[name=update_cart]{background:transparent!important;color:#111111!important;border:1.5px solid #CFCCC6!important;min-height:40px;font-size:14px!important}
+.woocommerce-cart .checkout-button{width:100%;min-height:58px;font-size:18px!important}
