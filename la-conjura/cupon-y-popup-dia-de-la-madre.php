@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: La Conjura — Cupón en checkout + popup Día de la Madre
- * Description: Muestra el campo de cupón en carrito y checkout, crea el cupón MAMÁ (15% OFF) y suma un popup que pide el mail y asigna el código automáticamente.
+ * Description: Muestra el campo de cupón en carrito y checkout, crea el cupón MAMÁ (15% OFF) y suma un popup que pide el mail, asigna el código automáticamente y manda el mail a Brevo.
  * Version: 1.0
  *
  * Instalación: pegar en Fragmentos de código (plugin Code Snippets) como fragmento PHP
@@ -72,6 +72,7 @@ function lc_mama_suscribir() {
 		$emails[ $email ] = current_time( 'mysql' );
 		update_option( 'lc_mama_emails', $emails, false );
 	}
+	lc_mama_brevo_enviar( $email );
 
 	if ( function_exists( 'WC' ) && WC()->session ) {
 		if ( ! WC()->session->has_session() ) {
@@ -227,13 +228,120 @@ add_action( 'wp_footer', function () {
 	<?php
 } );
 
-/* ===== 3. Mails recibidos: WooCommerce → Mails Día de la Madre ===== */
+/* ===== 3. Brevo: cada mail del popup entra a la lista "Día de la Madre 2026" ===== */
+
+// La clave se carga en WooCommerce → Mails Día de la Madre (o con LC_BREVO_API_KEY en wp-config.php).
+function lc_mama_brevo_key() {
+	return defined( 'LC_BREVO_API_KEY' ) ? LC_BREVO_API_KEY : get_option( 'lc_mama_brevo_key', '' );
+}
+
+function lc_mama_brevo_api( $metodo, $ruta, $cuerpo = null ) {
+	$args = array(
+		'method'  => $metodo,
+		'timeout' => 8,
+		'headers' => array(
+			'api-key'      => lc_mama_brevo_key(),
+			'accept'       => 'application/json',
+			'content-type' => 'application/json',
+		),
+	);
+	if ( null !== $cuerpo ) {
+		$args['body'] = wp_json_encode( $cuerpo );
+	}
+	$respuesta = wp_remote_request( 'https://api.brevo.com/v3' . $ruta, $args );
+	if ( is_wp_error( $respuesta ) ) {
+		return $respuesta;
+	}
+	$codigo = wp_remote_retrieve_response_code( $respuesta );
+	$datos  = json_decode( wp_remote_retrieve_body( $respuesta ), true );
+	if ( $codigo >= 300 ) {
+		return new WP_Error( 'brevo', 'Brevo respondió ' . $codigo . ': ' . ( isset( $datos['message'] ) ? $datos['message'] : '' ) );
+	}
+	return is_array( $datos ) ? $datos : array();
+}
+
+// Usa la lista guardada o la crea la primera vez.
+function lc_mama_brevo_lista() {
+	$id = (int) get_option( 'lc_mama_brevo_lista', 0 );
+	if ( $id ) {
+		return $id;
+	}
+	$carpetas = lc_mama_brevo_api( 'GET', '/contacts/folders?limit=1&offset=0' );
+	if ( is_wp_error( $carpetas ) ) {
+		return $carpetas;
+	}
+	if ( empty( $carpetas['folders'][0]['id'] ) ) {
+		return new WP_Error( 'brevo', 'No hay ninguna carpeta de listas en Brevo.' );
+	}
+	$lista = lc_mama_brevo_api( 'POST', '/contacts/lists', array(
+		'name'     => 'Día de la Madre 2026',
+		'folderId' => (int) $carpetas['folders'][0]['id'],
+	) );
+	if ( is_wp_error( $lista ) ) {
+		return $lista;
+	}
+	update_option( 'lc_mama_brevo_lista', (int) $lista['id'], false );
+	return (int) $lista['id'];
+}
+
+function lc_mama_brevo_enviar( $email ) {
+	if ( ! lc_mama_brevo_key() ) {
+		return false;
+	}
+	$lista = lc_mama_brevo_lista();
+	if ( ! is_wp_error( $lista ) ) {
+		$lista = lc_mama_brevo_api( 'POST', '/contacts', array(
+			'email'         => $email,
+			'listIds'       => array( $lista ),
+			'updateEnabled' => true,
+		) );
+	}
+	if ( is_wp_error( $lista ) ) {
+		update_option( 'lc_mama_brevo_error', current_time( 'mysql' ) . ' — ' . $email . ' — ' . $lista->get_error_message(), false );
+		return false;
+	}
+	return true;
+}
+
+/* ===== 4. WooCommerce → Mails Día de la Madre ===== */
 
 add_action( 'admin_menu', function () {
 	add_submenu_page( 'woocommerce', 'Mails Día de la Madre', 'Mails Día de la Madre', 'manage_woocommerce', 'lc-mama-emails', function () {
 		$emails = get_option( 'lc_mama_emails', array() );
+
+		if ( isset( $_POST['lc_mama_guardar'] ) && check_admin_referer( 'lc_mama_brevo' ) ) {
+			if ( ! defined( 'LC_BREVO_API_KEY' ) && isset( $_POST['lc_mama_brevo_key'] ) && '' !== $_POST['lc_mama_brevo_key'] ) {
+				update_option( 'lc_mama_brevo_key', sanitize_text_field( wp_unslash( $_POST['lc_mama_brevo_key'] ) ), false );
+			}
+			delete_option( 'lc_mama_brevo_error' );
+			$enviados = 0;
+			foreach ( array_keys( $emails ) as $email ) {
+				$enviados += lc_mama_brevo_enviar( $email ) ? 1 : 0;
+			}
+			echo '<div class="notice notice-info"><p>Enviados a Brevo: ' . (int) $enviados . ' de ' . count( $emails ) . '.</p></div>';
+		}
+
+		$error = get_option( 'lc_mama_brevo_error' );
 		echo '<div class="wrap"><h1>Mails Día de la Madre (' . count( $emails ) . ')</h1>';
-		echo '<p>Copiá la lista para importarla en tu herramienta de mailing.</p>';
+
+		echo '<h2>Brevo</h2>';
+		if ( $error ) {
+			echo '<div class="notice notice-error inline"><p>Último error: ' . esc_html( $error ) . '</p></div>';
+		}
+		echo '<form method="post">';
+		wp_nonce_field( 'lc_mama_brevo' );
+		if ( defined( 'LC_BREVO_API_KEY' ) ) {
+			echo '<p>Clave de API cargada desde wp-config.php.</p>';
+		} else {
+			echo '<p><label>Clave de API de Brevo (Brevo → SMTP y API → Claves API)<br>';
+			echo '<input type="password" name="lc_mama_brevo_key" class="regular-text" autocomplete="off" placeholder="' . ( lc_mama_brevo_key() ? 'Ya está cargada — dejá vacío para no cambiarla' : 'xkeysib-…' ) . '"></label></p>';
+		}
+		$lista = (int) get_option( 'lc_mama_brevo_lista', 0 );
+		echo '<p>Lista: ' . ( $lista ? 'Día de la Madre 2026 (ID ' . $lista . ')' : 'se crea sola, "Día de la Madre 2026", con el primer envío' ) . '</p>';
+		echo '<p><button class="button button-primary" name="lc_mama_guardar" value="1">Guardar y enviar a Brevo los mails ya recibidos</button></p>';
+		echo '</form>';
+
+		echo '<h2>Lista</h2>';
 		echo '<textarea readonly rows="20" style="width:100%;max-width:640px;font-family:monospace">';
 		echo esc_textarea( "email,fecha\n" );
 		foreach ( $emails as $email => $fecha ) {
