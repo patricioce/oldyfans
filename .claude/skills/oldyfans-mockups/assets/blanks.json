@@ -1,0 +1,93 @@
+{
+ "Black": {
+  "file": "black.jpg",
+  "left": 162,
+  "right": 876,
+  "top": 51,
+  "light_ink": true
+ },
+ "Charcoal": {
+  "file": "charcoal.jpg",
+  "left": 157,
+  "right": 869,
+  "top": 55,
+  "light_ink": false
+ },
+ "Ice Grey": {
+  "file": "ice-grey.jpg",
+  "left": 164,
+  "right": 877,
+  "top": 44,
+  "light_ink": false
+ },
+ "Military Green": {
+  "file": "military-green.jpg",
+  "left": 163,
+  "right": 852,
+  "top": 46,
+  "light_ink": false
+ },
+ "Navy": {
+  "file": "navy.jpg",
+  "left": 163,
+  "right": 861,
+  "top": 66,
+  "light_ink": true
+ },
+ "Sport Grey": {
+  "file": "sport-grey.jpg",
+  "left": 151,
+  "right": 845,
+  "top": 48,
+  "light_ink": false
+ },
+ "White": {
+  "file": "white.jpg",
+  "left": 140,
+  "right": 835,
+  "top": 12,
+  "light_ink": false
+ },
+ "Brown": {
+  "file": "brown.jpg",
+  "left": 156,
+  "right": 868,
+  "top": 55,
+  "light_ink": false
+ },
+ "Light Blue": {
+  "file": "light-blue.jpg",
+  "left": 157,
+  "right": 848,
+  "top": 48,
+  "light_ink": false
+ },
+ "Maroon": {
+  "file": "maroon.jpg",
+  "left": 132,
+  "right": 867,
+  "top": 31,
+  "light_ink": false
+ },
+ "Sage": {
+  "file": "sage.jpg",
+  "left": 157,
+  "right": 869,
+  "top": 55,
+  "light_ink": false
+ },
+ "Sand": {
+  "file": "sand.jpg",
+  "left": 155,
+  "right": 857,
+  "top": 54,
+  "light_ink": false
+ },
+ "Stone Blue": {
+  "file": "stone-blue.jpg",
+  "left": 157,
+  "right": 869,
+  "top": 55,
+  "light_ink": false
+ }
+}
