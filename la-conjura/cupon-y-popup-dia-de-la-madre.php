@@ -44,7 +44,7 @@ add_action( 'wp_head', function () {
 	if ( ! function_exists( 'is_checkout' ) || ! ( is_checkout() || is_cart() ) ) {
 		return;
 	}
-	?>
+	echo <<<'LC_CSS'
 	<style>
 	.woocommerce-form-coupon-toggle{display:none!important}
 	.woocommerce-checkout form.checkout_coupon{display:flex!important;flex-wrap:wrap;gap:10px;align-items:stretch;border:1.5px solid #E4E2DD!important;border-radius:4px;padding:16px!important;margin:0 0 24px!important;background:#F2F1EE}
@@ -55,7 +55,7 @@ add_action( 'wp_head', function () {
 	.woocommerce-checkout form.checkout_coupon .clear{display:none}
 	.woocommerce-checkout form.checkout_coupon input.input-text,.woocommerce-cart .coupon input.input-text{min-height:48px;border-radius:999px;border:1.5px solid #111111;padding:0 18px;text-transform:uppercase;width:100%}
 	</style>
-	<?php
+LC_CSS;
 } );
 
 /* ===== 2. Popup Día de la Madre ===== */
@@ -118,7 +118,7 @@ add_action( 'wp_footer', function () {
 	if ( function_exists( 'is_checkout' ) && ( is_checkout() || is_account_page() ) ) {
 		return;
 	}
-	?>
+	$html = <<<'LC_HTML'
 	<div id="lc-mama" class="lc-mama" role="dialog" aria-modal="true" aria-labelledby="lc-mama-titulo" hidden>
 		<div class="lc-mama__box">
 			<button type="button" class="lc-mama__cerrar" aria-label="Cerrar">&times;</button>
@@ -194,7 +194,7 @@ add_action( 'wp_footer', function () {
 			var datos = new FormData();
 			datos.append('action', 'lc_mama_suscribir');
 			datos.append('email', email);
-			fetch(<?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>, { method: 'POST', body: datos, credentials: 'same-origin' })
+			fetch(LC_AJAX_URL, { method: 'POST', body: datos, credentials: 'same-origin' })
 				.then(function (r) { return r.json(); })
 				.then(function (r) {
 					if (!r.success) throw new Error(r.data && r.data.message);
@@ -225,7 +225,8 @@ add_action( 'wp_footer', function () {
 		});
 	})();
 	</script>
-	<?php
+LC_HTML;
+	echo str_replace( 'LC_AJAX_URL', wp_json_encode( admin_url( 'admin-ajax.php' ) ), $html );
 } );
 
 /* ===== 3. Brevo: cada mail del popup entra a la lista "Día de la Madre 2026" ===== */
