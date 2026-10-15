@@ -127,11 +127,14 @@ def main():
     light = {c.strip().lower() for c in a.light_colors.split(",") if c.strip()}
     groups = [(a.image, [v["id"] for v in enabled if not (a.image_light and color_of[v["id"]].lower() in light)])]
     if a.image_light:
-        groups.append((a.image_light, [v["id"] for v in enabled if color_of[v["id"]].lower() in light]))
+        # un area por cada color claro: asi el editor de Printify lo muestra como
+        # "specific design for Black" / "for Navy" (con Black y Navy juntos en una area no lo reconoce)
+        for c in sorted({color_of[v["id"]] for v in enabled if color_of[v["id"]].lower() in light}):
+            groups.append((a.image_light, [v["id"] for v in enabled if color_of[v["id"]] == c]))
         for img, vids in groups:
             cols = sorted({color_of[i] for i in vids})
             print(f"  {os.path.basename(img)} -> {', '.join(cols) or '(ningun color)'}")
-        if not groups[1][1]:
+        if len(groups) < 2:
             sys.exit(f"Ninguno de los colores elegidos esta en --light-colors ({a.light_colors}).")
     groups = [(img, vids) for img, vids in groups if vids]
 
@@ -142,13 +145,16 @@ def main():
         print("SIMULACION: no se creo nada. Agrega --create para crear el producto.")
         return
 
-    print_areas = []
+    print_areas, subidas = [], {}
     for img, vids in groups:
-        contents = base64.b64encode(open(img, "rb").read()).decode()
-        up = call("POST", "/uploads/images.json", {"file_name": os.path.basename(img), "contents": contents})
-        if "id" not in up:
-            sys.exit(f"Fallo la subida: {up}")
-        print("Imagen subida:", os.path.basename(img), up["id"], f"{up.get('width')}x{up.get('height')}")
+        if img not in subidas:
+            contents = base64.b64encode(open(img, "rb").read()).decode()
+            subidas[img] = call("POST", "/uploads/images.json", {"file_name": os.path.basename(img), "contents": contents})
+            if "id" not in subidas[img]:
+                sys.exit(f"Fallo la subida: {subidas[img]}")
+            print("Imagen subida:", os.path.basename(img), subidas[img]["id"],
+                  f"{subidas[img].get('width')}x{subidas[img].get('height')}")
+        up = subidas[img]
         print_areas.append({
             "variant_ids": vids,
             "placeholders": [{"position": "front",
