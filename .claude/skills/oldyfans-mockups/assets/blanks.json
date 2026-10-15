@@ -1,93 +1,236 @@
 {
  "Black": {
   "file": "black.jpg",
-  "left": 162,
-  "right": 876,
-  "top": 51,
-  "light_ink": true
+  "light_ink": true,
+  "medidas_originales": {
+   "centro_cuello": 503.0,
+   "centro_torso": 517.0,
+   "cuello_abajo": 159.0,
+   "ruedo": 967,
+   "torso": [
+    161,
+    873
+   ]
+  },
+  "desplazamiento": {
+   "dx": -10.0,
+   "dy": -6.0
+  }
  },
  "Charcoal": {
   "file": "charcoal.jpg",
-  "left": 157,
-  "right": 869,
-  "top": 55,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 490.0,
+   "centro_torso": 512.8,
+   "cuello_abajo": 132.0,
+   "ruedo": 972,
+   "torso": [
+    157,
+    868
+   ]
+  },
+  "desplazamiento": {
+   "dx": -1.4,
+   "dy": 5.0
+  }
  },
  "Ice Grey": {
   "file": "ice-grey.jpg",
-  "left": 164,
-  "right": 877,
-  "top": 44,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 489.0,
+   "centro_torso": 519.2,
+   "cuello_abajo": 149.0,
+   "ruedo": 965,
+   "torso": [
+    165,
+    874
+   ]
+  },
+  "desplazamiento": {
+   "dx": -4.1,
+   "dy": 0.0
+  }
  },
  "Military Green": {
   "file": "military-green.jpg",
-  "left": 163,
-  "right": 852,
-  "top": 46,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 485.0,
+   "centro_torso": 507.5,
+   "cuello_abajo": 169.0,
+   "ruedo": 967,
+   "torso": [
+    163,
+    852
+   ]
+  },
+  "desplazamiento": {
+   "dx": 3.8,
+   "dy": -11.0
+  }
  },
  "Navy": {
   "file": "navy.jpg",
-  "left": 163,
-  "right": 861,
-  "top": 66,
-  "light_ink": true
+  "light_ink": true,
+  "medidas_originales": {
+   "centro_cuello": 483.0,
+   "centro_torso": 508.2,
+   "cuello_abajo": 168.0,
+   "ruedo": 946,
+   "torso": [
+    163,
+    854
+   ]
+  },
+  "desplazamiento": {
+   "dx": 4.4,
+   "dy": 0.0
+  }
  },
  "Sport Grey": {
   "file": "sport-grey.jpg",
-  "left": 151,
-  "right": 845,
-  "top": 48,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 484.0,
+   "centro_torso": 500.2,
+   "cuello_abajo": 124.0,
+   "ruedo": 974,
+   "torso": [
+    153,
+    848
+   ]
+  },
+  "desplazamiento": {
+   "dx": 7.9,
+   "dy": 8.0
+  }
  },
  "White": {
   "file": "white.jpg",
-  "left": 140,
-  "right": 835,
-  "top": 12,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 482.0,
+   "centro_torso": 515.0,
+   "cuello_abajo": 147.0,
+   "ruedo": 945,
+   "torso": [
+    170,
+    860
+   ]
+  },
+  "desplazamiento": {
+   "dx": 1.5,
+   "dy": 11.0
+  }
  },
  "Brown": {
   "file": "brown.jpg",
-  "left": 156,
-  "right": 868,
-  "top": 55,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 490.0,
+   "centro_torso": 512.2,
+   "cuello_abajo": 132.0,
+   "ruedo": 972,
+   "torso": [
+    156,
+    868
+   ]
+  },
+  "desplazamiento": {
+   "dx": -1.1,
+   "dy": 5.0
+  }
  },
  "Light Blue": {
   "file": "light-blue.jpg",
-  "left": 157,
-  "right": 848,
-  "top": 48,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 502.0,
+   "centro_torso": 503.5,
+   "cuello_abajo": 156.0,
+   "ruedo": 969,
+   "torso": [
+    157,
+    850
+   ]
+  },
+  "desplazamiento": {
+   "dx": -2.8,
+   "dy": -5.5
+  }
  },
  "Maroon": {
   "file": "maroon.jpg",
-  "left": 132,
-  "right": 867,
-  "top": 31,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 498.0,
+   "centro_torso": 500.0,
+   "cuello_abajo": 147.0,
+   "ruedo": 967,
+   "torso": [
+    131,
+    869
+   ]
+  },
+  "desplazamiento": {
+   "dx": 1.0,
+   "dy": 0.0
+  }
  },
  "Sage": {
   "file": "sage.jpg",
-  "left": 157,
-  "right": 869,
-  "top": 55,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 490.0,
+   "centro_torso": 512.8,
+   "cuello_abajo": 132.0,
+   "ruedo": 971,
+   "torso": [
+    157,
+    868
+   ]
+  },
+  "desplazamiento": {
+   "dx": -1.4,
+   "dy": 5.5
+  }
  },
  "Sand": {
   "file": "sand.jpg",
-  "left": 155,
-  "right": 857,
-  "top": 54,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 509.0,
+   "centro_torso": 506.8,
+   "cuello_abajo": 169.0,
+   "ruedo": 959,
+   "torso": [
+    156,
+    857
+   ]
+  },
+  "desplazamiento": {
+   "dx": -7.9,
+   "dy": -7.0
+  }
  },
  "Stone Blue": {
   "file": "stone-blue.jpg",
-  "left": 157,
-  "right": 869,
-  "top": 55,
-  "light_ink": false
+  "light_ink": false,
+  "medidas_originales": {
+   "centro_cuello": 490.0,
+   "centro_torso": 512.8,
+   "cuello_abajo": 132.0,
+   "ruedo": 971,
+   "torso": [
+    157,
+    868
+   ]
+  },
+  "desplazamiento": {
+   "dx": -1.4,
+   "dy": 5.5
+  }
  }
 }

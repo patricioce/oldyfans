@@ -18,7 +18,12 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, '..', 'assets')
-BOX, TOPK = 0.54, 0.36      # lado del cuadro = 54% del ancho del torso; arriba = 36% del torso bajo el cuello
+# Posición FIJA del diseño, igual en todas las variantes (escala 0-1000 de la imagen).
+# Las remeras de assets/blanks/ ya vienen centradas (center_blanks.py): el centro de cada remera (promedio entre
+# centro del cuello y centro del torso) está en x=500 de la imagen, así que el diseño en CX=500 queda centrado en todas.
+# Tamaño y altura aprobados por Patricio sobre Slow Me Down y Raised On Hose Water.
+# El diseño (recortado a su contenido) entra en un cuadro de BOX de lado, centrado en CX, con su borde de arriba en TOP.
+BOX, CX, TOP = 318, 500, 293
 INK_ALPHA = 0.96
 LOW_CONTRAST = 0.45          # menos que esto: no se lee, se omite
 DOUBTFUL = 0.70              # entre LOW_CONTRAST y esto: dudoso, mostrarlo y preguntar
@@ -70,15 +75,14 @@ def find_designs(root):
     return res
 
 
-def blank_geom(base, cfg):
+def blank_geom(base):
     k = base.width / 1000
-    bw = (cfg['right'] - cfg['left']) * k
-    return bw * BOX, (cfg['left'] + cfg['right']) / 2 * k, cfg['top'] * k + TOPK * bw
+    return BOX * k, CX * k, TOP * k
 
 
 def compose(base, d, cfg):
     a = np.asarray(base)
-    box, cx, top = blank_geom(base, cfg)
+    box, cx, top = blank_geom(base)
     sc = box / max(d.size)
     d = d.resize((max(1, round(d.width * sc)), max(1, round(d.height * sc))), Image.LANCZOS)
     x0, y0 = round(cx - d.width / 2), round(top)
@@ -150,6 +154,10 @@ def main():
             img.save(f, quality=90); made.append((c, f))
         if made:
             sheet(made, os.path.join(A.out, f'{name} - preview.jpg'))
+            # simulación del cambio de variante en la tienda: el diseño no debe moverse
+            fr = [Image.open(f).convert('RGB').resize((800, 800)) for _, f in made]
+            fr[0].save(os.path.join(A.out, f'{name} - cambio de variante.gif'), save_all=True,
+                       append_images=fr[1:], duration=1000, loop=0)
     json.dump(report, open(os.path.join(A.out, 'reporte.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     for r in report:
         flag = ('  <-- BAJO CONTRASTE' + (' (omitido)' if r['omitido'] else '')) if r['bajo_contraste'] else ('  <-- dudoso' if r['contraste'] < DOUBTFUL else '')
