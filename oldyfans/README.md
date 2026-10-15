@@ -18,7 +18,7 @@ Los links "Admin" de los CSV abren el producto en `admin.shopify.com/store/s0vk8
 | `07-redirects-shopify-import.csv` | 24 | Redirects 301 de los handles viejos a los nuevos (excluye los que chocan con un duplicado). | Solo si NO usaste el tilde de redirect: Online Store → Navigation → URL Redirects → Import. |
 | `08-productos-duplicados.csv` | 5 pares | Mismo título publicado dos veces: Circle Back, Fixer, Well Seasoned, Whatever y Hose Water. | Comparar diseños. Si son iguales, despublicar el más nuevo y redirigirlo al más viejo (que tiene las reseñas). |
 | `05-talles-faltantes.csv` | 819 combinaciones / 294 productos | Colores sin 3XL (796) o sin XL y 3XL (22). | Informativo: es lo que ofrece Printify por color. Si el proveedor lo permite, habilitar 3XL. |
-| `06-orden-de-opciones-color-talle.csv` | 229 | Productos con opciones Color/Talle (los nuevos usan Talle/Color). | Informativo; reordenar opciones solo si el tema lo muestra raro. |
+| `06-orden-de-opciones-color-talle.csv` | 234 | Productos con opciones Color/Talle (los nuevos usan Talle/Color). | Informativo; reordenar opciones solo si el tema lo muestra raro. |
 
 ## textos/ (copiar y pegar)
 
