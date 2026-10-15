@@ -1,0 +1,40 @@
+Título,Handle actual,Handle sugerido,Problema,Redirect desde,Redirect hacia
+Daily Dose 2 T-Shirt,daily-dose-2-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Daily Dose 1 T-Shirt,daily-dose-1-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Daily Dose 3 T-Shirt,daily-dose-3-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+"Ew, people 2 T-Shirt",ew-people-2-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Sumbitch 2 T-Shirt,sumbitch-2-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Circle Back T-Shirt,circle-back-t-shirt-1,circle-back-t-shirt,sufijo numérico; OJO: el handle sugerido ya existe,/products/circle-back-t-shirt-1,/products/circle-back-t-shirt
+Fixer T-Shirt,fixer-t-shirt-1,fixer-t-shirt,sufijo numérico; OJO: el handle sugerido ya existe,/products/fixer-t-shirt-1,/products/fixer-t-shirt
+Tape T-Shirt,casette-t-shirt,tape-t-shirt,handle no coincide con título,/products/casette-t-shirt,/products/tape-t-shirt
+Raised By Wolves 2 T-Shirt,raised-by-wolves-2-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+80s Fan 3 T-Shirt,80s-fan-3-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Slow Me Down 2 T-Shirt,slow-me-down-2-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Antisocial 2 T-Shirt,antisocial-2-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+80s Fan 2 T-Shirt,80s-fan-2-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Woke Up Bald Again 2 T-Shirt,woke-up-bald-again-2-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Hose Water 3 T-Shirt,hose-water-3-t-shirt,(decidir: renombrar o unificar),título numerado (posible duplicado),,
+Apologies In Cash T-Shirt,apalogies-in-cash-t-shirt,apologies-in-cash-t-shirt,handle no coincide con título,/products/apalogies-in-cash-t-shirt,/products/apologies-in-cash-t-shirt
+Midlife Crisis T-Shirt,midelife-crisis,midlife-crisis-t-shirt,handle no coincide con título,/products/midelife-crisis,/products/midlife-crisis-t-shirt
+Make The Donuts T-Shirt,off-to-make-the-donuts-t-shirt-1,make-the-donuts-t-shirt,sufijo numérico,/products/off-to-make-the-donuts-t-shirt-1,/products/make-the-donuts-t-shirt
+Care Less T-Shirt,care-way-way-less-t-shirt,care-less-t-shirt,handle no coincide con título,/products/care-way-way-less-t-shirt,/products/care-less-t-shirt
+A You Problem T-Shirt,a-tomorrow-problem-t-shirt,a-you-problem-t-shirt,handle no coincide con título,/products/a-tomorrow-problem-t-shirt,/products/a-you-problem-t-shirt
+Pluto T-Shirt,size-matters-t-shirt,pluto-t-shirt,handle no coincide con título,/products/size-matters-t-shirt,/products/pluto-t-shirt
+Physical Therapy T-Shirt,lets-get-physical-therpy-t-shirt,physical-therapy-t-shirt,handle no coincide con título,/products/lets-get-physical-therpy-t-shirt,/products/physical-therapy-t-shirt
+Well Seasoned T-Shirt,wll-seasoned-t-shirt,well-seasoned-t-shirt,handle no coincide con título; OJO: el handle sugerido ya existe,/products/wll-seasoned-t-shirt,/products/well-seasoned-t-shirt
+8-Bit Music T-Shirt,8-bit-music-1,8-bit-music-t-shirt,sufijo numérico,/products/8-bit-music-1,/products/8-bit-music-t-shirt
+In The Garage T-Shirt,ill-be-in-the-garage-t-shirt-1,in-the-garage-t-shirt,sufijo numérico,/products/ill-be-in-the-garage-t-shirt-1,/products/in-the-garage-t-shirt
+The Right Questions T-Shirt,the-right-questions-1,the-right-questions-t-shirt,sufijo numérico,/products/the-right-questions-1,/products/the-right-questions-t-shirt
+Sellouts! T-Shirt,sellout-1,sellouts-t-shirt,sufijo numérico; handle no coincide con título,/products/sellout-1,/products/sellouts-t-shirt
+Our Lips Are Sealed T-Shirt,our-lips-are-sealed-1,our-lips-are-sealed-t-shirt,sufijo numérico,/products/our-lips-are-sealed-1,/products/our-lips-are-sealed-t-shirt
+You Make A Better Door,you-make-a-better-door,you-make-a-better-door-t-shirt,"sin ""T-Shirt""",/products/you-make-a-better-door,/products/you-make-a-better-door-t-shirt
+Gen X Definition T-Shirt,definicion-gen-x,gen-x-definition-t-shirt,handle no coincide con título,/products/definicion-gen-x,/products/gen-x-definition-t-shirt
+Gaming Because Murder Is Wrong T-Shirt,gaming-because-morder-is-wrong-white,gaming-because-murder-is-wrong-t-shirt,handle no coincide con título,/products/gaming-because-morder-is-wrong-white,/products/gaming-because-murder-is-wrong-t-shirt
+Dreaming About Her T-Shirt,dreaming-about-me,dreaming-about-her-t-shirt,handle no coincide con título,/products/dreaming-about-me,/products/dreaming-about-her-t-shirt
+We Don´t Care T-Shirt,dont-care-if-you-like-us,we-dont-care-t-shirt,handle no coincide con título,/products/dont-care-if-you-like-us,/products/we-dont-care-t-shirt
+My Dog T-Shirt,im-only-talking-to-my-dog-today-1,my-dog-t-shirt,sufijo numérico,/products/im-only-talking-to-my-dog-today-1,/products/my-dog-t-shirt
+Record Sunset T-Shirt,vinyl-sunset,record-sunset-t-shirt,handle no coincide con título,/products/vinyl-sunset,/products/record-sunset-t-shirt
+Still Alive T-Shirt,unsupervised,still-alive-t-shirt,handle no coincide con título,/products/unsupervised,/products/still-alive-t-shirt
+Paused Since 1987 T-Shirt,paused-since-1987,paused-since-1987-t-shirt,sufijo numérico,/products/paused-since-1987,/products/paused-since-1987-t-shirt
+I'll Be In My Office,ill-be-in-my-office-plane,ill-be-in-my-office-t-shirt,"sin ""T-Shirt""",/products/ill-be-in-my-office-plane,/products/ill-be-in-my-office-t-shirt
+Wise Man T-Shirt,a-wise-man-once-said-white-1,wise-man-t-shirt,sufijo numérico,/products/a-wise-man-once-said-white-1,/products/wise-man-t-shirt
