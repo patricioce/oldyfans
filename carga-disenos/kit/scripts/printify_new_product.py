@@ -12,13 +12,15 @@ Uso:
 Dos tintas: con --image-light se arman dos areas de impresion en el mismo producto. Los colores de
 --light-colors (por defecto "Black,Navy") llevan --image-light; todos los demas, --image.
 
-Opciones de ubicacion del diseno: --x --y --scale --angle (por defecto los de la receta).
+Opciones de ubicacion del diseno: --x --y --scale --angle (por defecto los del modelo, con la escala al 85%).
+Para publicar un producto YA creado (sin duplicarlo): publicar_existente.py --printify-id <id> --mockups carpeta/
 """
 import argparse, base64, json, os, subprocess, sys, tempfile, time
 
 SHOP_ID = int(os.environ.get("PRINTIFY_SHOP_ID", "27342731"))
 TEMPLATE_PRODUCT_TITLE = "10 p.m T-Shirt"
 PRICE_CENTS = 4285
+SCALE_FACTOR = 0.85  # el diseno va al 85% del tamano del modelo (aprobado por Patricio, lote 2026-10-15)
 ENV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
 API = "https://api.printify.com/v1"
 
@@ -115,7 +117,7 @@ def main():
     ref = front["images"][0]
     x = ref["x"] if a.x is None else a.x
     y = ref["y"] if a.y is None else a.y
-    scale = ref["scale"] if a.scale is None else a.scale
+    scale = ref["scale"] * SCALE_FACTOR if a.scale is None else a.scale
     angle = ref.get("angle", 0) if a.angle is None else a.angle
     tags = [t.strip() for t in a.tags.split(",")] if a.tags else tpl["tags"]
 
@@ -176,22 +178,8 @@ def main():
     print("Producto creado en Printify:", prod["id"])
 
     if a.publish:
-        if a.mockups:
-            # oculto y sin las fotos de Printify, para que no pise los mockups propios
-            call("PUT", f"/shops/{SHOP_ID}/products/{prod['id']}.json", {"visible": False})
-        r = call("POST", f"/shops/{SHOP_ID}/products/{prod['id']}/publish.json",
-                 {"title": True, "description": True, "images": not a.mockups, "variants": True, "tags": True,
-                  "keyfeatures": True, "shipping_template": True})
-        print("Publicacion a Shopify solicitada:", r)
-        if a.mockups:
-            import shopify_mockups
-            sid = shopify_mockups.shopify_id_from_printify(prod["id"], wait=300)
-            print("Producto en Shopify:", sid, "- esperando a que Printify termine de publicar...")
-            if not shopify_mockups.wait_printify_done(sid):
-                print("AVISO: Printify no termino en 5 minutos; sigo igual y vigilo el estado.")
-            shopify_mockups.upload(sid, a.mockups, apply=True)
-            shopify_mockups.keep_hidden(sid, minutes=5)
-            print("Verificado: el producto sigue en borrador.")
+        import publicar_existente
+        publicar_existente.publicar(prod["id"], a.mockups)
     else:
         print("No publicado. Revisa los mockups en Printify y luego publica.")
 

@@ -13,7 +13,7 @@ Todos los tokens y secretos viven en `.env` (en esta carpeta, ya está en .gitig
 - Shopify: dominio API `s0vk8m-gj.myshopify.com`, API `2024-10`, header `X-Shopify-Access-Token`. Tema activo (main): id `187945418797`.
 - Printify: shop id `27342731` ("Oldy Fans Store", canal Shopify), API `https://api.printify.com/v1`, headers `Authorization: Bearer` + `User-Agent: Claude`.
 - Los productos se crean con el mismo modelo/proveedor de impresión (blueprint 145, provider 99), 39 variantes habilitadas, precio `$42.85` (el 30% de descuento es un descuento automático de Shopify, no cambia el precio base).
-- Ubicación estándar del diseño (frente): x=0.5, y≈0.281, scale≈0.862, angle=0. Espalda vacía.
+- Ubicación estándar del diseño (frente): x=0.5, y≈0.281, angle=0, escala = 85% de la del modelo (≈0.733; el modelo usa 0.862). Espalda vacía.
 
 ## Cargar un diseño nuevo
 ```
@@ -21,11 +21,12 @@ python3 scripts/printify_new_product.py --image diseno.png --title "Nombre T-Shi
 python3 scripts/printify_new_product.py --image diseno.png --title "Nombre T-Shirt" --create   # crea en Printify, SIN publicar
 python3 scripts/printify_new_product.py ... --create --publish                                   # además publica a Shopify
 ```
-Flujo recomendado: crear sin publicar → mirar los mockups → ajustar `--x --y --scale --angle` si hace falta → publicar.
+Flujo recomendado: crear sin publicar (`--create`) → revisar en el editor de Printify → ajustar `--x --y --scale --angle` si hace falta → publicar con `publicar_existente.py`.
+OJO: `--create --publish` crea un producto NUEVO; para publicar uno ya creado usá `publicar_existente.py`.
 Después del publish, ajustar en Shopify: colecciones, tags, precio tachado, descripción en inglés.
 
 ### Diseños con dos tintas (blanca y negra)
-Con `--image-light clara.png` el producto lleva dos áreas de impresión: los colores de `--light-colors` (por defecto `Black,Navy`) usan la versión clara y el resto la de `--image` (oscura).
+Con `--image-light clara.png` los colores de `--light-colors` (por defecto `Black,Navy`) usan la versión clara y el resto la de `--image` (oscura). Cada color claro lleva su **propia área de impresión** (una para Black y otra para Navy): así el editor de Printify lo muestra como "specific design for Black / for Navy". Con los dos juntos en una sola área, el editor no lo reconoce.
 ```
 python3 scripts/printify_new_product.py --image oscura.png --image-light clara.png --title "Nombre T-Shirt" --colors "Black,Navy,White,Sport Grey"
 ```
@@ -41,6 +42,7 @@ La API de Printify no permite subir mockups propios: se cargan en Shopify, asign
 Carpeta con un archivo por color, con el nombre del color en el archivo (ej. `black-sheep-sport-grey.jpg`), máx. 20 MB c/u (2500 px alcanza).
 ```
 python3 scripts/printify_new_product.py ... --create --publish --mockups carpeta/     # todo junto: publica OCULTO y carga los mockups
+python3 scripts/publicar_existente.py --printify-id <id> --mockups carpeta/ --apply  # publica en borrador un producto YA creado (sin duplicarlo)
 python3 scripts/shopify_mockups.py --printify-id <id> --dir carpeta/                  # simulación sobre un producto ya publicado
 python3 scripts/shopify_mockups.py --printify-id <id> --dir carpeta/ --apply --replace --order "White,Purple"   # reemplaza las fotos
 ```
