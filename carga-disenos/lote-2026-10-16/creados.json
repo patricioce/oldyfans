@@ -1,4 +1,22 @@
 {
- "Lincoln Music": {"titulo": "Lincoln Music T-Shirt", "printify_id": "6ad24b688d7f3da4b70f47f2", "shopify_id": null, "estado": "creado en Printify, sin publicar", "escala": 0.733, "nota": "unica.png en todos los colores"},
- "Washington Music": {"titulo": "Washington Music T-Shirt", "printify_id": "6ad24b77824c87e1e701e603", "shopify_id": null, "estado": "creado en Printify, sin publicar", "escala": 0.733, "nota": "unica.png en todos los colores"}
+ "Lincoln Music": {
+  "titulo": "Lincoln Music T-Shirt",
+  "printify_id": "6ad24b688d7f3da4b70f47f2",
+  "shopify_id": "15420689842221",
+  "shopify_handle": "lincoln-music-t-shirt",
+  "estado": "draft",
+  "mockups": 4,
+  "posicion": "ajustada a mano por Patricio en Printify (x=0.5, y=0.386, escala=0.733)",
+  "nota": "unica.png en todos los colores"
+ },
+ "Washington Music": {
+  "titulo": "Washington Music T-Shirt",
+  "printify_id": "6ad24b77824c87e1e701e603",
+  "shopify_id": "15420689776685",
+  "shopify_handle": "washington-music-t-shirt",
+  "estado": "draft",
+  "mockups": 4,
+  "posicion": "ajustada a mano por Patricio en Printify (x=0.5, y=0.370, escala=0.640)",
+  "nota": "unica.png en todos los colores"
+ }
 }
