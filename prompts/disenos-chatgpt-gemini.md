@@ -4,7 +4,7 @@ Basado en "OldyFans — WeScalers Prompting System" (oct 2026) y en los diseños
 
 ## Cómo usarlo
 
-1. **Paso 1 (igual para los dos):** abrí un chat nuevo, adjuntá la imagen de referencia y pegá el PROMPT 1 con la frase completada. Te devuelve la ecuación de la referencia y 3 opciones en el estilo OldyFans.
+1. **Paso 1 (igual para los dos):** abrí un chat nuevo, adjuntá la imagen de referencia y pegá el PROMPT 1 con la frase completada. Te devuelve la ecuación de la referencia y 5 opciones bien distintas en el estilo OldyFans.
 2. **Paso 2:** elegí una opción y pegá el PROMPT 2 de la herramienta que estés usando (ChatGPT o Gemini). Genera la versión de **tinta oscura** (para remeras claras).
 3. **Paso 3:** pegá el PROMPT 3 para la versión de **tinta clara** (para Black y Navy).
    - Atajo más fiel: como el diseño es de una sola tinta, en Photoshop podés hacer la versión clara bloqueando la transparencia de la capa y rellenándola de blanco. Queda idéntica, cosa que el modelo no siempre logra.
@@ -17,14 +17,14 @@ Notas:
 
 ---
 
-## PROMPT 1 — Análisis + 3 opciones (ChatGPT y Gemini)
+## PROMPT 1 — Análisis + 5 opciones (ChatGPT y Gemini)
 
 Adjuntar la imagen de referencia. Completar `[PHRASE]` respetando los saltos de línea.
 
 ```
 You are a senior t-shirt graphic designer for OldyFans, a US apparel brand. Do NOT generate any image yet. This step is text only.
 
-I attached a REFERENCE design. My phrase for the new design is (keep exact spelling, punctuation, capitalization and line breaks):
+I attached a REFERENCE design. My phrase for the new design is (keep exact words, spelling and punctuation):
 """
 [PHRASE]
 """
@@ -36,7 +36,18 @@ DESIGN EQUATION = PRINT STYLE + GRAPHIC DESIGN STYLE + MOOD
 - MOOD: tone of the humor and the feeling it gives
 Keep it to one line per layer.
 
-STEP B — Propose 3 different design options for my phrase in the OLDYFANS HOUSE STYLE below. The reference is only inspiration for mood and idea: do NOT copy its colors, layout, materials, logos, signatures or watermarks.
+STEP B — Propose 5 design options for my phrase in the OLDYFANS HOUSE STYLE below. The reference is only inspiration for mood and idea: do NOT copy its colors, layout, materials, logos, signatures or watermarks.
+
+The 5 options must be CLEARLY DIFFERENT from each other. Use exactly one of these 5 directions per option, each direction once:
+  1. BLOCK STACK: condensed athletic block caps only, stacked tight, punchline much bigger than the setup, optional hard-edged distress.
+  2. VARSITY SCRIPT: block caps for the setup + retro baseball-script with a swash tail underline for the punchline.
+  3. 70s SOFT SERIF: chunky Cooper-style soft-serif, friendly and warm, punchline set apart by spacing or size.
+  4. BADGE + ICON: one simple single-color line-art illustration that adds to the joke, centered, with text arched above and/or below it.
+  5. HAND-LETTERED: bold marker caps, slightly uneven baseline, lines of very different sizes, a small doodle accent (arrow, underline, stars) at most.
+Rules for variety:
+- No two options may share the same main typeface style, the same layout shape, or the same way of emphasizing the punchline.
+- You may split the phrase into lines differently per option to fit the layout, and set it in all caps if the direction calls for it, but never change, add or remove words or punctuation.
+- Before answering, check the 5 options side by side. If any two would look similar as thumbnails, rework one of them.
 
 OLDYFANS HOUSE STYLE
 - Audience: adults 40+ (Gen X and boomers) in the US. Humor is deadpan, sarcastic, self-deprecating, often nostalgic for a 70s/80s childhood (unsupervised kids, playground games, "back in my day").
