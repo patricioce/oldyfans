@@ -1,6 +1,38 @@
 {
- "Like Ads":              {"titulo": "Like Ads T-Shirt",              "printify_id": "6ad7b2196094d917fe054bdd", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "Am I Perfect":          {"titulo": "Am I Perfect T-Shirt",          "printify_id": "6ad7b22449d13ef91309d5e4", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "It's Not Manipulation": {"titulo": "It's Not Manipulation T-Shirt", "printify_id": "6ad7b2306094d917fe054bf6", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "If a Clown":            {"titulo": "If a Clown T-Shirt",            "printify_id": "6ad7b23b0167db29180cddf4", "shopify_id": null, "estado": "creado en Printify, sin publicar"}
+ "Like Ads": {
+  "titulo": "Like Ads T-Shirt",
+  "printify_id": "6ad7b2196094d917fe054bdd",
+  "shopify_id": "15423433769005",
+  "estado": "draft",
+  "shopify_handle": "like-ads-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png. Ajustes manuales de Patricio en Printify antes de publicar."
+ },
+ "Am I Perfect": {
+  "titulo": "Am I Perfect T-Shirt",
+  "printify_id": "6ad7b22449d13ef91309d5e4",
+  "shopify_id": "15423433736237",
+  "estado": "draft",
+  "shopify_handle": "am-i-perfect-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png. Ajustes manuales de Patricio en Printify antes de publicar."
+ },
+ "It's Not Manipulation": {
+  "titulo": "It's Not Manipulation T-Shirt",
+  "printify_id": "6ad7b2306094d917fe054bf6",
+  "shopify_id": "15423433867309",
+  "estado": "draft",
+  "shopify_handle": "its-not-manipulation-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png. Ajustes manuales de Patricio en Printify antes de publicar."
+ },
+ "If a Clown": {
+  "titulo": "If a Clown T-Shirt",
+  "printify_id": "6ad7b23b0167db29180cddf4",
+  "shopify_id": "15423433801773",
+  "estado": "draft",
+  "shopify_handle": "if-a-clown-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png. Ajustes manuales de Patricio en Printify antes de publicar."
+ }
 }
