@@ -1,0 +1,41 @@
+{
+  "frase": "I'M RIDE OR DIE... UNTIL 9 PM",
+  "nombre": "im-ride-or-die-until-9pm",
+  "opciones": [
+    {
+      "id": 1,
+      "titulo": "Bloque justificado",
+      "detalle": "Bebas Neue · frases parejas, 4 líneas",
+      "bloques": [
+        [{"texto": "I'M RIDE", "fuente": "BebasNeue"}, {"texto": "OR DIE", "fuente": "BebasNeue"}],
+        [{"texto": "...UNTIL", "fuente": "BebasNeue"}, {"texto": "ABOUT 9 PM", "fuente": "BebasNeue"}]
+      ],
+      "parejas": true
+    },
+    {
+      "id": 2,
+      "titulo": "Centrado parejo",
+      "detalle": "Anton · mismo tamaño, centrado",
+      "color": "#141414",
+      "gastado": 0.45,
+      "interlineado": 0.05,
+      "separacion_frases": 0.05,
+      "bloques": [
+        [{"texto": "I'M RIDE", "fuente": "Anton", "modo": "alto", "alto": 0.2},
+         {"texto": "OR DIE", "fuente": "Anton", "modo": "alto", "alto": 0.2}],
+        [{"texto": "...UNTIL", "fuente": "Anton", "modo": "alto", "alto": 0.2},
+         {"texto": "ABOUT 9 PM", "fuente": "Anton", "modo": "alto", "alto": 0.2}]
+      ]
+    },
+    {
+      "id": 3,
+      "titulo": "APROBADO · Remate grande",
+      "detalle": "Bebas arriba, remate en Anton",
+      "semilla": 21,
+      "bloques": [
+        [{"texto": "I'M RIDE OR DIE...", "fuente": "BebasNeue"}],
+        [{"texto": "UNTIL 9 PM", "fuente": "Anton"}]
+      ]
+    }
+  ]
+}
