@@ -27,6 +27,7 @@ Después del publish, ajustar en Shopify: colecciones, tags, precio tachado, des
 
 ### Diseños con dos tintas (blanca y negra)
 Con `--image-light clara.png` los colores de `--light-colors` (por defecto `Black,Navy`) usan la versión clara y el resto la de `--image` (oscura). Cada color claro lleva su **propia área de impresión** (una para Black y otra para Navy): así el editor de Printify lo muestra como "specific design for Black / for Navy". Con los dos juntos en una sola área, el editor no lo reconoce.
+Además, Black y Navy tienen que tener **imágenes subidas distintas**: Printify deduplica las subidas por contenido, y con la misma imagen en las dos áreas el editor mostraba Navy con el diseño regular. El script sube la clara una vez por color con un metadato PNG del color (id propio para cada una) y, después de crear, relee el producto y corta con error si algún color no quedó en su área.
 ```
 python3 scripts/printify_new_product.py --image oscura.png --image-light clara.png --title "Nombre T-Shirt" --colors "Black,Navy,White,Sport Grey"
 ```

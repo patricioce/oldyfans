@@ -15,7 +15,7 @@ Dos tintas: con --image-light se arman dos areas de impresion en el mismo produc
 Opciones de ubicacion del diseno: --x --y --scale --angle (por defecto los del modelo, con la escala al 85%).
 Para publicar un producto YA creado (sin duplicarlo): publicar_existente.py --printify-id <id> --mockups carpeta/
 """
-import argparse, base64, json, os, subprocess, sys, tempfile, time
+import argparse, base64, io, json, os, subprocess, sys, tempfile, time
 
 SHOP_ID = int(os.environ.get("PRINTIFY_SHOP_ID", "27342731"))
 TEMPLATE_PRODUCT_TITLE = "10 p.m T-Shirt"
@@ -81,6 +81,38 @@ def find_template():
         page += 1
 
 
+def png_con_color(path, color):
+    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
+    from PIL import Image, PngImagePlugin
+    info = PngImagePlugin.PngInfo()
+    info.add_text("oldyfans-color", color)
+    buf = io.BytesIO()
+    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    return buf.getvalue()
+
+
+def verificar_areas(pid, esperado, color_of):
+    """Relee el producto y confirma que cada grupo de colores quedo en su area con su imagen."""
+    p = call("GET", f"/shops/{SHOP_ID}/products/{pid}.json")
+    ok = True
+    for vids, img_id, fname, _ in esperado:
+        area = next((pa for pa in p["print_areas"] if vids <= set(pa["variant_ids"])), None)
+        ids = [im["id"] for ph in (area or {}).get("placeholders", []) if ph["position"] == "front" for im in ph["images"]]
+        otros = {color_of[v] for v in (set(area["variant_ids"]) if area else set()) - vids if v in color_of}
+        cols = ", ".join(sorted({color_of[v] for v in vids}))
+        if area is None or ids != [img_id] or otros:
+            ok = False
+            print(f"  ERROR area de {cols}: imagenes {ids} (esperada {fname}), comparte area con: {', '.join(sorted(otros)) or '-'}")
+        else:
+            print(f"  OK {cols} -> {fname}")
+    claras = [img_id for _, img_id, _, color in esperado if color]
+    if len(set(claras)) != len(claras):
+        ok = False
+        print("  ERROR los colores claros comparten la misma imagen subida")
+    if not ok:
+        sys.exit(f"El producto {pid} no quedo con las areas esperadas: revisarlo antes de publicar.")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--image", required=True)
@@ -127,18 +159,18 @@ def main():
     print(f"Ubicacion frente: x={x:.3f} y={y:.3f} scale={scale:.3f} angle={angle}")
 
     light = {c.strip().lower() for c in a.light_colors.split(",") if c.strip()}
-    groups = [(a.image, [v["id"] for v in enabled if not (a.image_light and color_of[v["id"]].lower() in light)])]
+    groups = [(a.image, [v["id"] for v in enabled if not (a.image_light and color_of[v["id"]].lower() in light)], None)]
     if a.image_light:
         # un area por cada color claro: asi el editor de Printify lo muestra como
         # "specific design for Black" / "for Navy" (con Black y Navy juntos en una area no lo reconoce)
         for c in sorted({color_of[v["id"]] for v in enabled if color_of[v["id"]].lower() in light}):
-            groups.append((a.image_light, [v["id"] for v in enabled if color_of[v["id"]] == c]))
-        for img, vids in groups:
+            groups.append((a.image_light, [v["id"] for v in enabled if color_of[v["id"]] == c], c))
+        for img, vids, *_ in groups:
             cols = sorted({color_of[i] for i in vids})
             print(f"  {os.path.basename(img)} -> {', '.join(cols) or '(ningun color)'}")
         if len(groups) < 2:
             sys.exit(f"Ninguno de los colores elegidos esta en --light-colors ({a.light_colors}).")
-    groups = [(img, vids) for img, vids in groups if vids]
+    groups = [g for g in groups if g[1]]
 
     if a.mockups and not os.path.isdir(a.mockups):
         sys.exit(f"No existe la carpeta de mockups: {a.mockups}")
@@ -147,16 +179,19 @@ def main():
         print("SIMULACION: no se creo nada. Agrega --create para crear el producto.")
         return
 
-    print_areas, subidas = [], {}
-    for img, vids in groups:
-        if img not in subidas:
-            contents = base64.b64encode(open(img, "rb").read()).decode()
-            subidas[img] = call("POST", "/uploads/images.json", {"file_name": os.path.basename(img), "contents": contents})
-            if "id" not in subidas[img]:
-                sys.exit(f"Fallo la subida: {subidas[img]}")
-            print("Imagen subida:", os.path.basename(img), subidas[img]["id"],
-                  f"{subidas[img].get('width')}x{subidas[img].get('height')}")
-        up = subidas[img]
+    # cada color claro sube su propia copia de la clara (clara-black.png, clara-navy.png): con la misma
+    # imagen compartida entre Black y Navy, el editor de Printify mostraba Navy con el diseno regular.
+    # Printify deduplica las subidas por contenido, asi que cada copia lleva un metadato PNG con su color.
+    print_areas, esperado = [], []
+    for img, vids, color in groups:
+        base, ext = os.path.splitext(os.path.basename(img))
+        fname = f"{base}-{color.lower().replace(' ', '-')}{ext}" if color else os.path.basename(img)
+        contents = base64.b64encode(png_con_color(img, color) if color else open(img, "rb").read()).decode()
+        up = call("POST", "/uploads/images.json", {"file_name": fname, "contents": contents})
+        if "id" not in up:
+            sys.exit(f"Fallo la subida: {up}")
+        print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
+        esperado.append((set(vids), up["id"], fname, color))
         print_areas.append({
             "variant_ids": vids,
             "placeholders": [{"position": "front",
@@ -176,6 +211,7 @@ def main():
     if "id" not in prod:
         sys.exit(f"Fallo la creacion: {prod}")
     print("Producto creado en Printify:", prod["id"])
+    verificar_areas(prod["id"], esperado, color_of)
 
     if a.publish:
         import publicar_existente
