@@ -2,7 +2,10 @@
  "Five Bucks": {
   "titulo": "Five Bucks T-Shirt",
   "printify_id": "6ada11aed65a0cab9a0736b3",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK de Patricio)"
+  "shopify_id": "15424979959853",
+  "estado": "draft",
+  "shopify_handle": "five-bucks-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area y con su propia imagen subida (primer lote con el fix de deduplicacion por pixeles)."
  }
 }
