@@ -1,5 +1,5 @@
 {
- "Trouble": {"titulo": "Trouble T-Shirt", "printify_id": "6ada1a0873b8f5726400e0ca", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "Troublemaker": {"titulo": "Troublemaker T-Shirt", "printify_id": "6ada1a2128f903de34093c29", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "Underdog": {"titulo": "Underdog T-Shirt", "printify_id": "6ada1a37096bb6877a007f15", "shopify_id": null, "estado": "creado en Printify, sin publicar"}
+ "Trouble": {"titulo": "Trouble T-Shirt", "printify_id": "6ada1a0873b8f5726400e0ca", "shopify_id": "15424993853485", "estado": "publicado en Shopify en borrador con mockups propios"},
+ "Troublemaker": {"titulo": "Troublemaker T-Shirt", "printify_id": "6ada1a2128f903de34093c29", "shopify_id": "15424993820717", "estado": "publicado en Shopify en borrador con mockups propios"},
+ "Underdog": {"titulo": "Underdog T-Shirt", "printify_id": "6ada1a37096bb6877a007f15", "shopify_id": "15424993722413", "estado": "publicado en Shopify en borrador con mockups propios"}
 }
