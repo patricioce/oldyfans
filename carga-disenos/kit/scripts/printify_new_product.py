@@ -21,7 +21,7 @@ Al publicar, publicar_existente.py deja en Shopify price 29.99 / compare_at 42.8
 Opciones de ubicacion del diseno: --x --y --scale --angle (por defecto los del modelo, con la escala al 85%).
 Para publicar un producto YA creado (sin duplicarlo): publicar_existente.py --printify-id <id> --mockups carpeta/
 """
-import argparse, base64, io, json, os, subprocess, sys, tempfile, time
+import argparse, base64, io, json, os, subprocess, sys, tempfile, time, zlib
 
 SHOP_ID = int(os.environ.get("PRINTIFY_SHOP_ID", "27342731"))
 TEMPLATE_PRODUCT_TITLE = "10 p.m T-Shirt"
@@ -94,12 +94,21 @@ def colores(p):
 
 
 def png_con_color(path, color):
-    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
+    """Misma imagen con pixeles distintos por color, para que Printify le de un id propio.
+    Printify deduplica por contenido de la imagen (un metadato PNG no alcanza): se cambia en 1 el rojo
+    del primer pixel opaco, un cambio invisible distinto para cada color."""
     from PIL import Image, PngImagePlugin
+    im = Image.open(path).convert("RGBA")
+    px = im.load()
+    w, h = im.size
+    i = next(i for i in range(w * h) if px[i % w, i // w][3] == 255)
+    r, g, b, a = px[i % w, i // w]
+    d = 1 + zlib.crc32(color.encode()) % 3
+    px[i % w, i // w] = (r - d if r >= d else r + d, g, b, a)
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -111,7 +120,8 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # Printify rechaza placeholders sin imagenes (la espalda vacia) en el PUT
+        return [ph for ph in pa["placeholders"] if ph["images"]] if en & set(pa["variant_ids"]) else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
@@ -277,6 +287,8 @@ def main():
         if "id" not in up:
             sys.exit(f"Fallo la subida: {up}")
         print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
+        if any(up["id"] == e[1] for e in esperado):
+            sys.exit(f"Printify devolvio el mismo id de subida para {fname} que para otra imagen: no se creo el producto.")
         esperado.append((set(vids) & en, up["id"], fname, color))
         print_areas.append({
             "variant_ids": vids,
