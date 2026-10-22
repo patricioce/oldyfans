@@ -5,7 +5,7 @@ description: Cargar un lote de diseños de remeras de OldyFans (carpeta de lote 
 
 # Carga de diseños OldyFans
 
-Todo vive en el repo `patricioce/oldyfans`, carpeta `carga-disenos/` (rama `claude/exciting-mayer-frtssa` hasta que se mergee).
+Todo vive en el repo `patricioce/oldyfans`, carpeta `carga-disenos/` (rama `claude/peaceful-newton-igx29l` hasta que se mergee: las otras ramas tienen versiones viejas de los scripts).
 Leé primero `carga-disenos/kit/README.md` y el `CARGA.md` del lote. Los scripts están en `carga-disenos/kit/scripts/`.
 
 ## Credenciales
