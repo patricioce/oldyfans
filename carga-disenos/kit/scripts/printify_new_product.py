@@ -98,9 +98,26 @@ def png_con_color(path, color):
     from PIL import Image, PngImagePlugin
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
+    im = Image.open(path).convert("RGBA")
+    # Printify ignora el metadato al deduplicar: ademas se cambia el RGB de un pixel totalmente
+    # transparente de la esquina (no se ve ni se imprime), distinto para cada color
+    if im.getpixel((0, 0))[3] == 0:
+        n = sum(color.encode()) % 250 + 1
+        im.putpixel((0, 0), (n, 255 - n, n // 2, 0))
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
+
+
+def subir_clara(img, color):
+    """Sube la copia de la clara para un color (clara-black.png, clara-navy.png). Devuelve (id, nombre)."""
+    base, ext = os.path.splitext(os.path.basename(img))
+    fname = f"{base}-{color.lower().replace(' ', '-')}{ext}"
+    up = call("POST", "/uploads/images.json", {"file_name": fname, "contents": base64.b64encode(png_con_color(img, color)).decode()})
+    if "id" not in up:
+        sys.exit(f"Fallo la subida: {up}")
+    print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
+    return up["id"], fname
 
 
 def areas_esperadas(p, light_cols):
@@ -111,7 +128,9 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # Printify rechaza el PUT con placeholders sin imagenes (la espalda vacia): se omiten
+        phs = [ph for ph in pa["placeholders"] if ph["images"]]
+        return phs if en & set(pa["variant_ids"]) and phs else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
@@ -134,8 +153,13 @@ def problemas_areas(p, light_cols):
     return out
 
 
-def normalizar_areas(pid, light_cols, apply=True):
-    """Deja cada color claro solo en su area (con todos sus talles) y el resto en el area general."""
+def front_ids(pa):
+    return [im["id"] for ph in pa["placeholders"] if ph["position"] == "front" for im in ph["images"]]
+
+
+def normalizar_areas(pid, light_cols, apply=True, image_light=None):
+    """Deja cada color claro solo en su area (con todos sus talles) y el resto en el area general.
+    Con image_light, si los colores claros comparten la misma imagen subida, sube una copia por color."""
     p = call("GET", f"/shops/{SHOP_ID}/products/{pid}.json")
     if len(p["print_areas"]) < 2:
         print("  Una sola area (diseno unico en todos los colores): nada que corregir.")
@@ -145,6 +169,11 @@ def normalizar_areas(pid, light_cols, apply=True):
     light_cols = {color_of[v["id"]] for v in p["variants"]
                   if v["is_enabled"] and color_of[v["id"]].lower() in {x.lower() for x in light_cols}}
     probs = problemas_areas(p, light_cols)
+    claras = [pa for pa in p["print_areas"] if {color_of.get(v) for v in pa["variant_ids"]} & light_cols]
+    ids_claras = [tuple(front_ids(pa)) for pa in claras]
+    if len(set(ids_claras)) < len(ids_claras):
+        probs.append(f"{' y '.join(sorted(light_cols))} comparten la misma imagen subida"
+                     + ("" if image_light else " (pasar --image-light para resubirla)"))
     if not probs:
         print("  Areas OK: cada color claro tiene su area propia.")
         return True
@@ -152,7 +181,15 @@ def normalizar_areas(pid, light_cols, apply=True):
         print("  A CORREGIR:", pr)
     if not apply:
         return False
-    r = call("PUT", f"/shops/{SHOP_ID}/products/{pid}.json", {"print_areas": areas_esperadas(p, light_cols)})
+    areas = areas_esperadas(p, light_cols)
+    if image_light and len(set(ids_claras)) < len(ids_claras):
+        for pa in areas:
+            cs = {color_of.get(v) for v in pa["variant_ids"]}
+            if len(cs) == 1 and cs <= light_cols:
+                nuevo, _ = subir_clara(image_light, cs.pop())
+                pa["placeholders"] = [dict(ph, images=[dict(im, id=nuevo) for im in ph["images"]])
+                                      if ph["position"] == "front" else ph for ph in pa["placeholders"]]
+    r = call("PUT", f"/shops/{SHOP_ID}/products/{pid}.json", {"print_areas": areas})
     if "id" not in r:
         sys.exit(f"Printify rechazo el cambio de areas: {str(r)[:300]}")
     print("  Areas reacomodadas.")
@@ -208,7 +245,7 @@ def main():
 
     if a.fix_areas:
         print(f"Producto {a.fix_areas}:")
-        if not normalizar_areas(a.fix_areas, light, apply=a.apply) and not a.apply:
+        if not normalizar_areas(a.fix_areas, light, apply=a.apply, image_light=a.image_light) and not a.apply:
             print("SIMULACION: no se cambio nada. Agrega --apply para corregir.")
         return
     if not (a.image and a.title):
@@ -218,7 +255,7 @@ def main():
     enabled_tpl = [v for v in tpl["variants"] if v["is_enabled"]]
     # catalogo completo del modelo: todas las variantes van a alguna area (tambien las deshabilitadas),
     # asi Printify no las tira en el area de Navy
-    cat = call("GET", f"/catalog/blueprints/{tpl['blueprint_id']}/print_providers/{tpl['print_provider_id']}/variants.json")["variants"]
+    cat = call("GET", f"/catalog/blueprints/{tpl['blueprint_id']}/print_providers/{tpl['print_provider_id']}/variants.json?show-out-of-stock=1")["variants"]
     color_of = {v["id"]: v["options"]["color"] for v in cat}
     sizes = {v["options"]["size"] for v in cat if v["id"] in {t["id"] for t in enabled_tpl}}
     if a.colors:
@@ -270,19 +307,25 @@ def main():
     # Printify deduplica las subidas por contenido, asi que cada copia lleva un metadato PNG con su color.
     print_areas, esperado = [], []
     for img, vids, color in groups:
-        base, ext = os.path.splitext(os.path.basename(img))
-        fname = f"{base}-{color.lower().replace(' ', '-')}{ext}" if color else os.path.basename(img)
-        contents = base64.b64encode(png_con_color(img, color) if color else open(img, "rb").read()).decode()
-        up = call("POST", "/uploads/images.json", {"file_name": fname, "contents": contents})
-        if "id" not in up:
-            sys.exit(f"Fallo la subida: {up}")
-        print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
-        esperado.append((set(vids) & en, up["id"], fname, color))
+        if color:
+            img_id, fname = subir_clara(img, color)
+        else:
+            fname = os.path.basename(img)
+            up = call("POST", "/uploads/images.json", {"file_name": fname, "contents": base64.b64encode(open(img, "rb").read()).decode()})
+            if "id" not in up:
+                sys.exit(f"Fallo la subida: {up}")
+            print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
+            img_id = up["id"]
+        esperado.append((set(vids) & en, img_id, fname, color))
         print_areas.append({
             "variant_ids": vids,
             "placeholders": [{"position": "front",
-                              "images": [{"id": up["id"], "x": x, "y": y, "scale": scale, "angle": angle}]}],
+                              "images": [{"id": img_id, "x": x, "y": y, "scale": scale, "angle": angle}]}],
         })
+
+    ids_claras = [e[1] for e in esperado if e[3]]
+    if len(set(ids_claras)) < len(ids_claras):
+        sys.exit("Printify devolvio la misma imagen para los colores claros: no se creo el producto.")
 
     body = {
         "title": a.title,
