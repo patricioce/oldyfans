@@ -1,0 +1,261 @@
+[
+ {
+  "id": "gid://shopify/Product/15424070484013",
+  "handle": "lost-my-mind-t-shirt",
+  "vendor": "Printify",
+  "variants": [
+   {
+    "id": "gid://shopify/ProductVariant/67712709132333",
+    "title": "White / S",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709361709",
+    "title": "White / M",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709591085",
+    "title": "White / L",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709820461",
+    "title": "White / XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710049837",
+    "title": "White / 2XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710279213",
+    "title": "White / 3XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709230637",
+    "title": "Ice Grey / S",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709460013",
+    "title": "Ice Grey / M",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709689389",
+    "title": "Ice Grey / L",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709918765",
+    "title": "Ice Grey / XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710148141",
+    "title": "Ice Grey / 2XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710377517",
+    "title": "Ice Grey / 3XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709099565",
+    "title": "Sport Grey / S",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709328941",
+    "title": "Sport Grey / M",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709558317",
+    "title": "Sport Grey / L",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709787693",
+    "title": "Sport Grey / XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710017069",
+    "title": "Sport Grey / 2XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710246445",
+    "title": "Sport Grey / 3XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709197869",
+    "title": "Military Green / S",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709427245",
+    "title": "Military Green / M",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709656621",
+    "title": "Military Green / L",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709885997",
+    "title": "Military Green / XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710115373",
+    "title": "Military Green / 2XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710344749",
+    "title": "Military Green / 3XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709034029",
+    "title": "Charcoal / S",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709263405",
+    "title": "Charcoal / M",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709492781",
+    "title": "Charcoal / L",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709722157",
+    "title": "Charcoal / XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709951533",
+    "title": "Charcoal / 2XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710180909",
+    "title": "Charcoal / 3XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709066797",
+    "title": "Navy / S",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709296173",
+    "title": "Navy / M",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709525549",
+    "title": "Navy / L",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709754925",
+    "title": "Navy / XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709984301",
+    "title": "Navy / 2XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710213677",
+    "title": "Navy / 3XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709165101",
+    "title": "Black / S",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709394477",
+    "title": "Black / M",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709623853",
+    "title": "Black / L",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712709853229",
+    "title": "Black / XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710082605",
+    "title": "Black / 2XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   },
+   {
+    "id": "gid://shopify/ProductVariant/67712710311981",
+    "title": "Black / 3XL",
+    "price": "29.99",
+    "compareAtPrice": "42.85"
+   }
+  ]
+ }
+]
