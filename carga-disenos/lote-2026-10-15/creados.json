@@ -1,0 +1,42 @@
+{
+ "I Had Potential": {
+  "titulo": "I Had Potential T-Shirt",
+  "printify_id": "6ad10c00210a7ce1c702c486",
+  "shopify_id": "15420120760365",
+  "shopify_handle": "i-had-potential-t-shirt",
+  "estado": "draft",
+  "mockups": 7,
+  "escala": 0.733,
+  "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png"
+ },
+ "A Wise Man": {
+  "titulo": "A Wise Man T-Shirt",
+  "printify_id": "6ad12e1fe1630eaee406c5c1",
+  "shopify_id": "15420176039981",
+  "shopify_handle": "a-wise-man-t-shirt",
+  "estado": "draft",
+  "mockups": 6,
+  "escala": 0.733,
+  "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png"
+ },
+ "Call Me Antisocial": {
+  "titulo": "Call Me Antisocial T-Shirt",
+  "printify_id": "6ad12e3002e855b98e014bd7",
+  "shopify_id": "15420176072749",
+  "shopify_handle": "call-me-antisocial-t-shirt",
+  "estado": "draft",
+  "mockups": 6,
+  "escala": 0.733,
+  "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png"
+ },
+ "Hang In There": {
+  "titulo": "Hang In There T-Shirt",
+  "printify_id": "6ad12e3dd12cbea6030efaad",
+  "shopify_id": "15420176007213",
+  "shopify_handle": "hang-in-there-t-shirt-1",
+  "estado": "draft",
+  "mockups": 6,
+  "escala": 0.733,
+  "nota": "unica.png en todos los colores"
+ }
+}
