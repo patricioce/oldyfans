@@ -94,12 +94,16 @@ def colores(p):
 
 
 def png_con_color(path, color):
-    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
-    from PIL import Image, PngImagePlugin
-    info = PngImagePlugin.PngInfo()
-    info.add_text("oldyfans-color", color)
+    """Misma imagen con un pixel de la primera fila apenas cambiado en el alfa (invisible): pixeles distintos
+    para que Printify le de un id propio. Un metadato PNG no alcanza: Printify deduplica por los pixeles."""
+    from PIL import Image
+    im = Image.open(path).convert("RGBA")
+    px = im.load()
+    i = sum(color.encode()) % im.width
+    r, g, b, alfa = px[i, 0]
+    px[i, 0] = (r, g, b, alfa + 1 if alfa < 255 else 254)
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG")
     return buf.getvalue()
 
 
@@ -111,7 +115,8 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # Printify rechaza placeholders sin imagenes (la espalda vacia): no mandarlos
+        return [ph for ph in pa["placeholders"] if ph["images"]] if en & set(pa["variant_ids"]) else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
@@ -283,6 +288,10 @@ def main():
             "placeholders": [{"position": "front",
                               "images": [{"id": up["id"], "x": x, "y": y, "scale": scale, "angle": angle}]}],
         })
+
+    ids_claros = [img_id for _, img_id, _, color in esperado if color]
+    if len(ids_claros) != len(set(ids_claros)):
+        sys.exit("Printify devolvio el mismo id de imagen para dos colores claros: no se creo el producto.")
 
     body = {
         "title": a.title,
