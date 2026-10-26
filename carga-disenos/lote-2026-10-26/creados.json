@@ -2,31 +2,46 @@
  "Gifted": {
   "titulo": "Gifted T-Shirt",
   "printify_id": "6adf4e1a67e54b24cd0aaca7",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15427816521773",
+  "estado": "draft",
+  "shopify_handle": "gifted-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia. Ajustes manuales de Patricio en Printify antes de publicar."
  },
  "Positive Energy": {
   "titulo": "Positive Energy T-Shirt",
   "printify_id": "6adf4e353a852e6fa20e52ae",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15427816423469",
+  "estado": "draft",
+  "shopify_handle": "positive-energy-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia. Ajustes manuales de Patricio en Printify antes de publicar."
  },
  "Smartass": {
   "titulo": "Smartass T-Shirt",
   "printify_id": "6adf4e4dcb4bc654040ae191",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15427817308205",
+  "estado": "draft",
+  "shopify_handle": "smartass-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia. Ajustes manuales de Patricio en Printify antes de publicar."
  },
  "Who Came First": {
   "titulo": "Who Came First? T-Shirt",
   "printify_id": "6adf4e6874bd2435cf0d7f05",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15427817930797",
+  "estado": "draft",
+  "shopify_handle": "who-came-first-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia. Ajustes manuales de Patricio en Printify antes de publicar."
  },
  "Surprise Party": {
   "titulo": "Surprise Party T-Shirt",
   "printify_id": "6adf4e7d74bd2435cf0d7f18",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15427816783917",
+  "estado": "draft",
+  "shopify_handle": "surprise-party-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia. Ajustes manuales de Patricio en Printify antes de publicar."
  }
 }
