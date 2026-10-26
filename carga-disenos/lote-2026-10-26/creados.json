@@ -43,5 +43,11 @@
   "shopify_handle": "surprise-party-t-shirt",
   "mockups": 7,
   "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia. Ajustes manuales de Patricio en Printify antes de publicar."
+ },
+ "Diapers": {
+  "titulo": "Diapers T-Shirt",
+  "printify_id": "6adf550ce1f425fa1d0938d7",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar"
  }
 }
