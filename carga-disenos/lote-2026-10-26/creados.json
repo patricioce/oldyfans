@@ -47,7 +47,10 @@
  "Diapers": {
   "titulo": "Diapers T-Shirt",
   "printify_id": "6adf550ce1f425fa1d0938d7",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15427839361069",
+  "estado": "draft",
+  "shopify_handle": "diapers-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia."
  }
 }
