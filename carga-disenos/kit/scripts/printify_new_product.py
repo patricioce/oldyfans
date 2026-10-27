@@ -98,8 +98,13 @@ def png_con_color(path, color):
     from PIL import Image, PngImagePlugin
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
+    # el metadato solo no alcanza (Printify igual deduplica): ademas un pixel transparente de la fila de arriba pasa a alfa 1/255,
+    # invisible al imprimir, distinto segun el color
+    im = Image.open(path).convert("RGBA")
+    libres = [x for x in range(im.width) if im.getpixel((x, 0))[3] == 0] or [0]
+    im.putpixel((libres[sum(map(ord, color)) % len(libres)], 0), (0, 0, 0, 1))
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -152,7 +157,14 @@ def normalizar_areas(pid, light_cols, apply=True):
         print("  A CORREGIR:", pr)
     if not apply:
         return False
-    r = call("PUT", f"/shops/{SHOP_ID}/products/{pid}.json", {"print_areas": areas_esperadas(p, light_cols)})
+    areas = areas_esperadas(p, light_cols)
+    for pa in areas:
+        # Printify devuelve la espalda con images: [] pero rechaza un PUT que la mande asi
+        # y solo los campos de ubicacion de cada imagen: con los que agrega el GET (imageId...) puede descartarla
+        pa["placeholders"] = [{"position": ph["position"],
+                               "images": [{k: im[k] for k in ("id", "x", "y", "scale", "angle")} for im in ph["images"]]}
+                              for ph in pa["placeholders"] if ph["images"]]
+    r = call("PUT", f"/shops/{SHOP_ID}/products/{pid}.json", {"print_areas": areas})
     if "id" not in r:
         sys.exit(f"Printify rechazo el cambio de areas: {str(r)[:300]}")
     print("  Areas reacomodadas.")
