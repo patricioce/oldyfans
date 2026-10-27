@@ -21,7 +21,7 @@ Al publicar, publicar_existente.py deja en Shopify price 29.99 / compare_at 42.8
 Opciones de ubicacion del diseno: --x --y --scale --angle (por defecto los del modelo, con la escala al 85%).
 Para publicar un producto YA creado (sin duplicarlo): publicar_existente.py --printify-id <id> --mockups carpeta/
 """
-import argparse, base64, io, json, os, subprocess, sys, tempfile, time
+import argparse, base64, hashlib, io, json, os, subprocess, sys, tempfile, time
 
 SHOP_ID = int(os.environ.get("PRINTIFY_SHOP_ID", "27342731"))
 TEMPLATE_PRODUCT_TITLE = "10 p.m T-Shirt"
@@ -94,12 +94,21 @@ def colores(p):
 
 
 def png_con_color(path, color):
-    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
+    """Misma imagen con un pixel invisible distinto por color, para que Printify le de un id propio.
+    Printify deduplica por pixeles (un metadato PNG no alcanza): se cambia el RGB de un pixel
+    totalmente transparente, que no se imprime."""
     from PIL import Image, PngImagePlugin
+    im = Image.open(path).convert("RGBA")
+    w, h = im.size
+    xy = next(((x, y) for y in (0, h - 1) for x in range(w) if im.getpixel((x, y))[3] == 0), None)
+    if xy is None:
+        sys.exit(f"{path}: no tiene pixeles transparentes en el borde para diferenciar la copia de {color}")
+    rgb = tuple(b for b in hashlib.md5(color.encode()).digest()[:3])
+    im.putpixel(xy, rgb + (0,))
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -152,7 +161,11 @@ def normalizar_areas(pid, light_cols, apply=True):
         print("  A CORREGIR:", pr)
     if not apply:
         return False
-    r = call("PUT", f"/shops/{SHOP_ID}/products/{pid}.json", {"print_areas": areas_esperadas(p, light_cols)})
+    areas = areas_esperadas(p, light_cols)
+    # Printify devuelve el placeholder "back" con images vacio, pero rechaza el PUT si se lo reenvia asi
+    for a in areas:
+        a["placeholders"] = [ph for ph in a["placeholders"] if ph["images"]]
+    r = call("PUT", f"/shops/{SHOP_ID}/products/{pid}.json", {"print_areas": areas})
     if "id" not in r:
         sys.exit(f"Printify rechazo el cambio de areas: {str(r)[:300]}")
     print("  Areas reacomodadas.")
