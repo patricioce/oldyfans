@@ -2,25 +2,37 @@
  "The First 50 Years": {
   "titulo": "The First 50 Years T-Shirt",
   "printify_id": "6ae0a5aa65a188b0dd0b75d0",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15429075468333",
+  "estado": "draft",
+  "shopify_handle": "the-first-50-years-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area y con su propia imagen. Patricio hizo ajustes manuales en Printify antes de publicar."
  },
  "I'm Trying": {
   "titulo": "I'm Trying T-Shirt",
   "printify_id": "6ae0a5c2e491576a95060d80",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15429075501101",
+  "estado": "draft",
+  "shopify_handle": "im-trying-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area y con su propia imagen. Patricio hizo ajustes manuales en Printify antes de publicar."
  },
  "Hesitate": {
   "titulo": "Hesitate T-Shirt",
   "printify_id": "6ae0a5d7680b19cf9803ef37",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15429075402797",
+  "estado": "draft",
+  "shopify_handle": "hesitate-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area y con su propia imagen. Patricio hizo ajustes manuales en Printify antes de publicar."
  },
  "Crayons": {
   "titulo": "Crayons T-Shirt",
   "printify_id": "6ae0a5ee0f7ba876cc04ae75",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15429075435565",
+  "estado": "draft",
+  "shopify_handle": "crayons-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area y con su propia imagen. Patricio hizo ajustes manuales en Printify antes de publicar."
  }
 }
