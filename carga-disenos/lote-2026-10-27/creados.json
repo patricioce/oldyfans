@@ -2,13 +2,19 @@
  "Allegedly": {
   "titulo": "Allegedly T-Shirt",
   "printify_id": "6ae0f2e2a044f1c025073c89",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando revision)"
+  "shopify_id": "15429079433261",
+  "estado": "draft",
+  "shopify_handle": "allegedly-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area y con su propia imagen subida. Patricio hizo ajustes manuales en Printify antes de publicar."
  },
  "My Wife Knows Everything": {
   "titulo": "My Wife Knows Everything T-Shirt",
   "printify_id": "6ae0f2f30dd207ab130b60d6",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando revision)"
+  "shopify_id": "15429079531565",
+  "estado": "draft",
+  "shopify_handle": "my-wife-knows-everything-t-shirt",
+  "mockups": 5,
+  "nota": "Una sola tinta (negra), solo colores claros: White, Sport Grey, Military Green, Charcoal, Ice Grey. Patricio hizo ajustes manuales en Printify antes de publicar."
  }
 }
