@@ -20,3 +20,9 @@
 ```
 python3 scripts/publicar_existente.py --printify-id <id> --mockups "../lote-2026-11-02/mockups/<Diseño>" --apply
 ```
+
+## Publicación
+Publicar los 6 a la vez superó el límite de Shopify (2 llamadas/seg) y cortó la carga de mockups en 5 de ellos.
+Se rehízo de a uno con `shopify_mockups.py --printify-id <id> --dir <mockups> --apply --replace`, después de esperar
+a que Printify terminara de agregar sus fotos. Resultado: los 6 en draft, fuera de la tienda online, una foto por color,
+Vendor OldyFans, 29.99/42.85 (`repair_products.py`: "Nada para corregir").
