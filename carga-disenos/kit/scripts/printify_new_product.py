@@ -94,12 +94,24 @@ def colores(p):
 
 
 def png_con_color(path, color):
-    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
-    from PIL import Image, PngImagePlugin
-    info = PngImagePlugin.PngInfo()
-    info.add_text("oldyfans-color", color)
+    """Misma imagen con bytes distintos para que Printify le de un id propio a cada color claro.
+    Printify deduplica por contenido de la imagen e ignora los metadatos PNG (probado 2026-11-02),
+    asi que se cambia el RGB de un pixel totalmente transparente (invisible, alpha sigue en 0)."""
+    import zlib
+    from PIL import Image
+    im = Image.open(path).convert("RGBA")
+    w, h = im.size
+    marca = zlib.crc32(color.encode()) & 0xFFFFFF
+    rgb = ((marca >> 16) & 255 or 1, (marca >> 8) & 255, marca & 255)
+    px = im.load()
+    pos = next(((x, y) for y in (0, h - 1) for x in range(w) if px[x, y][3] == 0), None)
+    if pos is None:
+        pos = next(((x, y) for y in range(h) for x in range(w) if px[x, y][3] == 0), None)
+    if pos is None:
+        sys.exit(f"{path}: no tiene pixeles transparentes para marcar la copia de {color}")
+    px[pos] = rgb + (0,)
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG")
     return buf.getvalue()
 
 
@@ -111,7 +123,10 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        if not en & set(pa["variant_ids"]):
+            return None
+        # Printify rechaza placeholders sin imagenes (ej. la espalda vacia) en el PUT
+        return [ph for ph in pa["placeholders"] if ph["images"]] or None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
@@ -267,7 +282,7 @@ def main():
         return
 
     # cada color claro sube su propia copia de la clara (clara-black.png, clara-navy.png).
-    # Printify deduplica las subidas por contenido, asi que cada copia lleva un metadato PNG con su color.
+    # Printify deduplica las subidas por contenido: cada copia lleva un pixel transparente marcado con su color.
     print_areas, esperado = [], []
     for img, vids, color in groups:
         base, ext = os.path.splitext(os.path.basename(img))
