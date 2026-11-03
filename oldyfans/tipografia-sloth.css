@@ -1,0 +1,139 @@
+/* =====================================================================
+   OldyFans — Tipografía copiada de slothhikingclub.com
+   ---------------------------------------------------------------------
+   Sloth Hiking Club (tema Dawn) usa:
+     · Cuerpo:   DM Sans — 400, 600, 700 (+ itálica 400/700).
+                 El 500 no está cargado allá, así que el navegador lo
+                 muestra como 400; acá se carga lo mismo para que se vea igual.
+     · Títulos:  Barlow Condensed — 800 (Extra Bold), en MAYÚSCULAS.
+   Tamaños medidos en vivo (desktop 1440px / mobile 390px).
+   Corte mobile: < 750px (igual que Sloth).
+
+   Dónde va: Shopify → Tienda online → Temas → Personalizar →
+   Configuración del tema → CSS personalizado (o al final de un .css del tema).
+   ===================================================================== */
+
+/* ---------- 1. Fuentes (biblioteca de fuentes de Shopify, servida por la propia tienda) ---------- */
+@font-face{font-family:"DM Sans";font-weight:400;font-style:normal;font-display:swap;src:url("/cdn/fonts/dm_sans/dmsans_n4.ec80bd4dd7e1a334c969c265873491ae56018d72.woff2") format("woff2")}
+@font-face{font-family:"DM Sans";font-weight:600;font-style:normal;font-display:swap;src:url("/cdn/fonts/dm_sans/dmsans_n6.70a2453ea926d613c6a2f89af05180d14b3a7c96.woff2") format("woff2")}
+@font-face{font-family:"DM Sans";font-weight:700;font-style:normal;font-display:swap;src:url("/cdn/fonts/dm_sans/dmsans_n7.97e21d81502002291ea1de8aefb79170c6946ce5.woff2") format("woff2")}
+@font-face{font-family:"DM Sans";font-weight:400;font-style:italic;font-display:swap;src:url("/cdn/fonts/dm_sans/dmsans_i4.b8fe05e69ee95d5a53155c346957d8cbf5081c1a.woff2") format("woff2")}
+@font-face{font-family:"DM Sans";font-weight:700;font-style:italic;font-display:swap;src:url("/cdn/fonts/dm_sans/dmsans_i7.52b57f7d7342eb7255084623d98ab83fd96e7f9b.woff2") format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-weight:800;font-style:normal;font-display:swap;src:url("/cdn/fonts/barlow_condensed/barlowcondensed_n8.7834cc55e75e72418139ee98bd5319d55b2ccda6.woff2") format("woff2")}
+
+/* ---------- 2. Variables del tema (familias, pesos, escala) ---------- */
+:root{
+  --shc-sans:"DM Sans",sans-serif;
+  --shc-display:"Barlow Condensed",sans-serif;
+
+  --font-body--family:var(--shc-sans)!important;
+  --font-body--weight:400!important;
+  --font-subheading--family:var(--shc-sans)!important;
+  --font-subheading--weight:600!important;
+  --font-accent--family:var(--shc-sans)!important;
+  --font-accent--weight:700!important;
+  --font-heading--family:var(--shc-display)!important;
+  --font-heading--weight:800!important;
+
+  /* Texto corrido: 15px / 1.6 (mobile 14px) */
+  --font-size--paragraph:0.9375rem!important;
+
+  /* Títulos: H1 68→40 · H2 48→28 · H3 26→22 · H4 22 · H5 20→18 · H6 15 */
+  --font-size--h1:clamp(2.5rem,4.8vw,4.25rem)!important;
+  --font-size--h2:clamp(1.75rem,3.4vw,3rem)!important;
+  --font-size--h3:clamp(1.375rem,2vw,1.625rem)!important;
+  --font-size--h4:1.375rem!important;
+  --font-size--h5:1.25rem!important;
+  --font-size--h6:0.9375rem!important;
+
+  --font-h1--case:uppercase!important;  --font-h1--line-height:0.95!important; --font-h1--letter-spacing:-0.025em!important;
+  --font-h2--case:uppercase!important;  --font-h2--line-height:1!important;    --font-h2--letter-spacing:-0.025em!important;
+  --font-h3--case:uppercase!important;  --font-h3--line-height:1.05!important; --font-h3--letter-spacing:0.023em!important;
+  --font-h4--case:uppercase!important;  --font-h4--line-height:1.05!important; --font-h4--letter-spacing:0.023em!important;
+  --font-h5--case:uppercase!important;  --font-h5--line-height:1.1!important;  --font-h5--letter-spacing:0.02em!important;
+  --font-h5--family:var(--shc-display)!important; --font-h5--weight:800!important;
+  --font-h6--case:uppercase!important;  --font-h6--line-height:1.4!important;  --font-h6--letter-spacing:-0.025em!important;
+}
+@media (max-width:749px){
+  :root{
+    --font-size--paragraph:0.875rem!important;
+    --font-size--h5:1.125rem!important;
+  }
+}
+
+/* ---------- 3. Base ---------- */
+body{font-family:var(--shc-sans)}
+h1,h2,h3,h4,h5,h6{font-family:var(--shc-display)!important;font-weight:800!important;text-transform:uppercase}
+h1{font-size:var(--font-size--h1);line-height:.95;letter-spacing:-.025em}
+h2{font-size:var(--font-size--h2);line-height:1;letter-spacing:-.025em}
+h3{font-size:var(--font-size--h3);line-height:1.05;letter-spacing:.023em}
+
+/* Títulos de página (colección, etc.) — 68px → 40px */
+main h1{font-size:var(--font-size--h1)!important;line-height:.95!important;letter-spacing:-.025em!important;text-transform:uppercase!important}
+/* Títulos de sección (Bestsellers, FAQs, Favoritos, reseñas…) — 48px / 1 · -0.025em → 28px mobile.
+   Algunos bloques los tienen como H3 o con tipografía "custom"; se igualan todos al H2 de Sloth. */
+main :is(.text-block,rte-formatter)>:is(h2,h3):not(.product-details *){font-family:var(--shc-display)!important;font-weight:800!important;font-size:var(--font-size--h2)!important;line-height:1!important;letter-spacing:-.025em!important;text-transform:uppercase!important}
+
+/* Sección "Premium Quality Tees" (tenía Anek Tamil forzada) */
+html [id$='__about_brand'] h2{font-family:var(--shc-display)!important;font-weight:800!important;text-transform:uppercase;font-size:var(--font-size--h2)!important;line-height:1!important;letter-spacing:-.025em!important}
+html [id$='__about_brand'] p{font-family:var(--shc-sans)!important}
+
+/* ---------- 4. Barra de anuncios — 700 · 11px · MAYÚS · +0.04em ---------- */
+.announcement-bar__text{font-family:var(--shc-sans)!important;font-weight:700!important;font-size:11px!important;line-height:1.4!important;letter-spacing:.04em!important;text-transform:uppercase!important}
+
+/* ---------- 5. Menú — 500 · 16px / 1.4 ---------- */
+.menu-list__link-title,.menu-list__link{font-family:var(--shc-sans)!important;font-weight:500!important;font-size:16px!important;line-height:1.4!important;text-transform:none!important;letter-spacing:normal!important}
+
+/* ---------- 6. Tarjetas de producto ---------- */
+/* Nombre — 700 · 15px / 1.3 · +0.04em · sin mayúsculas (mobile 14px) */
+.bmp-card-global-title p,.bmp-card-global-title a{font-family:var(--shc-sans)!important;font-weight:700!important;font-size:15px!important;line-height:1.3!important;letter-spacing:.04em!important;text-transform:none!important}
+/* Precio — 15px / 1.5; precio de oferta en 700, precio tachado en 400 (mobile 14px) */
+:root{--bmp-cardg-title-size:15px!important;--bmp-cardg-title-weight:700!important;--bmp-cardg-title-case:none!important;--bmp-cardg-title-line-height:1.3!important;--bmp-cardg-price-size:15px!important;--bmp-cardg-price-line-height:1.5!important}
+.bmp-card-global-price,html product-card product-price,html product-card product-price .price-item__group.price:not(.compare-at-price){font-family:var(--shc-sans)!important;font-weight:400!important;font-size:15px!important;line-height:1.5!important;letter-spacing:normal!important;text-transform:none!important}
+html product-card product-price .price-item__group.price:not(.compare-at-price){font-weight:700!important}
+html product-card product-price .compare-at-price{font-family:var(--shc-sans)!important;font-weight:400!important;font-size:15px!important;line-height:1.5!important}
+
+/* ---------- 7. Página de producto ---------- */
+/* Título — DM Sans 700 · 37.44px / 1.12 · -0.01em (mobile 25px / 28px) */
+.product-details [class*="product_title"] :is(h1,h2){font-family:var(--shc-sans)!important;font-weight:700!important;font-size:37.44px!important;line-height:1.12!important;letter-spacing:-.01em!important;text-transform:none!important}
+/* Precio — 500 · 22px / 1.25 · +0.02em (mobile 20px) */
+.product-details .price{font-family:var(--shc-sans)!important;font-weight:500!important;font-size:22px!important;line-height:1.25!important;letter-spacing:.02em!important}
+.product-details .compare-at-price{font-weight:400!important;font-size:15px!important;line-height:1.25!important;letter-spacing:normal!important}
+/* Selector de variantes — etiqueta 14px / 1.3, talles 500 · 14px (mobile 13px / 12px) */
+.product-details .variant-option legend{font-family:var(--shc-sans)!important;font-size:14px!important;line-height:1.3!important}
+.product-details .variant-option__button-label__text{font-family:var(--shc-sans)!important;font-weight:500!important;font-size:14px!important;line-height:1.35!important}
+.bmp-size-guide__trigger,.bmp-size-guide__trigger-label{font-family:var(--shc-sans)!important;font-weight:700!important;font-size:13px!important;line-height:1.3!important}
+/* Botón Agregar al carrito — 700 · 17px / 1.3 · MAYÚS · +0.08em (mobile 16px) */
+.add-to-cart-button,.add-to-cart-button *{font-family:var(--shc-sans)!important;font-weight:700!important;font-size:17px!important;line-height:1.3!important;letter-spacing:.08em!important;text-transform:uppercase!important}
+.sticky-add-to-cart__button,.sticky-add-to-cart__button *{font-size:15px!important}
+/* Acordeones — título 700 · 16px / 1.2; contenido 15px / 1.65 (mobile 14px / 1.6) */
+.details__header{font-family:var(--shc-sans)!important;font-weight:700!important;font-size:16px!important;line-height:1.2!important;text-transform:none!important;letter-spacing:normal!important}
+.details-content p,.details-content li{font-family:var(--shc-sans)!important;font-size:15px!important;line-height:1.65!important}
+/* Texto de garantía / envío — 13px / 1.4, destacado en 700 */
+.shc-guarantee-text,.shc-guarantee-text *{font-family:var(--shc-sans)!important;font-size:13px!important;line-height:1.4!important}
+
+/* ---------- 8. Botones secundarios (Ver todo, Suscribirme) — 400 · 14px / 1.5 ---------- */
+.button-secondary,.email-signup__button{font-family:var(--shc-sans)!important;font-weight:400!important;font-size:14px!important;line-height:1.5!important;text-transform:none!important}
+
+/* ---------- 9. Footer ---------- */
+/* Títulos de columna — Barlow 800 · 15px / 1.4 · MAYÚS · -0.025em */
+.footer-content h2,.footer-content h3,.footer-content .menu__heading{font-family:var(--shc-display)!important;font-weight:800!important;font-size:15px!important;line-height:1.4!important;letter-spacing:-.025em!important;text-transform:uppercase!important}
+/* Frase / título de newsletter — Barlow 800 · 20px / 1.1 · +0.02em (mobile 18px) */
+.footer-content .email-signup__heading{font-family:var(--shc-display)!important;font-weight:800!important;font-size:20px!important;line-height:1.1!important;letter-spacing:.02em!important;text-transform:uppercase!important}
+/* Links — 15px / 1.4; textos legales 13px / 1.5 */
+.footer-content a{font-family:var(--shc-sans)!important;font-size:15px!important;line-height:1.4!important}
+.footer-content .menu__item a,.footer-content [class*="copyright"],.footer-content [class*="policies"] a{font-size:13px!important;line-height:1.5!important}
+
+/* ---------- 10. Mobile (< 750px) ---------- */
+@media (max-width:749px){
+  .bmp-card-global-title p,.bmp-card-global-title a{font-size:14px!important}
+  :root{--bmp-cardg-title-size:14px!important;--bmp-cardg-price-size:14px!important}
+  .bmp-card-global-price,html product-card product-price,html product-card product-price .price-item__group.price:not(.compare-at-price),html product-card product-price .compare-at-price{font-size:14px!important}
+  .product-details [class*="product_title"] :is(h1,h2){font-size:25px!important;line-height:28px!important}
+  .product-details .price{font-size:20px!important;letter-spacing:.02em!important}
+  .product-details .variant-option legend{font-size:13px!important}
+  .product-details .variant-option__button-label__text{font-size:12px!important}
+  .add-to-cart-button,.add-to-cart-button *{font-size:16px!important}
+  .details-content p,.details-content li{font-size:14px!important;line-height:1.6!important}
+  .footer-content .email-signup__heading{font-size:18px!important}
+}
