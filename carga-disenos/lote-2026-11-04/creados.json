@@ -2,7 +2,10 @@
  "Father": {
   "titulo": "Father T-Shirt",
   "printify_id": "6aeb334d4c4394b66205f918",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15442909265965",
+  "estado": "draft",
+  "shopify_handle": "father-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia. Patricio hizo ajustes manuales en Printify antes de publicar (no se tocaron)."
  }
 }
