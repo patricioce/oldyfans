@@ -1,0 +1,32 @@
+{
+ "Aging Review": {
+  "titulo": "Aging Review T-Shirt",
+  "printify_id": "6aeb171c44e65d92fb048ff0",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Morons": {
+  "titulo": "Morons T-Shirt",
+  "printify_id": "6aeb174380db23a02904a654",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Personal Space": {
+  "titulo": "Personal Space T-Shirt",
+  "printify_id": "6aeb176d80db23a02904a67c",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Record Sunset": {
+  "titulo": "Record Sunset T-Shirt",
+  "printify_id": "6aeb16c222b6c1006c0eeb21",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Did You Die": {
+  "titulo": "Did You Die T-Shirt",
+  "printify_id": null,
+  "shopify_id": null,
+  "estado": "pendiente: falta la version clara"
+ }
+}
