@@ -1,4 +1,8 @@
-/* ===== OldyFans — imagen de producto en mobile, igual que Sloth Hiking Club =====
+/* ===== OldyFans — ficha de producto con medidas de Sloth Hiking Club =====
+   1) Mobile: imagen más chica para que Add to cart quede above the fold.
+   2) Desktop: ancho del contenido igual que SHC (más abajo). */
+
+/* --- 1) Mobile: imagen de producto ---
    Achica la imagen de la ficha de producto según el alto de la pantalla para que
    el botón Add to cart quede above the fold. Usa la misma fórmula que el theme de SHC:
      ancho = min(100%, max(184px, 100svh - 360px))
@@ -26,5 +30,35 @@
     height:100%;
     object-fit:cover;
     object-position:center 40%;
+  }
+}
+
+/* ===== OldyFans — ancho del contenido de la ficha de producto en desktop, igual que Sloth Hiking Club =====
+   SHC: contenedor de máx. 1440px centrado (40px de margen a los costados), imagen 1.15fr | info 1fr,
+   espacio entre columnas clamp(28px, 4vw, 64px) y la info ocupando todo el ancho de su columna.
+   El theme de OldyFans estira la grilla a todo el ancho de la pantalla y limita la info a 512px. */
+@media screen and (min-width:750px){
+  .product-information .product-information__grid{
+    grid-column:1 / -1 !important;
+    width:100% !important;
+    max-width:1440px !important;
+    margin-inline:auto !important;
+    padding-inline:clamp(16px,3vw,40px) !important;
+    box-sizing:border-box !important;
+    grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) !important;
+    column-gap:clamp(28px,4vw,64px) !important;
+  }
+  .product-information .product-information__grid > .product-information__media{
+    grid-column:1 !important;
+    padding-inline:0 !important;
+  }
+  .product-information .product-information__grid > .product-details{
+    grid-column:2 !important;
+    padding-inline:0 !important;
+  }
+  .product-information .product-information__grid .product-details > .group-block{
+    --details-max-width:none;
+    max-width:none !important;
+    width:100% !important;
   }
 }
