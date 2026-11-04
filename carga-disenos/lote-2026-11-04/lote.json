@@ -1,4 +1,51 @@
 {
- "But Did You Die": {"titulo": "But Did You Die T-Shirt", "colores": ["Black", "Charcoal", "Ice Grey", "Military Green", "Navy", "Sport Grey", "White"], "light_colors": ["Black", "Navy"]},
- "My Dog Thinks I'm Cool": {"titulo": "My Dog Thinks I'm Cool T-Shirt", "colores": ["Black", "Charcoal", "Ice Grey", "Military Green", "Navy", "Sport Grey", "White"], "light_colors": ["Black", "Navy", "Sport Grey"]}
+ "But Did You Die": {
+  "titulo": "But Did You Die T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ],
+  "light_colors": [
+   "Black",
+   "Navy"
+  ]
+ },
+ "My Dog Thinks I'm Cool": {
+  "titulo": "My Dog Thinks I'm Cool T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ],
+  "light_colors": [
+   "Black",
+   "Navy",
+   "Sport Grey"
+  ]
+ },
+ "Sarcasm Detected": {
+  "titulo": "Sarcasm Detected T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ],
+  "light_colors": [
+   "Black",
+   "Navy"
+  ]
+ }
 }

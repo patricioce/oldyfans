@@ -16,5 +16,11 @@
   "shopify_handle": "my-dog-thinks-im-cool-t-shirt",
   "mockups": 7,
   "nota": "Celeste en Black, Navy y Sport Grey (cada uno con su area); roja en el resto. Original WebP 2000 px. Patricio hizo ajustes manuales en Printify antes de publicar."
+ },
+ "Sarcasm Detected": {
+  "titulo": "Sarcasm Detected T-Shirt",
+  "printify_id": "6aeb3925767273517c0cdb50",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar"
  }
 }

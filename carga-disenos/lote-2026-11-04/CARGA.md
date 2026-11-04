@@ -9,7 +9,7 @@ Se guardaron como `mockups/<Diseño>/<Diseño> - <Color>.jpg` (reducidos a 2500 
 - **My Dog Thinks I'm Cool**: vino aparte en WebP 2000 px (baja resolución). `clara.png` = versión celeste,
   `oscura.png` = versión roja. Según los mockups la celeste va en **Black, Navy y Sport Grey**
   (`--light-colors "Black,Navy,Sport Grey"`), la roja en White, Military Green, Charcoal e Ice Grey.
-- **Sarcasm Detected**: el zip trajo solo mockups, sin el PNG del diseño. Pendiente.
+- **Sarcasm Detected**: diseño llegó en un zip aparte: `oscura.png` = `Disenos/8.png`, `clara.png` = `Disenos/9.png` (recortados). Clara en Black y Navy.
 
 ## Comandos (desde `carga-disenos/kit`)
 ```
