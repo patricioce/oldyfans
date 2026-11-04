@@ -1,5 +1,5 @@
 /* ===== OldyFans — correcciones del mini cart =====
-   Pegar AL FINAL de assets/mini-cart-sloth.css (las reglas tienen que ir después de las existentes). */
+   Pegar AL FINAL de assets/mini-cart-sloth.CSS (no en el .js) (las reglas tienen que ir después de las existentes). */
 
 /* 1) Sin scroll lateral.
    Los textos ocultos de accesibilidad (.visually-hidden, position:absolute) de las tarjetas de
@@ -11,22 +11,6 @@
 /* El total ($29.99) tiene una capa ::after invisible con "$29.99 USD" que se salía 47px de su caja */
 #cart-drawer .cart-drawer__inner .cart-totals__total-value{overflow:hidden}
 
-/* 2) Botón "Secure checkout" idéntico al de Add to cart, pero con el texto en minúscula */
-#cart-drawer .cart-drawer__inner .cart__checkout-button{
-  min-height:60px!important;
-  padding:16px 24px!important;
-  border:0!important;
-  border-radius:15px!important;
-  background:#E73123!important;
-  color:#fff!important;
-  font:700 16px/1.3 "DM Sans",sans-serif!important;
-  letter-spacing:.08em!important;
-  text-transform:none!important;
-  transition:transform .15s!important;
-}
-#cart-drawer .cart-drawer__inner .cart__checkout-button:hover{
-  background:#E73123!important;
-  border-color:#E73123!important;
-  color:#fff!important;
-  transform:scale(1.05);
-}
+/* 2) Botón "Secure Checkout": igual que antes, solo con los bordes redondeados como Add to cart.
+   (El texto "Secure Checkout" se cambia en assets/mini-cart-sloth.js, línea `checkout: 'Secure Checkout'`) */
+#cart-drawer .cart-drawer__inner .cart__checkout-button{border-radius:15px!important}
