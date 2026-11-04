@@ -94,12 +94,21 @@ def colores(p):
 
 
 def png_con_color(path, color):
-    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
+    """Misma imagen con bytes Y pixeles distintos por color, para que Printify le de un id propio.
+    Printify deduplica por contenido e ignora los metadatos PNG: se cambia un pixel totalmente
+    transparente a alpha 1-9 (invisible al imprimir), distinto segun el color."""
+    import zlib
     from PIL import Image, PngImagePlugin
+    im = Image.open(path).convert("RGBA")
+    a = 1 + zlib.crc32(color.encode()) % 9
+    px = im.load()
+    w, h = im.size
+    pos = next(((x, y) for y in (0, h - 1) for x in range(w) if px[x, y][3] == 0), (0, 0))
+    px[pos] = (0, 0, 0, a)
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -111,7 +120,8 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # Printify rechaza placeholders sin imagenes (la espalda vacia): se mandan solo los que tienen
+        return [ph for ph in pa["placeholders"] if ph.get("images")] if en & set(pa["variant_ids"]) else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
@@ -277,6 +287,8 @@ def main():
         if "id" not in up:
             sys.exit(f"Fallo la subida: {up}")
         print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
+        if color and any(e[3] and e[1] == up["id"] for e in esperado):
+            sys.exit(f"Printify devolvio el mismo id de imagen para {color} que para otro color claro: no se creo el producto.")
         esperado.append((set(vids) & en, up["id"], fname, color))
         print_areas.append({
             "variant_ids": vids,
