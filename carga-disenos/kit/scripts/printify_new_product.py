@@ -29,6 +29,7 @@ PRICE_CENTS = 2999  # precio de venta; el tachado (42.85) se pone en Shopify al 
 SCALE_FACTOR = 0.85  # el diseno va al 85% del tamano del modelo (aprobado por Patricio, lote 2026-10-15)
 ENV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
 API = "https://api.printify.com/v1"
+RESUBIDAS = {}  # color -> id de la imagen que normalizar_areas volvio a subir
 
 
 def load_env():
@@ -94,13 +95,39 @@ def colores(p):
 
 
 def png_con_color(path, color):
-    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
+    """Misma imagen con un cambio invisible propio del color, para que Printify le de un id propio.
+
+    Printify deduplica las subidas: un metadato PNG ya no alcanza (lote 2026-11-04, Black y Navy quedaron con
+    el mismo id). Ademas del metadato, a un pixel totalmente transparente le pone alfa 1/255 y un RGB que
+    depende del color: no se imprime, pero cambia el contenido de la imagen.
+    """
+    import hashlib
     from PIL import Image, PngImagePlugin
+    im = Image.open(path).convert("RGBA")
+    w, h = im.size
+    rgb = tuple(hashlib.sha1(color.encode()).digest()[:3])
+    for xy in [(0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)] + [(i, 0) for i in range(w)]:
+        if im.getpixel(xy)[3] == 0:
+            im.putpixel(xy, rgb + (1,))
+            break
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
+
+
+def subir(fname, data):
+    up = call("POST", "/uploads/images.json", {"file_name": fname, "contents": base64.b64encode(data).decode()})
+    if "id" not in up:
+        sys.exit(f"Fallo la subida: {up}")
+    print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
+    return up
+
+
+def solo_con_imagenes(placeholders):
+    """Printify rechaza un PUT con placeholders sin imagenes (la espalda vacia): se mandan solo los que tienen."""
+    return [ph for ph in placeholders if ph.get("images")]
 
 
 def areas_esperadas(p, light_cols):
@@ -116,7 +143,10 @@ def areas_esperadas(p, light_cols):
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
         areas.append({"variant_ids": [v for v in todas if color_of.get(v) == c], "placeholders": ph_de(lambda x, c=c: x == c)})
-    return [a for a in areas if a["variant_ids"] and a["placeholders"]]
+    areas = [a for a in areas if a["variant_ids"] and a["placeholders"]]
+    for a in areas:
+        a["placeholders"] = solo_con_imagenes(a["placeholders"])
+    return areas
 
 
 def problemas_areas(p, light_cols):
@@ -131,10 +161,30 @@ def problemas_areas(p, light_cols):
         otros = sorted({color_of.get(v, "?") for v in con_c[0]["variant_ids"]} - {c})
         if otros:
             out.append(f"el area de {c} tambien tiene {len(otros)} colores mas ({', '.join(otros[:4])}{'...' if len(otros) > 4 else ''})")
+    for c1, c2 in imagenes_compartidas(p, light_cols):
+        out.append(f"{c1} y {c2} usan la misma imagen subida (el editor muestra {c2} con el diseno regular)")
     return out
 
 
-def normalizar_areas(pid, light_cols, apply=True):
+def front_ids(pa):
+    return [im["id"] for ph in pa["placeholders"] if ph["position"] == "front" for im in ph["images"]]
+
+
+def imagenes_compartidas(p, light_cols):
+    """Pares de colores claros cuyas areas usan la misma imagen subida en el frente."""
+    color_of = colores(p)
+    visto, out = {}, []
+    for c in sorted(light_cols):
+        pa = next((pa for pa in p["print_areas"] if any(color_of.get(v) == c for v in pa["variant_ids"])), None)
+        key = tuple(front_ids(pa)) if pa else None
+        if key and key in visto:
+            out.append((visto[key], c))
+        elif key:
+            visto[key] = c
+    return out
+
+
+def normalizar_areas(pid, light_cols, apply=True, image_light=None):
     """Deja cada color claro solo en su area (con todos sus talles) y el resto en el area general."""
     p = call("GET", f"/shops/{SHOP_ID}/products/{pid}.json")
     if len(p["print_areas"]) < 2:
@@ -152,7 +202,20 @@ def normalizar_areas(pid, light_cols, apply=True):
         print("  A CORREGIR:", pr)
     if not apply:
         return False
-    r = call("PUT", f"/shops/{SHOP_ID}/products/{pid}.json", {"print_areas": areas_esperadas(p, light_cols)})
+    areas = areas_esperadas(p, light_cols)
+    compartidas = imagenes_compartidas(p, light_cols)
+    if compartidas:
+        if not image_light:
+            sys.exit("Hay colores claros con la misma imagen: pasar --image-light clara.png para subir una copia propia.")
+        base, ext = os.path.splitext(os.path.basename(image_light))
+        for _, c in compartidas:
+            up = subir(f"{base}-{c.lower().replace(' ', '-')}{ext}", png_con_color(image_light, c))
+            RESUBIDAS[c] = up["id"]
+            area = next(a for a in areas if any(color_of.get(v) == c for v in a["variant_ids"]))
+            for ph in area["placeholders"]:
+                if ph["position"] == "front":
+                    ph["images"] = [dict(im, id=up["id"]) for im in ph["images"]]
+    r = call("PUT", f"/shops/{SHOP_ID}/products/{pid}.json", {"print_areas": areas})
     if "id" not in r:
         sys.exit(f"Printify rechazo el cambio de areas: {str(r)[:300]}")
     print("  Areas reacomodadas.")
@@ -208,7 +271,7 @@ def main():
 
     if a.fix_areas:
         print(f"Producto {a.fix_areas}:")
-        if not normalizar_areas(a.fix_areas, light, apply=a.apply) and not a.apply:
+        if not normalizar_areas(a.fix_areas, light, apply=a.apply, image_light=a.image_light) and not a.apply:
             print("SIMULACION: no se cambio nada. Agrega --apply para corregir.")
         return
     if not (a.image and a.title):
@@ -272,11 +335,7 @@ def main():
     for img, vids, color in groups:
         base, ext = os.path.splitext(os.path.basename(img))
         fname = f"{base}-{color.lower().replace(' ', '-')}{ext}" if color else os.path.basename(img)
-        contents = base64.b64encode(png_con_color(img, color) if color else open(img, "rb").read()).decode()
-        up = call("POST", "/uploads/images.json", {"file_name": fname, "contents": contents})
-        if "id" not in up:
-            sys.exit(f"Fallo la subida: {up}")
-        print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
+        up = subir(fname, png_con_color(img, color) if color else open(img, "rb").read())
         esperado.append((set(vids) & en, up["id"], fname, color))
         print_areas.append({
             "variant_ids": vids,
@@ -298,7 +357,8 @@ def main():
         sys.exit(f"Fallo la creacion: {prod}")
     print("Producto creado en Printify:", prod["id"])
     if light_cols:
-        normalizar_areas(prod["id"], set(light_cols))
+        normalizar_areas(prod["id"], set(light_cols), image_light=a.image_light)
+    esperado = [(vids, RESUBIDAS.get(color, img_id), fname, color) for vids, img_id, fname, color in esperado]
     verificar_areas(prod["id"], esperado, set(light_cols))
     print(f"Editor: https://printify.com/app/editor/{prod['id']}")
 

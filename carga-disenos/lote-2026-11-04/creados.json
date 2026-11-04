@@ -1,0 +1,33 @@
+{
+ "Sarcasm": {
+  "titulo": "Sarcasm T-Shirt",
+  "printify_id": "6aeb153774b27e78040a92a7",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)",
+  "nota": "Creado con Navy compartiendo imagen con Black y colores extra en su area; corregido con --fix-areas --image-light --apply."
+ },
+ "Second Rodeo": {
+  "titulo": "Second Rodeo T-Shirt",
+  "printify_id": "6aeb15b880db23a02904a417",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Unwilling Participant": {
+  "titulo": "Unwilling Participant T-Shirt",
+  "printify_id": "6aeb15e0b917c08a4a0145c1",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Wait, What": {
+  "titulo": "Wait, What? T-Shirt",
+  "printify_id": "6aeb15fe22b6c1006c0eea07",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Whiskey Tango Foxtrot": {
+  "titulo": "Whiskey Tango Foxtrot T-Shirt",
+  "printify_id": "6aeb162e80db23a02904a4b4",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ }
+}
