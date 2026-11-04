@@ -94,12 +94,24 @@ def colores(p):
 
 
 def png_con_color(path, color):
-    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
+    """Misma imagen con bytes Y pixeles distintos para que Printify le de un id propio.
+    Printify deduplica por contenido y ya ignora los metadatos PNG: ademas del metadato,
+    se cambia el RGB de un pixel totalmente transparente (invisible al imprimir)."""
+    import hashlib
     from PIL import Image, PngImagePlugin
+    im = Image.open(path).convert("RGBA")
+    rgb = tuple(hashlib.md5(color.encode()).digest()[:3])
+    w, h = im.size
+    pos = next(((x, y) for x, y in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)) if im.getpixel((x, y))[3] == 0), None)
+    if pos is None:
+        pos = next(((x, y) for y in range(h) for x in (0, w - 1) if im.getpixel((x, y))[3] == 0), None)
+    if pos is None:
+        sys.exit(f"{path}: no tiene pixeles transparentes en el borde para diferenciar la copia de {color}")
+    im.putpixel(pos, rgb + (0,))
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -111,7 +123,8 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # solo los placeholders con imagen: Printify rechaza el PUT si van vacios (ej. la espalda)
+        return [ph for ph in pa["placeholders"] if ph.get("images")] if en & set(pa["variant_ids"]) else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
