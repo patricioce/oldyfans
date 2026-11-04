@@ -1,7 +1,44 @@
 {
- "Openly Gray": {"titulo": "Openly Gray T-Shirt", "printify_id": "6aeb155e44e65d92fb048dc4", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "Tutto Passa": {"titulo": "Tutto Passa T-Shirt", "printify_id": "6aeb157944e65d92fb048dde", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "80s Survivor": {"titulo": "80s Survivor T-Shirt", "printify_id": "6aeb159744e65d92fb048e1a", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "Alibi": {"titulo": "Alibi T-Shirt", "printify_id": "6aeb161f44e65d92fb048eb4", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "Sarcasm Detected": {"titulo": "Sarcasm Detected T-Shirt", "printify_id": null, "shopify_id": null, "estado": "falta el PNG del diseño"}
+ "Openly Gray": {
+  "titulo": "Openly Gray T-Shirt",
+  "printify_id": "6aeb155e44e65d92fb048dc4",
+  "shopify_id": "15442897174573",
+  "estado": "draft",
+  "shopify_handle": "openly-gray-t-shirt",
+  "mockups": 8,
+  "nota": "Ubicacion ajustada a mano por Patricio en Printify antes de publicar."
+ },
+ "Tutto Passa": {
+  "titulo": "Tutto Passa T-Shirt",
+  "printify_id": "6aeb157944e65d92fb048dde",
+  "shopify_id": "15442897272877",
+  "estado": "draft",
+  "shopify_handle": "tutto-passa-t-shirt",
+  "mockups": 8,
+  "nota": "Ubicacion ajustada a mano por Patricio en Printify antes de publicar."
+ },
+ "80s Survivor": {
+  "titulo": "80s Survivor T-Shirt",
+  "printify_id": "6aeb159744e65d92fb048e1a",
+  "shopify_id": "15442897305645",
+  "estado": "draft",
+  "shopify_handle": "80s-survivor-t-shirt",
+  "mockups": 7,
+  "nota": "Ubicacion ajustada a mano por Patricio en Printify antes de publicar."
+ },
+ "Alibi": {
+  "titulo": "Alibi T-Shirt",
+  "printify_id": "6aeb161f44e65d92fb048eb4",
+  "shopify_id": "15442897338413",
+  "estado": "draft",
+  "shopify_handle": "alibi-t-shirt",
+  "mockups": 7,
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia. Ubicacion ajustada a mano por Patricio en Printify antes de publicar."
+ },
+ "Sarcasm Detected": {
+  "titulo": "Sarcasm Detected T-Shirt",
+  "printify_id": null,
+  "shopify_id": null,
+  "estado": "falta el PNG del diseño"
+ }
 }
