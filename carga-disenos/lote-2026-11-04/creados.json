@@ -20,7 +20,10 @@
  "Sarcasm Detected": {
   "titulo": "Sarcasm Detected T-Shirt",
   "printify_id": "6aeb3925767273517c0cdb50",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15442916507693",
+  "estado": "draft",
+  "shopify_handle": "sarcasm-detected-t-shirt",
+  "mockups": 7,
+  "nota": "Clara (9.png) en Black y Navy, cada uno con su area e imagen propia; oscura (8.png) en el resto."
  }
 }
