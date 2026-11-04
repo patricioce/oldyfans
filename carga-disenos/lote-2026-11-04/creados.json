@@ -1,4 +1,20 @@
 {
- "But Did You Die": {"titulo": "But Did You Die T-Shirt", "printify_id": "6aeb3400767273517c0cd5d9", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "My Dog Thinks I'm Cool": {"titulo": "My Dog Thinks I'm Cool T-Shirt", "printify_id": "6aeb342c767273517c0cd5f8", "shopify_id": null, "estado": "creado en Printify, sin publicar"}
+ "But Did You Die": {
+  "titulo": "But Did You Die T-Shirt",
+  "printify_id": "6aeb3400767273517c0cd5d9",
+  "shopify_id": "15442909495341",
+  "estado": "draft",
+  "shopify_handle": "but-did-you-die-t-shirt",
+  "mockups": 7,
+  "nota": "Clara (generada recoloreando la oscura) en Black y Navy, cada uno con su area e imagen propia. Patricio hizo ajustes manuales en Printify antes de publicar."
+ },
+ "My Dog Thinks I'm Cool": {
+  "titulo": "My Dog Thinks I'm Cool T-Shirt",
+  "printify_id": "6aeb342c767273517c0cd5f8",
+  "shopify_id": "15442909528109",
+  "estado": "draft",
+  "shopify_handle": "my-dog-thinks-im-cool-t-shirt",
+  "mockups": 7,
+  "nota": "Celeste en Black, Navy y Sport Grey (cada uno con su area); roja en el resto. Original WebP 2000 px. Patricio hizo ajustes manuales en Printify antes de publicar."
+ }
 }
