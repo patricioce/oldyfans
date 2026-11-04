@@ -223,7 +223,11 @@ def upload(shopify_id, folder, apply=False, replace=False, order=None, draft=Tru
         body = {"image": {"attachment": base64.b64encode(open(files[c], "rb").read()).decode(),
                           "filename": os.path.basename(files[c]), "alt": f"{p['title']} - {c}",
                           "position": pos, "variant_ids": vids}}
-        r = shopify("POST", f"/products/{shopify_id}/images.json", body)
+        for intento in range(6):  # Shopify limita a 2 pedidos/s: con varios productos en paralelo hay que reintentar
+            r = shopify("POST", f"/products/{shopify_id}/images.json", body)
+            if "image" in r or "Exceeded" not in str(r.get("errors", "")):
+                break
+            time.sleep(2 * (intento + 1))
         if "image" not in r:
             sys.exit(f"Fallo la subida de {c}: {r}")
         print(f"  {c}: foto {r['image']['id']} -> {len(vids)} variantes")

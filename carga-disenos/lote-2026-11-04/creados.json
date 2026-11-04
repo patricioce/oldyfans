@@ -2,26 +2,38 @@
  "Aging Review": {
   "titulo": "Aging Review T-Shirt",
   "printify_id": "6aeb171c44e65d92fb048ff0",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15442897633325",
+  "estado": "draft",
+  "shopify_handle": "aging-review-t-shirt",
+  "mockups": 7,
+  "nota": "Patricio hizo ajustes manuales en Printify antes de publicar."
  },
  "Morons": {
   "titulo": "Morons T-Shirt",
   "printify_id": "6aeb174380db23a02904a654",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15442897535021",
+  "estado": "draft",
+  "shopify_handle": "morons-t-shirt",
+  "mockups": 7,
+  "nota": "Patricio hizo ajustes manuales en Printify antes de publicar."
  },
  "Personal Space": {
   "titulo": "Personal Space T-Shirt",
   "printify_id": "6aeb176d80db23a02904a67c",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15442897600557",
+  "estado": "draft",
+  "shopify_handle": "personal-space-t-shirt",
+  "mockups": 7,
+  "nota": "Patricio hizo ajustes manuales en Printify antes de publicar."
  },
  "Record Sunset": {
   "titulo": "Record Sunset T-Shirt",
   "printify_id": "6aeb16c222b6c1006c0eeb21",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15442897567789",
+  "estado": "draft",
+  "shopify_handle": "record-sunset-t-shirt",
+  "mockups": 8,
+  "nota": "Patricio hizo ajustes manuales en Printify antes de publicar. Fotos recargadas con shopify_mockups.py (la publicacion se corto por limite de 2 pedidos/s de Shopify)."
  },
  "Did You Die": {
   "titulo": "Did You Die T-Shirt",
