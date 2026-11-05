@@ -1,6 +1,51 @@
 {
-  "origen": {"titulo": "Hose Water T-Shirt", "printify_id": "69fa3545af1e4497af015b3b", "shopify_handle": "raised-on-hose-water"},
-  "Long Sleeve": {"titulo": "Hose Water Long Sleeve", "printify_id": "6aecc2c642af74f982020400", "blueprint": 2806, "provider": 99, "precio": 39.99, "ubicacion": {"x": 0.5, "y": 0.242, "scale": 0.63}, "shopify_id": null, "estado": "creado en Printify, sin publicar (prueba)"},
-  "Sweatshirt": {"titulo": "Hose Water Sweatshirt", "printify_id": "6aecc2ca42af74f982020406", "blueprint": 49, "provider": 99, "precio": 54.99, "ubicacion": {"x": 0.5, "y": 0.2805, "scale": 0.7365}, "shopify_id": null, "estado": "creado en Printify, sin publicar (prueba)"},
-  "Hoodie": {"titulo": "Hose Water Hoodie", "printify_id": "6aecc2d0f01d5dd523058dc6", "blueprint": 77, "provider": 99, "precio": 59.99, "ubicacion": {"x": 0.5, "y": 0.45, "scale": 0.75}, "shopify_id": null, "estado": "creado en Printify, sin publicar (prueba)"}
+  "origen": {
+    "titulo": "Hose Water T-Shirt",
+    "printify_id": "69fa3545af1e4497af015b3b",
+    "shopify_handle": "raised-on-hose-water"
+  },
+  "Long Sleeve": {
+    "titulo": "Hose Water Long Sleeve",
+    "printify_id": "6aecc2c642af74f982020400",
+    "blueprint": 2806,
+    "provider": 99,
+    "precio": 39.99,
+    "ubicacion": {
+      "x": 0.5,
+      "y": 0.242,
+      "scale": 0.63
+    },
+    "shopify_id": null,
+    "estado": "creado en Printify, sin publicar (prueba)",
+    "tachado": 57.13
+  },
+  "Sweatshirt": {
+    "titulo": "Hose Water Sweatshirt",
+    "printify_id": "6aecc2ca42af74f982020406",
+    "blueprint": 49,
+    "provider": 99,
+    "precio": 69.99,
+    "ubicacion": {
+      "x": 0.5,
+      "y": 0.2805,
+      "scale": 0.7365
+    },
+    "shopify_id": null,
+    "estado": "creado en Printify, sin publicar (prueba)",
+    "tachado": 99.99
+  },
+  "Hoodie": {
+    "titulo": "Hose Water Hoodie",
+    "printify_id": "6aecc2d0f01d5dd523058dc6",
+    "blueprint": 77,
+    "provider": 99,
+    "precio": 59.99,
+    "ubicacion": {
+      "x": 0.5,
+      "y": 0.45,
+      "scale": 0.75
+    },
+    "shopify_id": null,
+    "estado": "desestimado por ahora (2026-11-05); creado en Printify, sin publicar"
+  }
 }

@@ -20,6 +20,13 @@ import printify_new_product as pf
 
 MAX_BYTES = 20 * 1024 * 1024  # limite de Shopify por imagen
 PRECIO, TACHADO, VENDOR = "29.99", "42.85", "OldyFans"  # precio de venta, compare_at y marca (Google Shopping / Meta)
+# precio en Printify -> tachado en Shopify, por prenda (remera, long sleeve, sweatshirt; aprobados 2026-11-05)
+TACHADOS = {"29.99": "42.85", "39.99": "57.13", "69.99": "99.99"}
+
+
+def tachado_de(precio):
+    """Precio tachado para un precio de venta: el de la tabla o, si no esta, precio / 0.7 (30% off)."""
+    return TACHADOS.get(precio) or f"{float(precio) / 0.7:.2f}"
 EXTS = (".jpg", ".jpeg", ".png", ".webp")
 
 
@@ -87,13 +94,13 @@ def variantes(gid):
         after = p["variants"]["pageInfo"]["endCursor"]
 
 
-def corregir(gid, vendor_actual, vars_a_corregir):
+def corregir(gid, vendor_actual, vars_a_corregir, precio=PRECIO, tachado=TACHADO):
     """Pone price/compare_at en las variantes dadas y el vendor si hace falta. Devuelve la lista de errores."""
     errores = []
     if vars_a_corregir:
         r = graphql("""mutation($pid: ID!, $v: [ProductVariantsBulkInput!]!) {
             productVariantsBulkUpdate(productId: $pid, variants: $v) { userErrors { field message } } }""",
-                    {"pid": gid, "v": [{"id": v["id"], "price": PRECIO, "compareAtPrice": TACHADO} for v in vars_a_corregir]})
+                    {"pid": gid, "v": [{"id": v["id"], "price": precio, "compareAtPrice": tachado} for v in vars_a_corregir]})
         errores += [e["message"] for e in r["productVariantsBulkUpdate"]["userErrors"]]
     if vendor_actual != VENDOR:
         r = graphql("""mutation($p: ProductInput!) { productUpdate(input: $p) { userErrors { field message } } }""",
@@ -102,19 +109,20 @@ def corregir(gid, vendor_actual, vars_a_corregir):
     return errores
 
 
-def fijar_precio_y_vendor(shopify_id):
-    """Producto nuevo: TODAS las variantes a price 29.99 / compare_at 42.85 y Vendor "OldyFans".
+def fijar_precio_y_vendor(shopify_id, precio=PRECIO, tachado=None):
+    """Producto nuevo: TODAS las variantes a price/compare_at (por defecto 29.99 / 42.85) y Vendor "OldyFans".
     Idempotente: solo escribe lo que no esta bien. Imprime un resumen y devuelve True si quedo bien."""
+    tachado = tachado or tachado_de(precio)
     gid = f"gid://shopify/Product/{shopify_id}"
     p, vs = variantes(gid)
-    mal = [v for v in vs if v["price"] != PRECIO or v["compareAtPrice"] != TACHADO]
-    errores = corregir(gid, p["vendor"], mal)
+    mal = [v for v in vs if v["price"] != precio or v["compareAtPrice"] != tachado]
+    errores = corregir(gid, p["vendor"], mal, precio, tachado)
     p2, vs2 = variantes(gid)
-    quedan = [v for v in vs2 if v["price"] != PRECIO or v["compareAtPrice"] != TACHADO]
+    quedan = [v for v in vs2 if v["price"] != precio or v["compareAtPrice"] != tachado]
     print(f"Precio y marca en Shopify: {p2['handle']} | variantes: {len(vs2)} | actualizadas: {len(mal)} | "
           f"vendor: {p['vendor']} -> {p2['vendor']} | errores: {'; '.join(errores) or 'ninguno'}")
     if quedan or p2["vendor"] != VENDOR:
-        print(f"  AVISO: quedan {len(quedan)} variantes fuera de {PRECIO}/{TACHADO} o el vendor no es {VENDOR}.")
+        print(f"  AVISO: quedan {len(quedan)} variantes fuera de {precio}/{tachado} o el vendor no es {VENDOR}.")
         return False
     return True
 

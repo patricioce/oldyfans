@@ -10,7 +10,8 @@ Uso:
   python3 crear_version.py --from <printify_id_remera> --garment hoodie --create       # crea SIN publicar
   python3 crear_version.py --from <id> --garment sweatshirt --colors "Black,Sand" --create
 
-No publica. Para publicar: publicar_existente.py (OJO: hoy deja precio de remera 29.99/42.85; hay que adaptarlo).
+No publica. Para publicar: publicar_existente.py (toma el precio de Printify y pone su tachado en Shopify).
+Precios aprobados (iguales a Sloth Hiking Club): Long Sleeve 39.99 / 57.13, Sweatshirt 69.99 / 99.99.
 """
 import argparse, os, sys
 
@@ -27,7 +28,8 @@ SIZES = ["S", "M", "L", "XL", "2XL", "3XL"]  # mismos talles que la remera
 #  - hoodie 18500: area apaisada sobre el bolsillo (3273x2180) -> scale 0.75, y 0.45 (el texto queda ~5% bajo el borde de arriba)
 PRENDAS = {
     "long-sleeve": {"blueprint": 2806, "provider": 99, "price": 3999, "nombre": "Long Sleeve", "x": 0.5, "y": 0.242, "scale": 0.63},
-    "sweatshirt": {"blueprint": 49, "provider": 99, "price": 5499, "nombre": "Sweatshirt", "x": 0.5, "y": 0.2805, "scale": 0.7365},
+    "sweatshirt": {"blueprint": 49, "provider": 99, "price": 6999, "nombre": "Sweatshirt", "x": 0.5, "y": 0.2805, "scale": 0.7365},
+    # hoodie: desestimado por ahora (2026-11-05); queda la receta por si se retoma
     "hoodie": {"blueprint": 77, "provider": 99, "price": 5999, "nombre": "Hoodie", "x": 0.5, "y": 0.45, "scale": 0.75},
 }
 REEMPLAZOS = {"Ice Grey": "Ash"}

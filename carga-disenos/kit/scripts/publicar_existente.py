@@ -6,7 +6,8 @@ No crea nada en Printify (para eso esta printify_new_product.py --create). Pasos
   2. espera a que Printify termine su segunda pasada en Shopify (lo deja activo y visible),
   3. borra las fotos que haya en Shopify y sube un mockup propio por color, asignado a sus variantes,
   4. lo deja en borrador y lo vigila 5 minutos por si Printify lo reactiva,
-  5. deja todas las variantes en price 29.99 / compare_at 42.85 y el Vendor en "OldyFans"
+  5. deja todas las variantes en el precio de Printify con su tachado (29.99/42.85 remera, 39.99/57.13
+     long sleeve, 69.99/99.99 sweatshirt; ver shopify_mockups.TACHADOS) y el Vendor en "OldyFans"
      (Printify publica sin tachado y con Vendor "Printify"); lo repite al final por si Printify lo piso.
 
 Uso:
@@ -20,7 +21,19 @@ import printify_new_product as pf
 import shopify_mockups as sm
 
 
+def precio_printify(printify_id):
+    """Precio de venta del producto en Printify (todas las variantes habilitadas tienen que tener el mismo)."""
+    p = pf.call("GET", f"/shops/{pf.SHOP_ID}/products/{printify_id}.json")
+    precios = {v["price"] for v in p["variants"] if v["is_enabled"]}
+    if len(precios) != 1:
+        sys.exit(f"El producto {printify_id} tiene precios distintos en Printify: {sorted(precios)}")
+    return f"{precios.pop() / 100:.2f}"
+
+
 def publicar(printify_id, mockups):
+    precio = precio_printify(printify_id)
+    tachado = sm.tachado_de(precio)
+    print(f"Precio en Shopify: {precio} / tachado {tachado}")
     if mockups:
         if not os.path.isdir(mockups):
             sys.exit(f"No existe la carpeta de mockups: {mockups}")
@@ -35,14 +48,14 @@ def publicar(printify_id, mockups):
     print("Producto en Shopify:", sid, "- esperando a que Printify termine de publicar...")
     if not sm.wait_printify_done(sid):
         print("AVISO: Printify no termino en 5 minutos; sigo igual y vigilo el estado.")
-    sm.fijar_precio_y_vendor(sid)
+    sm.fijar_precio_y_vendor(sid, precio, tachado)
     if mockups:
         sm.upload(sid, mockups, apply=True, replace=True)
         sm.keep_hidden(sid, minutes=5)
     else:
         time.sleep(120)  # margen por si Printify hace otra pasada
     # segunda pasada: si Printify piso el precio, el tachado o el vendor, se vuelve a corregir
-    ok = sm.fijar_precio_y_vendor(sid)
+    ok = sm.fijar_precio_y_vendor(sid, precio, tachado)
     p = sm.shopify("GET", f"/products/{sid}.json?fields=id,title,handle,status,published_at,images,vendor").get("product", {})
     print(f"Verificado en Shopify: {p.get('title')} ({p.get('handle')}) | estado: {p.get('status')} | "
           f"en tienda online: {'si' if p.get('published_at') else 'no'} | fotos: {len(p.get('images', []))} | "
@@ -63,7 +76,8 @@ def main():
     color_of = pf.colores(p)
     colores = sorted({color_of[v["id"]] for v in p["variants"] if v["is_enabled"]})
     files, sobrantes = sm.match_files(a.mockups, colores)
-    print(f"Printify {p['id']} '{p['title']}' | ya en Shopify: {ext or 'no'}")
+    precio = precio_printify(a.printify_id)
+    print(f"Printify {p['id']} '{p['title']}' | ya en Shopify: {ext or 'no'} | precio {precio} / tachado {sm.tachado_de(precio)}")
     for c in colores:
         print(f"  {c:<24} {os.path.basename(files[c]) if c in files else '(SIN MOCKUP)'}")
     for fn in sobrantes:

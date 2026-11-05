@@ -1,5 +1,7 @@
 # Versiones Long Sleeve, Sweatshirt y Hoodie de los 12 diseños más vendidos
 
+> **Decisión (2026-11-05):** se avanza solo con **Long Sleeve ($39.99 / tachado $57.13)** y **Sweatshirt ($69.99 / tachado $99.99)**, con los mismos precios que Sloth Hiking Club. El **Hoodie queda desestimado por ahora**.
+
 Fecha: 2026-11-05 · Proveedor: Printify (tienda 27342731), igual que las remeras.
 Referencia de cómo mostrarlo: Sloth Hiking Club, bloque **"Also available as"** en la ficha de la remera (Long sleeve desde $39.99, Sweatshirt desde $69.99, Lighter Softstyle tee desde $31.95).
 
