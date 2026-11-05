@@ -1,0 +1,5 @@
+.env
+*.token
+.printify_token
+.shopify_token
+__pycache__/

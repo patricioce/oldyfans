@@ -41,28 +41,28 @@ Todas con **Printify Choice (proveedor 99)**, el mismo de las remeras. Así se m
 
 ## 3. Costos
 
-### 3.1 Costo por unidad (EE. UU., talles S–XL)
+### 3.1 Costo por unidad (EE. UU.): **reales**, de los productos de prueba de Hose Water (2026-11-05)
 
-| | Remera (actual) | Long Sleeve | Sweatshirt | Hoodie |
+| | Remera (actual) | Long Sleeve (64400) | Sweatshirt (18000) | Hoodie (18500) |
 |---|---:|---:|---:|---:|
-| Costo de producción en Printify | **$8.09** (real) | ~$11–14 (est. $12) | ~$15–20 (est. $17) | ~$19–24 (est. $21) |
-| Recargo 2XL / 3XL+ | +$1.20 / +$2.26 (real) | ~+$2 / +$3 | ~+$2 / +$4 | ~+$2 / +$4 |
-| Envío EE. UU., 1.er ítem / adicional (real, API) | $3.99 / $2.09 | $4.95 / $2.40 | $7.39 / $2.09 | $7.39 / $2.09 |
+| Costo Printify S–XL | **$8.09** | **$14.72** de color · $12.21 en White | **$12.70** | **$15.89** |
+| 2XL / 3XL | $9.29 / $10.35 | $17.00 / $18.76 (White $13.87 / $17.00) | $14.67 / $15.75 | $17.59 / $18.66 |
+| Envío EE. UU., 1.er ítem / adicional | $3.99 / $2.09 | $4.95 / $2.40 | $7.39 / $2.09 | $7.39 / $2.09 |
 
-Los valores "real" salen de la API de Printify: costos de los productos de la tienda y tarifas de envío del catálogo. La API del catálogo **no expone costos de producción**: los de las prendas nuevas son estimaciones, calibradas con la remera, que hoy se paga a precio Premium ($8.09). **El costo exacto aparece al crear el primer producto de cada prenda (paso 2 del plan). Ajustar la tabla con esos tres números antes de fijar los precios.**
+Todos los valores salen de la API de Printify. Sorpresa: el Sweatshirt cuesta **menos** que la Long Sleeve Softstyle de color. Si se quiere abaratar la Long Sleeve, la alternativa es la Gildan 2400 (blueprint 80), pero no viene en Charcoal ni Military Green en Printify Choice.
 
-### 3.2 Precio sugerido y margen
+### 3.2 Precio sugerido y margen (con los costos reales, talle S–XL de color)
 
 Se mantiene la lógica actual: precio + precio tachado ≈ 30% off. Las comisiones de Shopify Payments se estiman en 2,9% + $0,30.
 
-| | Precio | Tachado | Costo est. | Comisión | **Margen sin envío** | Margen si el envío es gratis |
+| | Precio | Tachado | Costo | Comisión | **Margen sin envío** | Margen si el envío es gratis |
 |---|---:|---:|---:|---:|---:|---:|
 | Remera (hoy) | $29.99 | $42.85 | $8.09 | $1.17 | **$20.73 (69%)** | $16.74 |
-| Long Sleeve | $39.99 | $57.13 | $12 | $1.46 | **$26.53 (66%)** | $21.58 |
-| Sweatshirt | $54.99 | $78.56 | $17 | $1.89 | **$36.10 (66%)** | $28.71 |
-| Hoodie | $59.99 | $85.70 | $21 | $2.04 | **$36.95 (62%)** | $29.56 |
+| Long Sleeve | $39.99 | $57.13 | $14.72 | $1.46 | **$23.81 (60%)** | $18.86 |
+| Sweatshirt | $54.99 | $78.56 | $12.70 | $1.89 | **$40.40 (73%)** | $33.01 |
+| Hoodie | $59.99 | $85.70 | $15.89 | $2.04 | **$42.06 (70%)** | $34.67 |
 
-Sloth vende el Sweatshirt a $69.99. Hay lugar para subir a $59.99 / $64.99 si se quiere más margen. Con OldyFans conviene arrancar un poco más abajo y testear.
+Sloth vende el Sweatshirt a $69.99. Con estos costos hay margen de sobra en el abrigo: se podría bajar el Sweatshirt a $49.99 para empujar volumen, o subirlo a $64.99 sin problema.
 
 ### 3.3 Costos fijos del proyecto
 
@@ -116,7 +116,7 @@ Cada versión es un **producto separado** con su propia ficha y su "desde $X". N
 1. **Priorizar por ventas y temporada.** Hose Water y Slow Me Down son el 62% de las ventas. Si hay que recortar, salir primero con esos 2 (o los top 4) en las 3 prendas y después completar el resto.
 2. **Calendario:** Black Friday es el 27/11/2026. Printify Choice tarda ~2–5 días de producción + 3–5 de envío. Para vender abrigo en temporada conviene tener todo activo **antes del 20/11**: arrancar ya con mockups "rápidos".
 3. **Hoodie y Sweatshirt primero.** Es noviembre: son las prendas de temporada y las que dejan más margen por unidad (~$36). La Long Sleeve puede ir en la segunda tanda.
-4. Confirmar con los 3 productos de prueba los costos reales antes de fijar precios definitivos.
+4. Costos reales confirmados con los productos de prueba de Hose Water (ver 3.1).
 
 ## Pendiente de decisión (Patricio)
 - [ ] Prendas: 2806 / 49 / 77 (o las alternativas 80 / SF000 / SF500).
