@@ -1,8 +1,16 @@
 # Políticas de OldyFans (oldyfans.store)
 
-`refund-policy.html`: texto de la Refund Policy, basado en la de Sloth Hiking Club
-(reembolso sin devolución y cambio de talle sin devolución, 30 días) y adaptado a OldyFans
-(remeras, talles XS–4XL, contacto info@oldyfans.store).
+- `refund-policy.html`: texto de la Refund Policy, basado en la de Sloth Hiking Club
+  (reembolso y cambio de talle sin devolución, 30 días) y adaptado a OldyFans.
+- `policy-pages.css`: estilo de las páginas `/policies/*` copiado de Sloth Hiking Club
+  (fondo gris, tarjeta blanca con borde superior grueso, título a la izquierda con línea),
+  con los colores de OldyFans. Se aplica a todas las políticas (refund, shipping, privacy, terms).
+- `new-refund-policy-d.png` / `new-refund-policy-m.png`: vista previa en escritorio y celular.
 
-Para publicarla: Shopify Admin → Configuración → Políticas → Política de reembolso →
-botón `<>` (Mostrar HTML) → pegar el contenido de `refund-policy.html` → Guardar.
+## Cómo publicar
+
+Texto: Shopify Admin → Configuración → Políticas → Política de reembolso → botón `<>` →
+pegar `refund-policy.html` → Guardar.
+
+Estilo: Tienda online → Temas → Personalizar → Configuración del tema (ícono de engranaje) →
+CSS personalizado → pegar al final el contenido de `policy-pages.css` → Guardar.
