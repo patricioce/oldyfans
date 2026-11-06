@@ -12,5 +12,10 @@
 Texto: Shopify Admin → Configuración → Políticas → Política de reembolso → botón `<>` →
 pegar `refund-policy.html` → Guardar.
 
-Estilo: Tienda online → Temas → Personalizar → Configuración del tema (ícono de engranaje) →
-CSS personalizado → pegar al final el contenido de `policy-pages.css` → Guardar.
+Estilo (el campo "CSS personalizado" tiene un límite de 1500 caracteres y no entra, así que va como archivo del tema):
+1. Tienda online → Temas → `…` → Editar código.
+2. Carpeta `assets` → Agregar un nuevo recurso → Crear un archivo en blanco → nombre `oldyfans-policies`, extensión `.css`.
+3. Pegar el contenido de `policy-pages.css` → Guardar.
+4. Abrir `layout/theme.liquid`, buscar `</head>` y pegar justo antes:
+   `{{ 'oldyfans-policies.css' | asset_url | stylesheet_tag }}`
+5. Guardar. El CSS solo afecta a las páginas `/policies/*`.
