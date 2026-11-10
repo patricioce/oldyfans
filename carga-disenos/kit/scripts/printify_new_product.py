@@ -98,8 +98,21 @@ def png_con_color(path, color):
     from PIL import Image, PngImagePlugin
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
+    # Printify deduplica tambien por pixeles (el metadato solo no alcanza): se cambia el RGB de un
+    # pixel totalmente transparente (invisible) segun el color, asi cada copia tiene contenido propio.
+    im = Image.open(path).convert("RGBA")
+    px = im.load()
+    w, h = im.size
+    tono = sum(color.encode()) % 256
+    for xy in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):
+        if px[xy][3] == 0:
+            px[xy] = (tono, 255 - tono, (tono * 7) % 256, 0)
+            break
+    else:
+        r, g, b, a = px[0, 0]
+        px[0, 0] = (r, g, b, max(0, a - 1 - tono % 2))
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -111,7 +124,8 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # Printify rechaza placeholders sin imagenes (la espalda vacia): se mandan solo los que tienen
+        return [ph for ph in pa["placeholders"] if ph["images"]] if en & set(pa["variant_ids"]) else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
@@ -283,6 +297,10 @@ def main():
             "placeholders": [{"position": "front",
                               "images": [{"id": up["id"], "x": x, "y": y, "scale": scale, "angle": angle}]}],
         })
+
+    ids_claras = [e[1] for e in esperado if e[3]]
+    if len(ids_claras) != len(set(ids_claras)):
+        sys.exit("Printify devolvio el mismo id para la clara de dos colores: no se crea el producto.")
 
     body = {
         "title": a.title,

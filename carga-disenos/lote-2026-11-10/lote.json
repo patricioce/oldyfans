@@ -1,0 +1,65 @@
+{
+ "Hedgehog": {
+  "titulo": "Hedgehog T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Dark Chocolate",
+   "Maroon",
+   "Military Green",
+   "Navy",
+   "Purple",
+   "Sage",
+   "Stone Blue"
+  ]
+ },
+ "Keep On Truckin 2": {
+  "titulo": "Keep On Truckin' T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Dark Chocolate",
+   "Maroon",
+   "Military Green",
+   "Navy",
+   "Purple"
+  ]
+ },
+ "Retirement Definition": {
+  "titulo": "Retirement Definition T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Retirement Review": {
+  "titulo": "Retirement Review T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "TV Game Switch": {
+  "titulo": "TV Game Switch T-Shirt",
+  "colores": [
+   "Charcoal",
+   "Ice Grey",
+   "Light Blue",
+   "Military Green",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ }
+}
