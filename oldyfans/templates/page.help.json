@@ -1,0 +1,204 @@
+{
+  "sections": {
+    "main": {
+      "type": "oldyfans-help",
+      "blocks": {
+        "c1": {
+          "type": "card",
+          "settings": {
+            "title": "Orders & shipping",
+            "text": "Delivery, tracking, and free shipping.",
+            "target": "orders"
+          }
+        },
+        "c2": {
+          "type": "card",
+          "settings": {
+            "title": "Refunds & sizing",
+            "text": "Don’t love it, or got the wrong size.",
+            "target": "returns"
+          }
+        },
+        "c3": {
+          "type": "card",
+          "settings": {
+            "title": "Product & care",
+            "text": "What the shirts are made of, and how to keep them that way.",
+            "target": "product"
+          }
+        },
+        "c4": {
+          "type": "card",
+          "settings": {
+            "title": "Size & fit",
+            "text": "The measurement tables, and how to pick a size.",
+            "target": "sizing"
+          }
+        },
+        "callout": {
+          "type": "callout",
+          "settings": {
+            "title": "Where’s my order?",
+            "text": "<p>Every tee is made to order. We’ll email your tracking link when your order is ready to ship, so you can follow it all the way to your door.</p>"
+          }
+        },
+        "g1": {
+          "type": "group",
+          "settings": {
+            "title": "Orders & shipping",
+            "anchor": "orders"
+          }
+        },
+        "q1": {
+          "type": "qa",
+          "settings": {
+            "question": "When will my order ship?",
+            "answer": "<p>Made to order. Delivery timing varies by destination. We’ll email your tracking link when your order is ready to ship.</p>"
+          }
+        },
+        "q2": {
+          "type": "qa",
+          "settings": {
+            "question": "Can I track my order?",
+            "answer": "<p>Yes. Once your order ships, we’ll email you a tracking link so you can follow your tee all the way to your door.</p>"
+          }
+        },
+        "q3": {
+          "type": "qa",
+          "settings": {
+            "question": "Do you offer free shipping?",
+            "answer": "<p>Yes. Free shipping on orders $99+. <a href=\"/policies/shipping-policy\">Shipping policy</a></p>"
+          }
+        },
+        "g2": {
+          "type": "group",
+          "settings": {
+            "title": "Refunds & sizing",
+            "anchor": "returns"
+          }
+        },
+        "q4": {
+          "type": "qa",
+          "settings": {
+            "question": "What if I don’t love my shirt?",
+            "answer": "<p>Don’t love your clothing for any reason? Contact us within 30 days of the original purchase for a refund. No return needed—donate it or share it with a friend.</p>"
+          }
+        },
+        "q5": {
+          "type": "qa",
+          "settings": {
+            "question": "I ordered the wrong size.",
+            "answer": "<p>Wrong T-shirt size? Contact us within 30 days of the original purchase and we’ll send you a new T-shirt in your requested size. No return needed.</p>"
+          }
+        },
+        "g3": {
+          "type": "group",
+          "settings": {
+            "title": "Product & care",
+            "anchor": "product"
+          }
+        },
+        "q6": {
+          "type": "qa",
+          "settings": {
+            "question": "What is the tee made of?",
+            "answer": "<p>We print on Comfort Colors® 1717: substantial 6.1 oz, 100% ring-spun cotton. The garment-dyed fabric has a soft, lived-in feel from the first wear.</p><p>Prefer a lighter tee? Many designs also come in Gildan® Softstyle® 64000, a lightweight 4.5 oz tee with a smooth, soft feel.</p>"
+          }
+        },
+        "q7": {
+          "type": "qa",
+          "settings": {
+            "question": "How do I wash it?",
+            "answer": "<p>Machine wash cold, inside out. Tumble dry low or hang dry. Skip the bleach and keep the iron off the print.</p>"
+          }
+        },
+        "q8": {
+          "type": "qa",
+          "settings": {
+            "question": "Where is OldyFans based?",
+            "answer": "<p>OldyFans is based in the USA, and our tees are printed right here in the States.</p>"
+          }
+        },
+        "g4": {
+          "type": "group",
+          "settings": {
+            "title": "Size & fit",
+            "anchor": "sizing"
+          }
+        },
+        "q9": {
+          "type": "qa",
+          "settings": {
+            "question": "How does it fit?",
+            "answer": "<p>Comfort Colors® 1717 has a relaxed unisex fit, with room through the body for an easy, laid-back feel. Lay your favorite tee flat, measure straight across from armpit to armpit, and compare it with the chart below.</p>"
+          }
+        },
+        "sizes": {
+          "type": "size_chart",
+          "settings": {
+            "question": "Size charts",
+            "label_size": "Size",
+            "label_width": "Width (in)",
+            "label_length": "Length (in)",
+            "cap_1": "Comfort Colors® 1717 tee",
+            "sizes_1": "S,M,L,XL,2XL,3XL,4XL",
+            "widths_1": "18.25,20.25,22,24,26,27.75,29.75",
+            "lengths_1": "26.6,28,29.4,30.75,31.6,32.5,33.5",
+            "cap_2": "Gildan® Softstyle® tee",
+            "sizes_2": "XS,S,M,L,XL,2XL,3XL,4XL,5XL",
+            "widths_2": "16,18,20,22,24,26,28,30,32",
+            "lengths_2": "27,28,29.25,30.25,31.25,32.5,33.5,34.5,35",
+            "cap_3": "Comfort Colors® 1566 sweatshirt",
+            "sizes_3": "S,M,L,XL,2XL,3XL",
+            "widths_3": "21,23,25,26.5,28,29.5",
+            "lengths_3": "27.5,28.5,29.5,30.5,31.5,32.5",
+            "note": "Published garment dimensions. Size tolerance: ±1.5 in."
+          }
+        },
+        "q10": {
+          "type": "qa",
+          "settings": {
+            "question": "Can I request a design?",
+            "answer": "<p>Please do. Tell us the song, the show or the saying you grew up with. We can’t promise every idea, but we read every note. <a href=\"/pages/contact\">Send it here</a>.</p>"
+          }
+        },
+        "contact": {
+          "type": "contact",
+          "settings": {
+            "title": "Still need a hand?",
+            "text": "<p>Email <a href=\"mailto:[email]\">[email]</a> with your order number, or use our <a href=\"/pages/contact\">contact form</a>.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "callout",
+        "g1",
+        "q1",
+        "q2",
+        "q3",
+        "g2",
+        "q4",
+        "q5",
+        "g3",
+        "q6",
+        "q7",
+        "q8",
+        "g4",
+        "q9",
+        "sizes",
+        "q10",
+        "contact"
+      ],
+      "settings": {
+        "title": "Help center"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
