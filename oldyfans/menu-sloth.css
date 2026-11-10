@@ -1,0 +1,49 @@
+/* ===== OldyFans — menú principal igual al de Sloth Hiking Club =====
+   Medidas tomadas del menú en vivo de slothhikingclub.com (escritorio 1440px):
+   - DM Sans 600 (semibold), 16px, interlineado 1.4, sin mayúsculas ni tracking
+   - Espacio entre ítems: clamp(22px, 2.4vw, 36px)  (≈34.5px a 1440px)
+   - "Shop" + flechita de 14px separadas 8px
+   - "Sale" en rojo #B72C28
+   Cargar DESPUÉS de tipografia-sloth.css (que pone el menú en peso 500).
+*/
+
+/* Tipografía de los ítems de primer nivel */
+.header .menu-list__link,
+.header .menu-list__link-title {
+  font-family: "DM Sans", Arial, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+
+/* Espacio entre palabras: la mitad del gap a cada lado del título */
+.header .menu-list__list-item:not([slot="overflow"]) .menu-list__link-title {
+  padding-inline: calc(clamp(22px, 2.4vw, 36px) / 2) !important;
+}
+
+/* "Shop" + flechita: 8px entre texto y flecha, la mitad del gap después */
+.header .bmp-nav-trigger {
+  gap: 8px !important;
+  padding-inline-end: calc(clamp(22px, 2.4vw, 36px) / 2) !important;
+}
+.header .menu-list__list-item:not([slot="overflow"]) .bmp-nav-trigger .menu-list__link-title {
+  padding-inline-end: 0 !important;
+}
+.header .bmp-nav-trigger__caret svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Sale en rojo (escritorio y menú del celular) */
+.header .menu-list__link[href$="/collections/sale"],
+.header .menu-list__link[href$="/collections/sale"]:hover,
+.header .menu-list__link[href$="/collections/sale"]:focus,
+.menu-list .menu-list__list-item .menu-list__link[href$="/collections/sale"],
+.menu-drawer__menu-item[href$="/collections/sale"] {
+  color: #B72C28 !important;
+}
+.menu-drawer__menu-item[href$="/collections/sale"] {
+  font-weight: 600 !important;
+}
