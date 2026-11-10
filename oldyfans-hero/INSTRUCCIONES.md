@@ -31,8 +31,10 @@ En **Tienda online → Temas**, en el tema publicado ("Cart Mobile Fix - 21 Oct 
 2. En la barra izquierda, ocultar el **Slideshow** actual (el ojito). No lo borres, así se puede volver atrás.
 3. **Agregar sección → OldyFans hero** y arrastrarla arriba de todo, debajo del encabezado.
 4. En la sección:
-   - **Imagen computadora** → Subir → `hero-desktop.jpg`
-   - **Imagen celular** → Subir → `hero-celular.jpg`
+   - **Imagen computadora** → **Subir** → `hero-desktop.jpg` (desde la compu)
+   - **Imagen celular** → **Subir** → `hero-celular.jpg` (desde la compu)
+
+   Ojo: en la biblioteca de archivos de Shopify ya está la foto vieja (`DESKTOP_NEW`, con "GEN X TEES" y "SHOP NOW" impresos). **No elegir esa**: hay que subir las de esta carpeta, que ya vienen recortadas sin el texto viejo.
    - **Link del botón** → la colección a la que tiene que llevar (por ejemplo Bestsellers o All).
 5. **Guardar.**
 
@@ -59,6 +61,16 @@ Usar **Vista previa** de la copia, mirarla en la compu y en el celular, y si est
 - **Celular:** foto arriba, texto abajo en el bloque oscuro, botón a todo el ancho.
 
 La altura en computadora se ajusta sola al ancho de la pantalla, para que la foto no recorte a nadie. Desde el editor se pueden cambiar también los colores (fondo, texto, botón) y la altura máxima.
+
+## Acomodar la foto desde el editor
+
+En la sección, dos grupos de controles: **Foto en computadora y tablet** y **Foto en celular**.
+
+- **Ajuste** (solo computadora): "Rellenar el espacio" recorta los bordes para que no queden huecos; "Mostrar la foto entera" no recorta nada y completa con el color de fondo.
+- **Zoom** (100% a 200%): acerca la foto.
+- **Posición horizontal / vertical** (0 a 100%): qué parte de la foto queda a la vista. Con 50/50 queda centrada. En celular se nota cuando el zoom es mayor a 100%.
+
+Los cambios se ven en vivo en el editor; mirar las dos vistas (compu y celular) con los íconos de arriba.
 
 ## Nota sobre la foto
 

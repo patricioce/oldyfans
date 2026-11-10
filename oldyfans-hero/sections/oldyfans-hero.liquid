@@ -16,12 +16,34 @@
     --ofh-text: {{ section.settings.color_text }};
     --ofh-btn-bg: {{ section.settings.color_button_bg }};
     --ofh-btn-text: {{ section.settings.color_button_text }};
+    /* Foto en celular: posición y zoom (se cambian desde el editor) */
+    --ofh-fit: cover;
+    --ofh-x: {{ section.settings.mobile_pos_x }}%;
+    --ofh-y: {{ section.settings.mobile_pos_y }}%;
+    --ofh-zoom: {{ section.settings.mobile_zoom | divided_by: 100.0 }};
     background: var(--ofh-bg);
     color: var(--ofh-text);
   }
+  @media screen and (min-width: 750px) {
+    /* Foto en tablet y computadora */
+    #ofh-{{ sid }} {
+      --ofh-fit: {{ section.settings.desktop_fit }};
+      --ofh-x: {{ section.settings.desktop_pos_x }}%;
+      --ofh-y: {{ section.settings.desktop_pos_y }}%;
+      --ofh-zoom: {{ section.settings.desktop_zoom | divided_by: 100.0 }};
+    }
+  }
   #ofh-{{ sid }} .ofh__grid { display: grid; }
   #ofh-{{ sid }} .ofh__media { position: relative; overflow: hidden; background: var(--ofh-bg); }
-  #ofh-{{ sid }} .ofh__media img { display: block; width: 100%; height: auto; }
+  #ofh-{{ sid }} .ofh__media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: var(--ofh-fit);
+    object-position: var(--ofh-x) var(--ofh-y);
+    transform: scale(var(--ofh-zoom));
+    transform-origin: var(--ofh-x) var(--ofh-y);
+  }
   #ofh-{{ sid }} .ofh__content {
     padding: 24px 18px 28px;
     display: flex;
@@ -93,8 +115,6 @@
       position: absolute;
       inset: 0;
       height: 100%;
-      object-fit: cover;
-      object-position: center;
     }
     /* Fundido suave entre el bloque de color y la foto */
     #ofh-{{ sid }} .ofh__media::before {
@@ -194,6 +214,88 @@
       "id": "image_alt",
       "label": "Texto alternativo de la foto",
       "default": "Friends laughing in a backyard, one spraying a garden hose, wearing the Raised On Hose Water tee"
+    },
+    {
+      "type": "header",
+      "content": "Foto en computadora y tablet"
+    },
+    {
+      "type": "select",
+      "id": "desktop_fit",
+      "label": "Ajuste",
+      "options": [
+        { "value": "cover", "label": "Rellenar el espacio (recorta los bordes)" },
+        { "value": "contain", "label": "Mostrar la foto entera" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "desktop_zoom",
+      "label": "Zoom",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "desktop_pos_x",
+      "label": "Posición horizontal",
+      "info": "0 = muestra el lado izquierdo de la foto, 100 = el derecho.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "desktop_pos_y",
+      "label": "Posición vertical",
+      "info": "0 = muestra la parte de arriba, 100 = la de abajo.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Foto en celular"
+    },
+    {
+      "type": "range",
+      "id": "mobile_zoom",
+      "label": "Zoom",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "mobile_pos_x",
+      "label": "Posición horizontal",
+      "info": "Se nota con zoom mayor a 100%.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "mobile_pos_y",
+      "label": "Posición vertical",
+      "info": "Se nota con zoom mayor a 100%.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
     },
     {
       "type": "header",
