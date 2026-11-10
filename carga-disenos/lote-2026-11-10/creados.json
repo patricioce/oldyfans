@@ -2,8 +2,10 @@
  "Metal Slide 2": {
   "titulo": "Metal Slide 2 T-Shirt",
   "printify_id": "6af36c329635018d8a0ed861",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK de Patricio)",
-  "nota": "Diseño único (unica.png) en los 7 colores claros."
+  "shopify_id": "15447162191917",
+  "estado": "draft",
+  "shopify_handle": "metal-slide-2-t-shirt",
+  "mockups": 7,
+  "nota": "Diseño único (unica.png) en los 7 colores claros. Patricio hizo ajustes manuales en Printify antes de publicar; no se tocaron."
  }
 }
