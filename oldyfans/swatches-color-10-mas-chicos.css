@@ -1,0 +1,8 @@
+/* ===== OldyFans — Globitos de color de la ficha de producto 10% más chicos =====
+   Tema: Horizon. Pegar al final de Personalizar > Configuración del tema > CSS personalizado.
+   El tema los dibuja con --variant-picker-swatch-width/height (32px); acá se pasan al 90% (28.8px).
+   Solo afecta al selector de variantes de la página de producto (no a las tarjetas de colección). */
+variant-picker .variant-option--swatches{
+  --variant-picker-swatch-width:calc(var(--variant-picker-swatch-width-unitless,32) * .9px)!important;
+  --variant-picker-swatch-height:calc(var(--variant-picker-swatch-height-unitless,32) * .9px)!important;
+}
