@@ -13,5 +13,4 @@ Copia del centro de ayuda de slothhikingclub.com (`?view=sbs-help`).
 3. Templates → Agregar plantilla → tipo `page`, nombre `help` → pegar `templates/page.help.json`.
 4. Abrir `/pages/contact?view=help` (o asignar la plantilla `help` a una página nueva).
 
-Antes de publicar revisar: umbral de envío gratis ($99+), política de reembolso (30 días),
-prendas/tablas de talles y el email de soporte (vacío = email de la tienda).
+Antes de publicar revisar: política de reembolso (30 días) y que OldyFans figure con base en EE. UU.
