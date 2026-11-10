@@ -1,0 +1,36 @@
+/* ===== OldyFans — Barra de anuncios más baja (≈38px, igual a Sloth Hiking Club) =====
+   Pegar en: Tienda online > Temas > Personalizar > Configuración del tema > CSS personalizado
+   (o al final de assets/base.css). Pensado para temas tipo Dawn (utility-bar / announcement-bar). */
+.utility-bar,
+.utility-bar__grid,
+.announcement-bar,
+.announcement-bar-slider,
+.announcement-bar-slider .slider,
+.announcement-bar-slider .slideshow__slide{
+  min-height:0!important;
+  padding-top:0!important;
+  padding-bottom:0!important;
+}
+.announcement-bar__message{
+  min-height:0!important;
+  padding:10px 0!important;      /* 10 + 18 + 10 = 38px */
+  line-height:18px!important;
+  font-size:13px!important;
+}
+/* Flechas < > : antes medían 44px y estiraban la barra */
+.announcement-bar-slider .slider-button,
+.utility-bar .slider-button{
+  height:38px!important;
+  min-height:0!important;
+  width:38px!important;
+}
+.announcement-bar-slider .slider-button .icon,
+.utility-bar .slider-button .icon{
+  height:10px!important;
+  width:10px!important;
+}
+@media screen and (max-width:749px){
+  .announcement-bar__message{font-size:12px!important;padding:9px 0!important}
+  .announcement-bar-slider .slider-button,
+  .utility-bar .slider-button{height:36px!important;width:32px!important}
+}
