@@ -2,31 +2,41 @@
  "Hedgehog": {
   "titulo": "Hedgehog T-Shirt",
   "printify_id": "6af309f7c0fe40df5e043171",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15446984785965",
+  "estado": "draft",
+  "shopify_handle": "hedgehog-t-shirt",
+  "mockups": 9
  },
  "Keep On Truckin 2": {
   "titulo": "Keep On Truckin' T-Shirt",
   "printify_id": "6af30a128cb8d11f050f1195",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15446984753197",
+  "estado": "draft",
+  "shopify_handle": "keep-on-truckin-t-shirt-1",
+  "mockups": 7
  },
  "Retirement Definition": {
   "titulo": "Retirement Definition T-Shirt",
   "printify_id": "6af30a2e7f513bd9b906907b",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15446984884269",
+  "estado": "draft",
+  "shopify_handle": "retirement-definition-t-shirt-1",
+  "mockups": 7
  },
  "Retirement Review": {
   "titulo": "Retirement Review T-Shirt",
   "printify_id": "6af30a4b271a1636ad0b9fc9",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15446984818733",
+  "estado": "draft",
+  "shopify_handle": "retirement-review-t-shirt",
+  "mockups": 7
  },
  "TV Game Switch": {
   "titulo": "TV Game Switch T-Shirt",
   "printify_id": "6af30a648cb8d11f050f11fd",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15446984851501",
+  "estado": "draft",
+  "shopify_handle": "tv-game-switch-t-shirt",
+  "mockups": 8
  }
 }
