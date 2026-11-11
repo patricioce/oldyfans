@@ -1,0 +1,53 @@
+{
+  "sections": {
+    "collections_rows": {
+      "type": "bmp-collections-rows",
+      "blocks": {
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "collection": "best-sellers"
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "collection": "gen-x"
+          }
+        },
+        "row_3": {
+          "type": "row",
+          "settings": {
+            "collection": "sarcastic-dad-jokes"
+          }
+        },
+        "row_5": {
+          "type": "row",
+          "settings": {
+            "collection": "retro-nostalgia"
+          }
+        },
+        "row_6": {
+          "type": "row",
+          "settings": {
+            "collection": "bald-bold",
+            "title": "Bald & Bold"
+          }
+        }
+      },
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_5",
+        "row_6"
+      ],
+      "settings": {
+        "products_per_row": 4
+      }
+    }
+  },
+  "order": [
+    "collections_rows"
+  ]
+}

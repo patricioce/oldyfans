@@ -1,0 +1,219 @@
+{%- comment -%}
+  BMP curated-first — standalone single-card section.
+
+  Fetched by assets/bmp-curated-first.js via the Section Rendering API:
+    /products/{handle}?section_id=bmp-curated-product-card
+  when the clicked product is NOT already in the visited collection grid.
+
+  Renders the card content (image, title, price) DIRECTLY instead of
+  delegating to a static `_product-card` block via the "render this section's
+  configured block" liquid tag. That tag resolves a static block's CHILD
+  blocks from the section's `blocks{}`/`block_order[]` configuration in a
+  template's JSON — but this section is never placed in any template (it
+  exists only to be invoked via the Section Rendering API), so it has zero
+  configured child blocks and that delegating call used to render nothing: an
+  empty, still-clickable `<li>` shell (the CRITICAL bug this rewrite fixes).
+  Native precedent: sections/section-rendering-product-card.liquid —
+  Horizon's own SRA-only card (used by quick-add / variant-picker morphing) —
+  avoids that same delegation for exactly this reason and renders its markup
+  inline.
+
+  Not pixel-identical to a merchant-configured `_product-card` block — no
+  badges, swatches, or per-card layout settings, since those live on block
+  instances this section doesn't have — but it reuses the SAME classes and
+  custom elements the real cards render (`.product-card`,
+  `.product-card__link`, `.card-gallery`, `.product-media-container`,
+  `.text-block`, `<product-price>`) so it (a) inherits the shared card
+  title/price typography lock in assets/bmp-styles.css and (b) stays a valid
+  target for assets/bmp-curated-first.js's own selectors (setVariantOnLinks
+  rewrites every anchor pointing at this product; swapImage looks for
+  `.card-gallery img` / `.product-media-container img` — see that file's
+  header comment).
+
+  The outer `<li class="product-grid__item" ref="cards[]">` wrapper stays
+  byte-compatible with the items sections/main-collection.liquid emits so
+  the JS can slot this straight into the grid at position #1. `data-page`
+  below is only a placeholder default: assets/bmp-curated-first.js's
+  moveToFront() overwrites it with the page number of the card this one
+  displaces, so upward infinite-scroll pagination keeps resolving the correct
+  "previous page" from cards[0].dataset.page (assets/paginated-list.js).
+  That overwrite only became real on 2026-08-04 — it previously read
+  `grid.firstElementChild`, which on the storefront is the sessionStorage
+  grid-view <script> from snippets/product-grid.liquid:141-166 rather than a
+  card, so the stamp silently never ran in production while still firing in
+  the theme editor (where that script is not rendered). Do not reintroduce a
+  `firstElementChild` lookup here or in that file.
+
+  LAYOUT CONTRACT (code review 2026-08-04). Reusing the real cards' CLASSES is
+  not enough: three of Horizon's card layout inputs are custom properties that
+  only ever exist as INLINE styles on the server-rendered cards, so a card that
+  omits them gets an invalid declaration and silently falls back to the CSS
+  initial value —
+    --gallery-aspect-ratio  emitted only at snippets/card-gallery.liquid:91.
+      snippets/product-media-container-styles.liquid:13 is
+      `aspect-ratio: var(--gallery-aspect-ratio, var(--media-preview-ratio))`,
+      and --media-preview-ratio exists only on PDP gallery markup (never on
+      :root), so with neither set the whole declaration is invalid at
+      computed-value time and the media box falls back to `aspect-ratio: auto`.
+    --product-media-fit  + the `media-fit` class, both set at
+      snippets/card-gallery.liquid:123,134 — without them there is no crop.
+    --product-card-gap  emitted only by the inline `gap-style` render at
+      snippets/product-card.liquid:106. snippets/product-card-styles.liquid:13
+      is `gap: var(--product-card-gap)` with NO fallback, so an unset var
+      computes `gap: normal` and the title/price sit higher than on siblings.
+  The values below mirror what templates/collection.json ships today
+  (`image_ratio: "square"` -> ratio `1`, `product_card_gap: 4`). They are the
+  FLOOR, not the whole fix: assets/bmp-curated-first.js copies the class+style
+  of a sibling real card onto this one before insertion whenever the grid has
+  one, so a merchant changing those settings still gets a matching card. The
+  inline values are what keeps the card correct in the case the copy cannot
+  cover — an empty or fully-filtered grid, which is precisely when the SRA
+  fallback path runs.
+
+  `product` is the page product (this section is only ever fetched on a
+  /products/{handle} URL).
+{%- endcomment -%}
+{% liquid
+  assign url = product.url
+  assign featured_media = product.featured_media
+%}
+{%- if product == blank or product.id == blank -%}
+  {%- comment -%}
+    Unknown, unpublished or draft handle. Shopify still answers the Section
+    Rendering API with HTTP 200 here and a nil `product`, so rendering the card
+    anyway produced an <li> with href="" that assets/bmp-curated-first.js could
+    never match against the requested handle — which is what let pin()
+    re-insert a clone every animation frame.
+
+    Render nothing instead: fetchAndPin() treats a card-less body as a failed
+    lookup, warns once, and no-ops.
+  {%- endcomment -%}
+{%- else -%}
+{% # theme-check-disable ValidScopedCSSClass %}
+<li
+  id="bmp-curated-{{ product.id }}"
+  class="product-grid__item product-grid__item--0"
+  data-page="1"
+  data-product-id="{{ product.id }}"
+  data-bmp-curated-pin="true"
+  ref="cards[]"
+>
+  {%- comment -%}
+    Card-global-style carrier. `display: contents` in
+    assets/bmp-styles.css, so it is layout-inert — but NOT selector-inert, and
+    that is exactly why it has to be here: the global Card group is scoped as
+    `.bmp-card-global-card div.product-card__content`, an ANCESTOR class, and
+    assets/bmp-curated-first.js `adoptSiblingLayout()` copies class and style
+    node-to-node for `.product-card__content` / `.card-gallery` /
+    `.product-media-container` only. An ancestor cannot be copied, so without
+    this line the global gap/background/border/radius/padding would never reach
+    this card in EITHER path — not just the sibling-less one. Media is fine
+    without it, since `bmp-card-global-media` rides the `.card-gallery` copy.
+
+    Emitted unconditionally, on the same footing as the hardcoded
+    `--product-card-gap: 4px` and `--gallery-aspect-ratio: 1` below: it mirrors
+    what templates/collection.json ships, which is the toggle ON for the
+    `_product-card` wrapper. adoptSiblingLayout() corrects it against a live
+    sibling before insertion, so a merchant who turns the toggle off still gets
+    a matching card; the unconditional value is the floor for the case the copy
+    cannot cover.
+
+    The inner markup deliberately keeps its indentation — re-indenting eighty
+    lines to add one wrapper would bury the change.
+  {%- endcomment -%}
+  <div class="bmp-card-global-card">
+  <product-card
+    class="product-card"
+    data-product-id="{{ product.id }}"
+    {% # theme-check-disable UnknownFilter %}
+    view-event-payload="{{ product | standard_event_data: 'view', context: 'collection' | escape }}"
+    {% # theme-check-enable UnknownFilter %}
+  >
+    {%- comment -%}
+      The `id` here is LOAD-BEARING, not decorative — do not drop it as
+      cosmetic. assets/product-card.js:572 (`navigateToProduct`) reads
+      `link.getAttribute('id')` and early-returns when it is absent, BEFORE it
+      reaches `#navigateToURL` at :592. The absolute `inset: 0` overlay does
+      not cover for that: `.product-card` is a stacking context
+      (assets/base.css:104-108) and inside it `.product-card__content`
+      (relative) paints over `.product-card__link` (absolute, z-index auto), so
+      the content box is the hit target everywhere there is no anchor — which
+      is why Horizon routes those clicks through JS in the first place. Without
+      an id the price row and the space beside the title do nothing.
+
+      Namespaced rather than mirroring the real card's
+      `'product-card-link-' | append: block.id | append: '-' | append: product.id`
+      (snippets/product-card.liquid:35,82): this section has no `block.id` to
+      mirror, and a distinct prefix also guarantees no duplicate DOM id during
+      the window where this clone and the genuine server-rendered card are both
+      in the grid, before findOtherCardWithHandle() swaps them.
+    {%- endcomment -%}
+    <a
+      id="{{ 'bmp-curated-' | append: product.id | md5 }}"
+      class="product-card__link"
+      ref="productCardLink"
+      href="{{ url }}"
+      aria-label="{{ product.title | escape }}"
+    ></a>
+    <div
+      class="product-card__content layout-panel-flex layout-panel-flex--column product-grid__card spacing-style border-style gap-style"
+      style="--product-card-gap: 4px;"
+    >
+      <div
+        class="card-gallery"
+        ref="cardGallery"
+        style="--gallery-aspect-ratio: 1;"
+        data-product-id="{{ product.id }}"
+      >
+        {%- if featured_media -%}
+          <a class="contents" ref="cardGalleryLink" href="{{ url }}" aria-label="{{ product.title | escape }}">
+            <div class="product-media-container media-fit" style="--product-media-fit: cover;">
+              {%- comment -%}
+                `eager`, not `lazy`. snippets/card-gallery.liquid:112-118 makes
+                every server-rendered card in the grid eager whenever
+                `section.index < 5`, and main-collection is well inside that in
+                templates/collection.json. This card is grid slot #1 by
+                construction, so shipping it lazy made the ad's own product the
+                LAST image to appear on the ad landing — behind the deferred
+                low-priority module AND the Section Rendering API round trip.
+                assets/bmp-curated-first.js additionally sets fetchPriority on
+                the node before insertion. Both together raise the floor; they
+                do not make this competitive with a server-rendered hero, which
+                is what a server-side pin would buy.
+              {%- endcomment -%}
+              {{
+                featured_media
+                | image_url: width: 700
+                | image_tag:
+                  loading: 'eager',
+                  alt: featured_media.alt | default: product.title,
+                  sizes: '(min-width: 750px) 25vw, 50vw',
+                  widths: '240, 352, 480, 640, 832, 1200, 1600, 1920'
+              }}
+            </div>
+          </a>
+        {%- else -%}
+          <a class="contents" ref="cardGalleryLink" href="{{ url }}">
+            <span class="title-text">{{ product.title }}</span>
+          </a>
+        {%- endif -%}
+      </div>
+      <div class="text-block">
+        <a class="contents" href="{{ url }}">{{ product.title }}</a>
+      </div>
+      <product-price>
+        {% render 'price', product_resource: product, show_unit_price: true %}
+      </product-price>
+    </div>
+  </product-card>
+  </div>
+</li>
+{% # theme-check-enable ValidScopedCSSClass %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "BMP: Curated card",
+  "settings": []
+}
+{% endschema %}

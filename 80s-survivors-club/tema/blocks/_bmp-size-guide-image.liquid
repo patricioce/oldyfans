@@ -1,0 +1,58 @@
+{% doc %}
+  BMP size guide image — private child of the bmp-size-guide block.
+
+  Shows its image only when the "Product type" setting matches the current
+  product's type (handleized comparison), so the merchant configures one chart
+  per product type and each PDP shows only its own.
+
+  A child with an EMPTY "Product type" is the default chart: it
+  always renders, marked `--default`, and the parent block's stylesheet hides
+  it whenever a typed sibling matched (marked `--match`) — a typed chart
+  always wins. Liquid cannot see sibling blocks, so that precedence lives in
+  the parent's CSS, on these two classes.
+{% enddoc %}
+
+{%- liquid
+  assign bmp_sgi_current = closest.product.type | handleize
+  assign bmp_sgi_target = block.settings.product_type | handleize
+
+  assign bmp_sgi_role = nil
+  if bmp_sgi_target == blank
+    assign bmp_sgi_role = 'bmp-size-guide__image--default'
+  elsif bmp_sgi_current == bmp_sgi_target
+    assign bmp_sgi_role = 'bmp-size-guide__image--match'
+  endif
+-%}
+
+{%- if bmp_sgi_role != blank and block.settings.image != blank -%}
+  <div
+    class="bmp-size-guide__image {{ bmp_sgi_role }}"
+    {{ block.shopify_attributes }}
+  >
+    {{
+      block.settings.image
+      | image_url: width: 1400
+      | image_tag: widths: '400, 700, 1000, 1400', sizes: '(min-width: 750px) 640px, calc(100vw - 32px)', loading: 'lazy'
+    }}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:bmp.names.bmp_size_guide_image",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "product_type",
+      "label": "t:bmp.settings.bmp_sg_product_type",
+      "info": "t:bmp.settings.bmp_sg_product_type_info"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.image"
+    }
+  ]
+}
+{% endschema %}

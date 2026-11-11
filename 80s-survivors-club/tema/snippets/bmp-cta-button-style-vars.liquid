@@ -1,0 +1,98 @@
+{%- doc -%}
+  Emits the optional global CTA color tokens and their scoped consumers.
+
+  Every property is gated independently so a blank global setting leaves that
+  property to Horizon or to the Add to Cart block's native Custom style. The
+  sticky Add to Cart inherits the configured global properties explicitly;
+  Buy Now intentionally excludes branded wallet buttons.
+{%- enddoc -%}
+
+{%- liquid
+  assign has_bmp_cta_color = false
+
+  if settings.bmp_cta_add_to_cart_background != blank or settings.bmp_cta_add_to_cart_text != blank or settings.bmp_cta_checkout_background != blank or settings.bmp_cta_checkout_text != blank or settings.bmp_cta_buy_now_background != blank or settings.bmp_cta_buy_now_text != blank
+    assign has_bmp_cta_color = true
+  endif
+-%}
+
+{%- if has_bmp_cta_color -%}
+  {% style %}
+    :root {
+      {%- if settings.bmp_cta_add_to_cart_background != blank %}
+        --bmp-cta-add-to-cart-background: rgb({{ settings.bmp_cta_add_to_cart_background.rgba }});
+      {%- endif %}
+      {%- if settings.bmp_cta_add_to_cart_text != blank %}
+        --bmp-cta-add-to-cart-text: rgb({{ settings.bmp_cta_add_to_cart_text.rgba }});
+      {%- endif %}
+      {%- if settings.bmp_cta_checkout_background != blank %}
+        --bmp-cta-checkout-background: rgb({{ settings.bmp_cta_checkout_background.rgba }});
+      {%- endif %}
+      {%- if settings.bmp_cta_checkout_text != blank %}
+        --bmp-cta-checkout-text: rgb({{ settings.bmp_cta_checkout_text.rgba }});
+      {%- endif %}
+      {%- if settings.bmp_cta_buy_now_background != blank %}
+        --bmp-cta-buy-now-background: rgb({{ settings.bmp_cta_buy_now_background.rgba }});
+      {%- endif %}
+      {%- if settings.bmp_cta_buy_now_text != blank %}
+        --bmp-cta-buy-now-text: rgb({{ settings.bmp_cta_buy_now_text.rgba }});
+      {%- endif %}
+    }
+
+    {%- if settings.bmp_cta_add_to_cart_background != blank %}
+      .buy-buttons-block add-to-cart-component .add-to-cart-button:not(.sticky-add-to-cart__button),
+      .buy-buttons-block
+        add-to-cart-component
+        .add-to-cart-button:not(.sticky-add-to-cart__button):not([data-added='true']):hover,
+      .sticky-add-to-cart__button,
+      .sticky-add-to-cart__button:hover:not([disabled]) {
+        --button-background-color: var(--bmp-cta-add-to-cart-background);
+        background-color: var(--bmp-cta-add-to-cart-background);
+      }
+    {%- endif %}
+
+    {%- if settings.bmp_cta_add_to_cart_text != blank %}
+      .buy-buttons-block add-to-cart-component .add-to-cart-button:not(.sticky-add-to-cart__button),
+      .sticky-add-to-cart__button,
+      .sticky-add-to-cart__button:hover:not([disabled]) {
+        --button-color: var(--bmp-cta-add-to-cart-text);
+      }
+
+      .buy-buttons-block
+        add-to-cart-component
+        .add-to-cart-button:not(.sticky-add-to-cart__button):not([data-added='true']),
+      .buy-buttons-block
+        add-to-cart-component
+        .add-to-cart-button:not(.sticky-add-to-cart__button):not([data-added='true']):hover,
+      .sticky-add-to-cart__button:not([data-added='true']),
+      .sticky-add-to-cart__button:not([data-added='true']):hover:not([disabled]) {
+        color: var(--bmp-cta-add-to-cart-text);
+      }
+    {%- endif %}
+
+    {%- if settings.bmp_cta_checkout_background != blank %}
+      .cart__ctas button.cart__checkout-button {
+        --button-background-color: var(--bmp-cta-checkout-background);
+      }
+    {%- endif %}
+
+    {%- if settings.bmp_cta_checkout_text != blank %}
+      .cart__ctas button.cart__checkout-button {
+        --button-color: var(--bmp-cta-checkout-text);
+      }
+    {%- endif %}
+
+    {%- if settings.bmp_cta_buy_now_background != blank %}
+      .accelerated-checkout-block button.shopify-payment-button__button--unbranded,
+      .accelerated-checkout-block button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
+        --button-background-color: var(--bmp-cta-buy-now-background);
+      }
+    {%- endif %}
+
+    {%- if settings.bmp_cta_buy_now_text != blank %}
+      .accelerated-checkout-block button.shopify-payment-button__button--unbranded,
+      .accelerated-checkout-block button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
+        --button-color: var(--bmp-cta-buy-now-text);
+      }
+    {%- endif %}
+  {% endstyle %}
+{%- endif -%}

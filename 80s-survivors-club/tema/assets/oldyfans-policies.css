@@ -1,0 +1,23 @@
+body:has(.shopify-policy__container) main{background:#F3F2EF;padding:40px 24px 56px}
+.shopify-policy__container{box-sizing:border-box;max-width:848px!important;width:100%;margin:0 auto!important;padding:40px 44px 44px!important;border:1px solid #E3E0DB;border-top:4px solid #1F1C1F;background:#FFFFFF;color:#1F1C1F}
+.shopify-policy__title{text-align:left!important;margin:0 0 28px;padding:0 0 24px;border-bottom:1px solid #E3E0DB}
+.shopify-policy__title h1{margin:0!important;font:800 clamp(40px,4.5vw,56px)/1 "Barlow Condensed","Arial Narrow",Impact,sans-serif!important;letter-spacing:-.025em!important;text-transform:uppercase;color:#1F1C1F;text-align:left!important}
+.shopify-policy__body{font:400 16px/1.8 "DM Sans",Arial,sans-serif!important;color:#4A454A!important;overflow-wrap:anywhere}
+.shopify-policy__body p{margin:0 0 20px!important;color:inherit!important;font:inherit!important}
+.shopify-policy__body :is(strong,b){font-weight:700!important;color:#1F1C1F}
+.shopify-policy__body :is(h2,h3,h4){font:700 20px/1.4 "DM Sans",Arial,sans-serif;letter-spacing:0;text-transform:none;margin:28px 0 12px;color:#1F1C1F}
+.shopify-policy__body :is(ul,ol){padding-left:22px;margin:0 0 20px}
+.shopify-policy__body li{padding:9px 0 9px 6px;margin:0;border-bottom:1px solid #ECEAE6}
+.shopify-policy__body li:last-child{border-bottom:0}
+.shopify-policy__body li::marker{color:#C41B0F}
+.shopify-policy__body li p{margin:0!important}
+.shopify-policy__body a{color:#C41B0F!important;text-decoration:underline;text-underline-offset:3px}
+.shopify-policy__body a:focus-visible{outline:2px solid #C41B0F;outline-offset:3px}
+.shopify-policy__body .rte>:last-child{margin-bottom:0!important}
+@media (max-width:700px){
+  body:has(.shopify-policy__container) main{padding:24px 12px 32px}
+  .shopify-policy__container{padding:26px 20px 28px!important}
+  .shopify-policy__title{margin-bottom:22px;padding-bottom:20px}
+  .shopify-policy__title h1{font-size:38px!important}
+  .shopify-policy__body{font-size:15px!important;line-height:1.75!important}
+}

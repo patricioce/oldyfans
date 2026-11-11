@@ -1,0 +1,265 @@
+{%- doc -%}
+  BMP size-guide trigger, rendered inside the variant picker's option legend
+  (`Size: M … Size Guide`) by the contracted edit in variant-main-picker —
+  the design's in-row placement.
+
+  The size guide's own presentation (link text, icon) lives on
+  the "BMP: Size guide" block, but the OPTION NAME does not: it stays the theme
+  setting `settings.bmp_size_guide_option` ("BMP: Size" panel), because the
+  server-side add-to-cart gate reads the same value from blocks/buy-buttons and
+  blocks/accelerated-checkout, where no block's settings are reachable, and on
+  templates that carry no size-guide block at all. One naming setting serves
+  both features (decision D2).
+
+  So this snippet gates itself SERVER-SIDE on that name, as it always did: one
+  button, in the one legend whose option matches, present in the first response.
+  The two values it cannot read from here — the block's link text and icon
+  toggle — leave the block by two different routes. The LABEL is the only thing
+  JS touches: it ships with its shipped default already rendered, and
+  assets/bmp-size-guide-portal.js swaps it only on stores that customised it,
+  reading data-bmp-size-guide-label off the dialog. The ICON never crosses into
+  JS: the block emits its own CSS rule for it, so it is right in the first paint
+  and right with JS unavailable.
+
+  The reveal stays pure CSS and is emitted by the block too, per PRODUCT:
+
+    .bmp-size-guide__trigger[data-bmp-size-guide-product="<id>"] {
+      display: inline-flex;
+    }
+
+  from a Liquid `style` tag inside the dialog-component (only that tag renders
+  Liquid; a `stylesheet` block cannot carry a product id). This file's own
+  sheet only hides. Two consequences it is worth being explicit about:
+
+    - The product can have the configured option on a template with no
+      size-guide block, and AC3 requires that to render nothing. No block, no
+      rule, no trigger.
+    - A page can hold a SECOND product's trigger — sections/featured-product
+      .liquid and featured-product-information.liquid render a variant picker
+      for a merchant-chosen product — or another product's dialog, adopted into
+      <body> by the portal on quick-add. The old guard,
+      `body:has([data-bmp-size-guide-dialog])`, was per document and revealed
+      those too: a visible button whose click resolves nothing.
+
+  In the theme editor only (request.design_mode), the same matching legend also
+  carries a warning span: "size guide hidden — add the block". Because the name
+  is server-side readable, the warning follows the merchant's real axis name
+  rather than the literal "Size" — a store whose option is "Talla" is warned too,
+  which is exactly the population that needs the warning. It is CSS-suppressed by the
+  presence of a [data-bmp-size-guide-config] marker, which the block emits on
+  its dialog, so the warning shows exactly when the template has no size-guide
+  block. Live storefront: the span is never rendered — zero bytes.
+
+  Opening is delegated to assets/bmp-size-guide-portal.js, NOT to a
+  `on:click="#id/showDialog"` binding, for two reasons:
+
+    - Horizon resolves an `on:click` `#id` target with
+      document.querySelector (assets/component.js:265-268) — first match in
+      document order. Quick-add clones the product page into its popup
+      (assets/quick-add.js), so that can be the wrong copy of the id.
+    - The chart must not open while it is a DOM descendant of the open
+      quick-add dialog: the nested dialog's clicks/Escape bubble into the outer
+      component's handlers, and `.quick-add-modal`'s forwards-filled
+      transform makes it the containing block of the nested fixed-position
+      dialog. The portal moves the node to <body> first — and the block's
+      `style` tag rides inside that node, which is what makes the trigger
+      visible inside the popup.
+
+  An earlier fix suppressed this trigger inside `.quick-add-modal` with a
+  display:none rule, which removed the feature from that surface instead of
+  fixing it.
+
+  The same module also owns the relocated-trigger case: a swatch app that renders its own
+  UI and sets `display: none` inline on the whole `<variant-picker>` takes this
+  trigger down with it, since the trigger renders inside that element's legend.
+  CSS cannot reach a descendant of `display: none`, so the portal moves the node
+  out of the picker and adds `bmp-size-guide__trigger--relocated` (rule below).
+
+  @param {string} option_name - the variant option this legend belongs to
+  @param {number} product_id - the product whose size-guide dialog this trigger opens
+  @param {string} product_url - that product's page URL; the portal's fallback
+    source for the dialog markup on mobile quick-add, where updateQuickAddModal
+    drops `.product-details` and the cloned dialog with it
+{%- enddoc -%}
+
+{%- liquid
+  assign bmp_sg_option = settings.bmp_size_guide_option | strip | default: 'Size'
+-%}
+{%- if option_name == bmp_sg_option -%}
+  <button
+    type="button"
+    class="bmp-size-guide__trigger button-unstyled"
+    data-bmp-size-guide-product="{{ product_id }}"
+    data-bmp-size-guide-url="{{ product_url }}"
+  >
+    {%- comment -%}
+      No `hidden` and no Liquid gate: the icon is decided in CSS, by the second
+      arm of the same per-product rule the block emits for the reveal, so both
+      flip in one style recalculation, at parse time, with no JS — see the
+      stylesheet.
+
+      The SVG therefore ships on every PDP that has the configured option, even
+      when the merchant turned the icon off: 752 bytes, once per response. That
+      is the priced cost of keeping the toggle on the block, where the ticket
+      wanted it. Omitting the markup server-side would require the trigger to
+      read a block setting, which Liquid does not allow from this snippet.
+    {%- endcomment -%}
+    <span
+      class="svg-wrapper bmp-size-guide__trigger-icon"
+      aria-hidden="true"
+    >
+      {{- 'bmp-icon-ruler.svg' | inline_asset_content -}}
+    </span>
+    {%- comment -%}
+      Filled server-side with the shipped default so the trigger is complete in
+      the first response and survives JS being unavailable. The portal replaces
+      the text only when the block's own label differs, so the swap is reachable
+      only on stores that customised it — and it is a text change inside a
+      button already in its final position, not an appearance.
+    {%- endcomment -%}
+    <span class="bmp-size-guide__trigger-label">{{- 'bmp.content.bmp_size_guide_default_label' | t -}}</span>
+  </button>
+  {%- if request.design_mode -%}
+    <span class="bmp-size-guide__editor-warning">{{ 'bmp.content.bmp_size_guide_missing_block' | t }}</span>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  /* Hidden until THIS product's own size-guide dialog is in the document. The
+     reveal is not here and cannot be: a static sheet renders no Liquid, so the
+     strongest thing it could say is "this document holds some size-guide
+     dialog" — and a document can hold another product's dialog (quick-add
+     adopts one into <body>) or another product's trigger
+     (featured-product{,-information} render a variant picker for a
+     merchant-chosen second product). That document-wide guard is what shipped
+     before, and it revealed triggers whose click resolves nothing.
+
+     blocks/bmp-size-guide.liquid emits the matching reveal instead, from a
+     Liquid `style` tag inside its dialog-component (spelled out rather than
+     written as a tag, because theme check's StaticStylesheetAndJavascriptTags
+     reads this comment as CSS and a real tag here is an error):
+
+       .bmp-size-guide__trigger[data-bmp-size-guide-product="<id>"] {
+         display: inline-flex;
+       }
+
+     — (0,2,0) against this rule's (0,1,0), so it wins with no `!important`
+     — which ships exactly when and where the dialog ships:
+     server-side, first response, per product, and travelling with the node
+     when the portal adopts it into <body>. Still pure CSS: no class applied by
+     JS stands between the server response and a visible trigger, and the
+     product that has the configured option on a template with no size-guide
+     block still renders nothing (AC3).
+
+     The other declarations live here rather than in that per-product rule
+     deliberately: they are inert while the button is `display: none`, so
+     keeping them in the static, cacheable sheet leaves exactly one
+     interpolated declaration per product on the page. */
+  .bmp-size-guide__trigger {
+    display: none;
+    align-items: center;
+    gap: var(--gap-2xs);
+    cursor: pointer;
+    font-size: var(--font-size--sm);
+  }
+
+  /* The icon toggle is per-block config, and it is resolved in CSS, not in JS —
+     by the second arm of that same per-product `style` tag, which the block
+     emits only when its setting is on. So the icon and the reveal flip on the
+     same fact, in the same style recalculation: both correct in the first
+     paint and correct with JS unavailable. A JS-applied `hidden` could only
+     ever arrive a frame later, and a 24.8px icon appearing inside a button
+     pinned by `margin-inline-start: auto` is a visible jump on every product
+     page at the shipped default.
+
+     Descendant form, not the bare class: `.svg-wrapper` sets
+     `display: inline-flex` at (0,1,0), so a bare `.bmp-size-guide__trigger-icon`
+     rule would tie it and depend on sheet order. This (0,2,0) beats it, and the
+     block's (0,3,0) beats this.
+
+     Per PRODUCT, deliberately. It used to be
+     `body:has([data-bmp-size-guide-icon])`, which meant a quick-add popup over
+     a PDP — two dialogs in <body> — showed the popup product's icon whenever
+     the HOST's toggle was on. */
+  .bmp-size-guide__trigger .bmp-size-guide__trigger-icon {
+    display: none;
+  }
+
+  /* Lay the legend out as one row — [Name: value ……… trigger] — only in the
+     legend that actually holds the trigger. Since the option gate is back on
+     the server there is exactly one such legend per product. */
+  .variant-option legend:has(.bmp-size-guide__trigger) {
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  .variant-option legend .bmp-size-guide__trigger {
+    margin-inline-start: auto;
+  }
+
+  /* Relocated state. assets/bmp-size-guide-portal.js moves the
+     trigger out of a <variant-picker> that a swatch app has hidden, into the
+     picker's own parent — a theme container, typically a column flex panel.
+     The in-legend `margin-inline-start: auto` above is scoped to the legend and
+     correctly stops applying; all that is needed out here is to stop a flex or
+     grid parent stretching the button to the full row. `start` is valid in
+     both, and is ignored in a block parent, where the inline-flex button
+     already sizes to its content. */
+  .bmp-size-guide__trigger--relocated {
+    align-self: start;
+  }
+
+  .bmp-size-guide__trigger-label {
+    text-decoration: underline dashed rgb(var(--color-foreground-rgb) / 60%) 2px;
+    text-underline-offset: 4px;
+  }
+
+  .bmp-size-guide__trigger:hover .bmp-size-guide__trigger-label {
+    opacity: 0.8;
+  }
+
+  .bmp-size-guide__trigger-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Editor-only missing-block warning. Rendered only under
+     request.design_mode, and CSS-suppressed by a [data-bmp-size-guide-config]
+     marker, which the block emits ONLY on its dialog — i.e. only when the
+     product actually has the configured option. On a product without it the
+     block renders its editor note and deliberately no marker, which is safe
+     because this warning is not rendered on that page either: the trigger
+     self-gates on the same option name, so there is no legend to warn in.
+     That makes the `:not(.quick-add-modal *)` clause below load-bearing rather
+     than defensive — a design-mode quick-add clone is the one way a foreign
+     product's marker can reach this document. */
+  .bmp-size-guide__editor-warning {
+    display: none;
+  }
+
+  /* :not(.quick-add-modal *): a design-mode quick-add popup on a collection
+     template clones a product page in; its Size legend must not claim the
+     COLLECTION template is missing a block it never carries. */
+  body:not(:has([data-bmp-size-guide-config])) .bmp-size-guide__editor-warning:not(.quick-add-modal *) {
+    display: inline;
+    margin-inline-start: var(--gap-2xs);
+    font-size: var(--font-size--2xs);
+    font-style: italic;
+    opacity: 0.7;
+  }
+
+  /* NOTE: there is deliberately NO `.quick-add-modal .bmp-size-guide__trigger
+     { display: none }` rule here. Suppressing the trigger inside the popup is
+     what the first quick-add fix did, and it removed the size guide from the
+     surface where quick-add is the only way to reach it. The nesting hazard it
+     was defending against (a dialog opened while a DOM descendant of the open
+     quick-add dialog: click/Escape bubbling into the outer component's
+     handlers per dialog.js:62-63 + isClickedOutside's geometric test at
+     utilities.js:395-401, and `.quick-add-modal`'s forwards-filled transform
+     becoming the containing block of the nested fixed-position dialog) is now
+     fixed at the root by bmp-size-guide-portal.js, which reparents the dialog
+     to <body> before it can be opened. Re-adding a suppression rule here would
+     silently delete the feature again — scripts/check-size-guide-isolation.mjs
+     fails the build if one comes back. */
+{% endstylesheet %}

@@ -1,0 +1,110 @@
+{% doc %}
+  BMP free shipping progress bar, rendered at the top of the cart drawer.
+
+  Reads the global "Free shipping bar" theme settings and renders nothing when
+  disabled. Lives inside the drawer's cart-items-component subtree, so it is
+  re-rendered via Section Rendering on every cart add/change/remove.
+
+  The remaining amount is computed in cents and formatted with the money
+  filter (an integer division here would silently truncate cents), and both
+  '$[amount]' and '[amount]' merchant message styles are supported without
+  doubling the currency symbol.
+
+  The goal is a number setting (a range capped at 101 steps can't span both
+  dollar goals and item-quantity goals); goals below 1 render nothing, which
+  also guards the percent division against zero.
+
+  @example
+  {% render 'bmp-free-shipping-bar' %}
+{% enddoc %}
+
+{%- liquid
+  assign goal = settings.bmp_cart_progress_bar_goal | default: 50
+-%}
+{%- if settings.bmp_show_cart_progress_bar and goal > 0 -%}
+  {%- liquid
+    if settings.bmp_cart_progress_bar_goal_type == 'quantity'
+      assign current = cart.item_count
+      assign remaining = goal | minus: current
+      assign amount_label = remaining
+    else
+      assign goal = goal | times: 100
+      assign current = cart.total_price
+      assign remaining = goal | minus: current
+      assign amount_label = remaining | money
+    endif
+    assign percent = current | times: 100.0 | divided_by: goal | at_most: 100 | at_least: 0 | round
+  -%}
+  <div class="bmp-free-shipping-bar">
+    <p class="bmp-free-shipping-bar__message">
+      {%- if settings.bmp_cart_progress_bar_message_icon == 'truck' -%}
+        <span
+          class="bmp-free-shipping-bar__icon svg-wrapper"
+          aria-hidden="true"
+        >
+          {{- 'bmp-icon-truck.svg' | inline_asset_content -}}
+        </span>
+      {%- endif -%}
+      <span>
+        {%- if remaining > 0 -%}
+          {{- settings.bmp_cart_progress_bar_message | replace: '$[amount]', '[amount]' | replace: '[amount]', amount_label -}}
+        {%- else -%}
+          {{- settings.bmp_cart_progress_bar_success_message -}}
+        {%- endif -%}
+      </span>
+    </p>
+    <div
+      class="bmp-free-shipping-bar__track"
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="{{ percent }}"
+      aria-label="{{ 'bmp.accessibility.bmp_free_shipping_progress' | t }}"
+      style="--bmp-fsb-progress: {{ percent }}%"
+    >
+      <div class="bmp-free-shipping-bar__fill"></div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  /* Inline padding matches the drawer items (.cart-drawer__items uses the
+     same token). Horizon 4.1.1 dropped the 3.5.1 --cart-drawer-padding-desktop
+     token — --cart-drawer-padding (= --theme-drawer-padding) is now the single
+     drawer gutter at every width. */
+  .bmp-free-shipping-bar {
+    padding-block: var(--padding-sm) var(--padding-md);
+    padding-inline: var(--cart-drawer-padding);
+    border-block-end: var(--style-border-width) solid var(--color-border);
+  }
+
+  .bmp-free-shipping-bar__message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-2xs);
+    margin-block: 0 var(--margin-sm);
+    text-align: center;
+    font-size: var(--font-size--sm);
+  }
+
+  .bmp-free-shipping-bar__icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bmp-free-shipping-bar__track {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+  }
+
+  .bmp-free-shipping-bar__fill {
+    width: var(--bmp-fsb-progress, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--color-foreground);
+    transition: width var(--animation-speed, 0.3s) var(--animation-easing, ease);
+  }
+{% endstylesheet %}

@@ -1,0 +1,30 @@
+{%- doc -%}
+  Full-media overlay link for a hero slide (bmp_slide_link).
+
+  Rendered as a direct child of <slideshow-slide>, BEFORE .slide__content:
+  same z-index layer (--layer-flat), earlier sibling — so the content stack
+  paints above it and its interactive elements win clicks (companion
+  pointer-events rules in assets/bmp-styles.css). Accessible name: the slide
+  image's alt, else the bmp.accessibility.bmp_slide_link_fallback string.
+
+  DELIBERATE INVERSION of core's overlay-link idiom, which Horizon ships five
+  times (blocks/_card.liquid:26, snippets/product-card.liquid:87,
+  snippets/collection-card.liquid:64, snippets/resource-card.liquid:60,
+  blocks/_featured-blog-posts-card.liquid:85). Core puts the overlay at
+  --layer-raised (2), ABOVE the content, and relies on a pointer-events opt-in
+  for descendants. A hero slide's content wrapper spans the whole slide, so the
+  same arrangement made the link swallow taps over in-slide buttons under
+  below-media grids. Do NOT "align with core" — the inversion IS the fix.
+
+  @param {string} url - destination URL (block_settings.bmp_slide_link)
+  @param {object} [image] - the slide's preview image (names the link)
+{%- enddoc -%}
+<a class="bmp-slide-link" href="{{ url }}">
+  <span class="visually-hidden">
+    {%- if image.alt != blank -%}
+      {{- image.alt | escape -}}
+    {%- else -%}
+      {{- 'bmp.accessibility.bmp_slide_link_fallback' | t -}}
+    {%- endif -%}
+  </span>
+</a>

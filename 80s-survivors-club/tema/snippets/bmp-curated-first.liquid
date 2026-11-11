@@ -1,0 +1,30 @@
+{%- comment -%}
+  BMP curated-first loader.
+
+  Rendered from sections/main-collection.liquid inside the
+  BMP-HOOK:curated-first block (the only core touch for this feature).
+  Ported from an earlier Horizon 3.5.1 build of this feature
+  onto this tree's Horizon 4.1.3 collection DOM — see the doc comment in
+  assets/bmp-curated-first.js for the verified selector contract.
+
+  Emits the bmp-curated-first.js ES module ONLY when the merchant enables the
+  feature (settings.bmp_curated_first_enabled, default TRUE — shipped live per
+  owner request). The module itself no-ops instantly unless a `?{param}=` is
+  present in the URL, so the only cost of the default-on setting is one
+  deferred script request per collection-page view (module scripts defer by
+  default; no render-blocking, no DOM work when the param is absent). Config
+  is forwarded to the script via data-* attributes.
+
+  Collection-page scoped on purpose (loaded from main-collection, not
+  bmp-globals) — the pin only ever applies to a collection grid.
+{%- endcomment -%}
+{%- if settings.bmp_curated_first_enabled -%}
+  <script
+    src="{{ 'bmp-curated-first.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+    data-bmp-curated-first
+    data-param="{{ settings.bmp_curated_first_param | default: 'first' | strip | escape }}"
+    data-swap-image="{{ settings.bmp_curated_first_swap_image }}"
+  ></script>
+{%- endif -%}

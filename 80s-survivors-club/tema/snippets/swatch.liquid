@@ -1,0 +1,111 @@
+{%- comment -%}BMP-HOOK-START:swatch-name-fallback{%- endcomment -%}
+{%- doc -%}
+  Renders a swatch either from a variant image object or a swatch object.
+
+  @param {object} swatch - a swatch object
+  @param {object} [variant_image] - an alternate image when there is no swatch value
+  @param {string} [mode] - one of 'unscaled', 'filter', 'pill'
+  @param {string} [label] - visually-hidden accessible label for the swatch (e.g. the color name)
+  @param {string} [value] - option value name used by the BMP name-based fallback
+  @param {string} [option_name] - option name used to gate the BMP name-based fallback
+  @param {string} [bmp_resolved] - a CSS color already resolved from bmp-swatch-color-map by the calling
+    surface. Purely an optimisation: it replaces this snippet's own map render, never the native
+    resolution order above it. A caller that omits it gets the identical result, one render later.
+  @param {string} [bmp_override] - a CSS color already resolved from bmp-swatch-color-map's override
+    mode by the calling surface. Same optimisation contract as bmp_resolved, with one distinction:
+    an empty string means "the caller probed and found no override row", which skips this snippet's
+    own override probe; omitting the param entirely makes this snippet probe for itself.
+
+  @example
+  {% render 'swatch', swatch: swatch, variant_image: variant_image, mode: 'unscaled', label: option_value.name %}
+{%- enddoc -%}
+{%- comment -%}BMP-HOOK-END:swatch-name-fallback{%- endcomment -%}
+
+{% liquid
+  assign swatch_value = null
+  assign extra_classes = ''
+  # BMP-HOOK-START:swatch-name-fallback
+  #
+  # Merchant override rows (settings.bmp_swatch_value_list) outrank
+  # native swatch.color — Printify stamps a taxonomy color on every catalog
+  # value, so a row that only ran behind it could never render. Variant
+  # images and linked swatch images still win. bmp_override threads a
+  # caller's already-probed result ('' = probed, none found); when the
+  # caller never probed (bmp_override is absent), probe here. An empty
+  # override textarea means no row can exist, so skip the render entirely.
+  assign bmp_swatch_override_value = bmp_override
+  if bmp_override == null and value != blank and option_name != blank and settings.bmp_swatch_value_list != blank
+    capture bmp_swatch_override_value
+      render 'bmp-swatch-color-map', option_name: option_name, value: value, mode: 'override'
+    endcapture
+  endif
+  assign bmp_swatch_override_value = bmp_swatch_override_value | strip
+  # BMP-HOOK-END:swatch-name-fallback
+  if settings.show_variant_image and variant_image
+    assign swatch_image_width = settings.variant_swatch_width | times: 2
+    assign swatch_image_url = variant_image | image_url: width: swatch_image_width
+    assign swatch_value = 'url(' | append: swatch_image_url | append: ')'
+    assign extra_classes = extra_classes | append: ' swatch--variant-image'
+  elsif swatch.image
+    assign swatch_image_url = swatch.image | image_url: width: 80
+    assign swatch_value = 'url(' | append: swatch_image_url | append: ')'
+  # BMP-HOOK-START:swatch-name-fallback
+  # The one place BMP is allowed ahead of a native resolver — a
+  # validated merchant row beats the taxonomy color only. See the doctrine
+  # note below the chain.
+  elsif bmp_swatch_override_value != blank
+    assign swatch_value = bmp_swatch_override_value
+  # BMP-HOOK-END:swatch-name-fallback
+  elsif swatch.color
+    assign swatch_value = 'rgb(' | append: swatch.color.rgb | append: ')'
+  endif
+
+  # BMP-HOOK-START:swatch-name-fallback
+  #
+  # LOAD-BEARING: both branches below live INSIDE `swatch_value == null`. The
+  # full map (merchant overrides + 241 baked defaults) is the last resort,
+  # behind variant image, swatch.image, swatch.color AND the override branch
+  # above. Only the override-mode branch may sit ahead of
+  # swatch.color; hoisting `bmp_resolved` or this render above the guard
+  # would make baked defaults beat a real linked metaobject swatch on every
+  # product that still has one. Keep both here.
+  if swatch_value == null
+    if bmp_resolved != blank
+      assign swatch_value = bmp_resolved
+    elsif value != blank and option_name != blank
+      capture bmp_swatch_fallback_value
+        render 'bmp-swatch-color-map', option_name: option_name, value: value
+      endcapture
+      assign bmp_swatch_fallback_value = bmp_swatch_fallback_value | strip
+      if bmp_swatch_fallback_value != blank
+        assign swatch_value = bmp_swatch_fallback_value
+      endif
+    endif
+  endif
+  # BMP-HOOK-END:swatch-name-fallback
+
+  case mode
+    when 'unscaled'
+      assign extra_classes = extra_classes | append: ' swatch--unscaled'
+    when 'filter'
+      assign extra_classes = extra_classes | append: ' swatch--filter'
+    when 'pill'
+      assign extra_classes = extra_classes | append: ' swatch--pill'
+  endcase
+%}
+
+<span
+  class="
+    swatch
+    {{ extra_classes }}
+    {% if swatch_value == null %} swatch--unavailable{% endif %}
+  "
+  style="
+    --swatch-background: {{ swatch_value }};
+    {% if swatch.image and settings.show_variant_image == false %} --swatch-focal-point: {{ swatch.image.presentation.focal_point }};{% endif %}
+  "
+>
+</span>
+{%- if label != blank -%}
+  <span class="visually-hidden">{{ label }}</span>
+{%- endif -%}

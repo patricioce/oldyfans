@@ -1,0 +1,140 @@
+{% doc %}
+  BMP footer localization — country/region + language selectors for the
+  footer utilities bar (stock Horizon only offers localization in the header).
+
+  Reuses the stock dropdown-localization-component, localization-form snippet
+  and their global styles; only the panel positioning is overridden so the
+  popover opens upward from the footer. localization.js is already loaded
+  globally by snippets/scripts.liquid when the store has multiple
+  countries/languages.
+{% enddoc %}
+
+{%- liquid
+  assign bmp_loc_show_country = block.settings.show_country
+  if localization.available_countries.size <= 1
+    assign bmp_loc_show_country = false
+  endif
+
+  assign bmp_loc_show_language = block.settings.show_language
+  if localization.available_languages.size <= 1
+    assign bmp_loc_show_language = false
+  endif
+-%}
+
+{% comment %}
+  Suppression note: dropdown-localization*, localization-wrapper, currency-code
+  and icon-flag are stock globals defined in sections/header.liquid's bundled
+  stylesheet — ValidScopedCSSClass is a false positive here (same family as the
+  24 baseline warnings on stock files); this block intentionally reuses them.
+{% endcomment %}
+{% # theme-check-disable ValidScopedCSSClass %}
+{%- if bmp_loc_show_country or bmp_loc_show_language -%}
+  <div
+    class="bmp-localization"
+    {{ block.shopify_attributes }}
+  >
+    <dropdown-localization-component class="dropdown-localization">
+      <button
+        type="button"
+        class="button dropdown-localization__button localization-selector"
+        aria-expanded="false"
+        aria-controls="bmp-localization-panel-{{ block.id }}"
+        ref="button"
+        on:click="/toggleSelector"
+      >
+        {% if bmp_loc_show_country %}
+          {% if block.settings.country_selector_style %}
+            <span
+              class="icon-flag"
+              style="
+                background-image: url({{- localization.country | image_url: width: 32 }});
+                --size-shadow: 2px;
+                --color-shadow: rgb(var(--color-foreground-rgb) / var(--opacity-30-60));
+              "
+            ></span>
+          {% endif %}
+          <span class="currency-code">
+            {{- localization.country.currency.iso_code -}}
+          </span>
+        {% endif %}
+        <span class="visually-hidden">
+          {{- 'accessibility.localization_region_and_language' | t -}}
+        </span>
+        {%- if bmp_loc_show_country and bmp_loc_show_language -%}
+          <span>/</span>
+        {%- endif -%}
+        {%- if bmp_loc_show_language -%}
+          <span>{{ localization.language.iso_code | upcase }}</span>
+        {%- endif -%}
+        <span class="svg-wrapper icon-caret">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </button>
+
+      <div
+        id="bmp-localization-panel-{{ block.id }}"
+        class="localization-wrapper"
+        hidden
+        ref="panel"
+      >
+        {% render 'localization-form',
+          show_country: bmp_loc_show_country,
+          show_language: bmp_loc_show_language,
+          localization_style: 'dropdown',
+          form_id: block.id
+        %}
+      </div>
+    </dropdown-localization-component>
+  </div>
+{%- endif -%}
+{% # theme-check-enable ValidScopedCSSClass %}
+
+{% stylesheet %}
+  .bmp-localization .dropdown-localization {
+    position: relative;
+    display: inline-flex;
+  }
+
+  /* Open the popover upward — the footer sits at the page bottom */
+  .bmp-localization .localization-wrapper {
+    position: absolute;
+    inset-block-end: calc(100% + var(--gap-2xs));
+    inset-inline-start: 0;
+    z-index: var(--layer-overlay, 4);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:bmp.names.bmp_localization",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_country",
+      "label": "t:settings.country_region",
+      "info": "t:info.manage_countries_regions",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "country_selector_style",
+      "label": "t:settings.flag",
+      "default": true,
+      "visible_if": "{{ block.settings.show_country }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language",
+      "label": "t:settings.language_selector",
+      "info": "t:info.manage_languages",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:bmp.names.bmp_localization"
+    }
+  ]
+}
+{% endschema %}

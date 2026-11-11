@@ -1,0 +1,329 @@
+{% doc %}
+  BMP size guide — the modal dialog holding the size chart, and the home of the
+  feature's own presentation settings (link text, icon) and of every chart, as
+  child blocks. The global "BMP: Size guide" panel is retired.
+
+  The option name is NOT one of them, deliberately. It identifies the store's
+  size axis for the server-side add-to-cart gate, which runs from
+  blocks/buy-buttons.liquid and blocks/accelerated-checkout.liquid on every
+  product template — including templates with no size-guide block at all, which
+  must keep working. Liquid gives those blocks no
+  way to read this one's settings, so the name stays a theme setting
+  (`settings.bmp_size_guide_option`, "BMP: Size" panel) and exactly one naming
+  setting serves both features by design. It is read below, not declared.
+
+  The visible trigger is NOT here: it renders inside the variant picker's
+  option legend (`Size: M … Size Guide`) via snippets/bmp-size-guide-trigger,
+  called from the contracted edit in snippets/variant-main-picker.liquid —
+  the original design's in-row placement. Because the name is a theme setting,
+  that snippet gates itself SERVER-SIDE on the legend's option name, exactly as
+  it always has: one trigger per product, in the right legend, in
+  the first response. The two presentation values it cannot read from here leave
+  this block by two different routes: the LABEL is published as
+  data-bmp-size-guide-label on the dialog-component and copied onto the trigger
+  by assets/bmp-size-guide-portal.js, while the ICON never crosses into JS at
+  all — the per-product `style` tag below either emits its rule or does not.
+  The dialog renders only when the product has a matching option.
+
+  There is deliberately no `data-bmp-size-guide-icon` attribute. It existed only
+  to be read by a `:has()` rule in the trigger's static sheet, which is the
+  document-wide shape this follow-up replaced; publishing it now would be a
+  second, unread source of truth for a value the `style` tag already decides.
+
+  In the theme editor only (request.design_mode), a product WITHOUT that option
+  renders a visible placeholder instead. It carries block.shopify_attributes so
+  selecting the block in the sidebar still scrolls to and outlines something —
+  a `hidden` element has no box and no rect, so it is a dead editor target, and
+  this is precisely when the merchant is looking for an explanation. Zero bytes
+  on the live storefront.
+
+  The dialog-component's id is per-product
+  (`id="bmp-size-guide-dialog-{{ closest.product.id }}"`), because quick-add
+  clones the whole product page into its popup (assets/quick-add.js), and a
+  fixed id would leave the host product's dialog and the quick-added
+  product's dialog sharing one id on the same page. The trigger carries the same
+  product id as a data attribute and assets/bmp-size-guide-portal.js rebuilds the
+  dialog id from it — not an `on:click` `#id` binding, which Horizon resolves
+  with document.querySelector, i.e. first match in document order.
+
+  The dialog also carries a bare `data-bmp-size-guide-dialog` attribute, which
+  is how assets/bmp-size-guide-portal.js finds size-guide dialogs generically
+  (parsing a fetched page, spotting a quick-add clone) without knowing whose
+  product they belong to.
+
+  The trigger's REVEAL is emitted from here, per product, by the Liquid `style`
+  tag inside the dialog-component. That placement is the whole mechanism and
+  each half of it is load-bearing:
+
+    - a `style` tag rather than the `stylesheet` block below, because
+      only the former renders Liquid, and the rule has to carry a product id:
+      `.bmp-size-guide__trigger[data-bmp-size-guide-product="…"]`. A static
+      sheet can only say "this document holds SOME size-guide dialog", and a
+      document can hold a second product's variant picker
+      (sections/featured-product{,-information}.liquid render one for a
+      merchant-chosen product) or a quick-add's adopted dialog. Under the old
+      document-wide guard those pages revealed a trigger whose click resolves
+      nothing, and showed the icon on a product whose own toggle is off.
+    - INSIDE the dialog-component rather than beside it, because the rule has
+      to travel with the node. On mobile quick-add, updateQuickAddModal drops
+      `.product-details` (assets/quick-add.js) and the portal re-fetches the
+      product page and adopts the `[data-bmp-size-guide-dialog]` element alone
+      — a sibling `<style>` would be left behind in the parse document and the
+      trigger in the popup would never come back.
+
+  So the reveal ships exactly where the dialog ships, on the server, in the
+  first response, with no JS between the response and a visible trigger. This
+  is the one place in the feature where Liquid is allowed to interpolate CSS
+  (the layer's second sanctioned exception).
+
+  The modal content is composed of child blocks; the private
+  _bmp-size-guide-image child shows its image only when its "Product type"
+  setting matches the current product's type, so one template serves every
+  product type with a per-type chart. A child with an EMPTY "Product type" is
+  the default chart: it renders whenever no typed child matched,
+  and the stylesheet below hides it the moment one did — before, an unmatched
+  product opened an empty dialog.
+
+  Replaces the old window-global modal (inline script, duplicate-id
+  workarounds) with Horizon's stock dialog-component (focus trap, ESC,
+  scroll-lock).
+{% enddoc %}
+
+{%- liquid
+  assign bmp_sg_option_name = settings.bmp_size_guide_option | strip | default: 'Size'
+
+  # Nil-safe, the same rule scripts/check-size-required.mjs enforces for
+  # bmp_size_required in this feature: an unmaterialised setting reads as nil,
+  # the schema default is true, so nil must mean ON. templates/product.json
+  # ships this block instance with `"settings": {}` — a bare truthiness test
+  # would render the icon OFF on the theme's own product template until a
+  # merchant re-saved the block, contradicting the default it declares.
+  assign bmp_sg_icon = true
+  if block.settings.bmp_size_guide_icon == false
+    assign bmp_sg_icon = false
+  endif
+  # Same reason, and it is an accessible name: an unmaterialised text setting
+  # would leave the dialog with aria-label="".
+  assign bmp_sg_default_label = 'bmp.content.bmp_size_guide_default_label' | t
+  assign bmp_sg_label = block.settings.bmp_size_guide_label | strip_html | strip | default: bmp_sg_default_label
+  assign bmp_sg_has_size = false
+  for option in closest.product.options
+    if option == bmp_sg_option_name
+      assign bmp_sg_has_size = true
+    endif
+  endfor
+-%}
+
+{%- if bmp_sg_has_size -%}
+  <script
+    src="{{ 'dialog.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+
+  <dialog-component
+    id="bmp-size-guide-dialog-{{ closest.product.id }}"
+    data-bmp-size-guide-dialog
+    data-bmp-size-guide-config
+    data-bmp-size-guide-label="{{ bmp_sg_label | escape }}"
+    class="bmp-size-guide"
+    {{ block.shopify_attributes }}
+  >
+    {%- comment -%}
+      The trigger's reveal, and the icon's, keyed on THIS product's id. See the
+      header: a `style` tag because it renders Liquid, and inside this element
+      because the portal adopts this element alone on the mobile quick-add
+      route. Only `display` is interpolated — every other trigger declaration
+      stays in the static, cacheable sheet in
+      snippets/bmp-size-guide-trigger.liquid, where it is harmless while the
+      button is still `display: none`.
+
+      The icon arm is conditional rather than value-interpolated: the setting
+      decides whether the rule EXISTS, so a store with the icon off ships two
+      fewer lines instead of a second `display: none`.
+    {%- endcomment -%}
+    {% style %}
+      .bmp-size-guide__trigger[data-bmp-size-guide-product="{{ closest.product.id }}"] {
+        display: inline-flex;
+      }
+
+      {% if bmp_sg_icon %}
+        .bmp-size-guide__trigger[data-bmp-size-guide-product="{{ closest.product.id }}"]
+          .bmp-size-guide__trigger-icon {
+          display: inline-flex;
+        }
+      {% endif %}
+    {% endstyle %}
+
+    <dialog
+      ref="dialog"
+      class="bmp-size-guide__dialog dialog-modal"
+      on:click="/closeDialogOnClickOutside"
+      on:keydown="/closeDialogOnEscapePress"
+      scroll-lock
+      aria-label="{{ bmp_sg_label | escape }}"
+    >
+      <button
+        type="button"
+        class="button close-button bmp-size-guide__close button-unstyled"
+        on:click="dialog-component/closeDialog"
+        aria-label="{{ 'actions.close_dialog' | t }}"
+      >
+        <span class="svg-wrapper">
+          {{- 'icon-close.svg' | inline_asset_content -}}
+        </span>
+      </button>
+
+      <div class="bmp-size-guide__content">
+        {% content_for 'blocks' %}
+      </div>
+    </dialog>
+  </dialog-component>
+{%- elsif request.design_mode -%}
+  {%- comment -%}
+    Visible on purpose, and deliberately WITHOUT data-bmp-size-guide-config.
+    The missing-block warning only renders on a legend whose option matches the
+    configured name, so a product that has no such option produces no warning
+    for this to suppress — emitting the marker here would only risk hiding a
+    warning somewhere else on the page (a design-mode quick-add clone).
+
+    The chart children are NOT rendered here, and that is a platform limit, not
+    a preference: Shopify rejects a block file that contains more than one
+    `content_for 'blocks'`, even across mutually exclusive branches — the upload
+    fails with "Duplicate entries for 'content_for "blocks"'". `shopify theme
+    check` does not catch it; only the upload does. So on a product without the
+    configured option every chart child stays a dead editor target: selecting
+    one in the sidebar scrolls to nothing. That is pre-existing — the original
+    version of this block had the same gap behind a hidden span — and closing it needs
+    a different shape (one `content_for` reached by both paths, or a separate
+    snippet), which is tracked separately rather than smuggled in here.
+
+    What this branch does fix is the PARENT: a `hidden` element has no box and
+    no rect, so selecting the block itself used to scroll to nothing, precisely
+    when the merchant is looking for the explanation.
+  {%- endcomment -%}
+  <p class="bmp-size-guide__editor-note" {{ block.shopify_attributes }}>
+    {{- 'bmp.content.bmp_size_guide_block_no_option' | t: option: bmp_sg_option_name -}}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  /* ONE geometry at every viewport (old-theme reference): a top-anchored
+     box that hugs its content and scrolls internally. height: fit-content
+     (not auto — fixed-position dialogs stretch on auto) also neutralizes
+     the native .dialog-modal mobile rule that turns dialogs into 100dvh
+     sheets, so nothing jumps at the 750px breakpoint. The top gap comes
+     from inset, not margin: the native open animation animates margin-top
+     to 0 with fill forwards, which permanently overrides author margins. */
+  .bmp-size-guide__dialog {
+    width: min(42rem, calc(100% - var(--margin-lg) * 2));
+    height: fit-content;
+    max-height: calc(100dvh - var(--margin-lg) * 2);
+    inset-block-start: var(--margin-lg);
+    inset-block-end: auto;
+    margin: 0 auto;
+    padding: var(--padding-xl);
+    overflow-y: auto;
+    border: none;
+    border-radius: var(--style-border-radius-popover);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .bmp-size-guide__close {
+    position: absolute;
+    inset-block-start: var(--padding-sm);
+    inset-inline-end: var(--padding-sm);
+  }
+
+  /* The 44px button reserves a good touch target but the stock icon draws
+     at 14px and reads too small in this large dialog. Scoped to this
+     dialog's close button only. */
+  .bmp-size-guide__close .svg-wrapper,
+  .bmp-size-guide__close svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .bmp-size-guide__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    padding-block-start: var(--padding-lg);
+  }
+
+  .bmp-size-guide__content img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Default-chart fallback: a chart child with an empty "Product
+     type" renders as the default and is suppressed the moment any typed
+     child matched the product — a typed chart always wins. Sibling
+     comparison is impossible in Liquid (blocks render in isolation), so the
+     "no other child matches" condition lives here, on the classes the
+     children emit. */
+  .bmp-size-guide__content:has(.bmp-size-guide__image--match) .bmp-size-guide__image--default {
+    display: none;
+  }
+
+  /* Two blank-type children would both claim the default slot; only the
+     first one renders. */
+  .bmp-size-guide__image--default ~ .bmp-size-guide__image--default {
+    display: none;
+  }
+
+  /* Theme-editor placeholder for a product with no option matching the
+     configured size axis. Never rendered on the live storefront. */
+  .bmp-size-guide__editor-note {
+    padding: var(--padding-sm);
+    border: 1px dashed rgb(var(--color-foreground-rgb) / 30%);
+    border-radius: var(--style-border-radius-popover);
+    font-size: var(--font-size--sm);
+    font-style: italic;
+    opacity: 0.8;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:bmp.names.bmp_size_guide",
+  "blocks": [
+    {
+      "type": "_bmp-size-guide-image"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "group"
+    },
+    {
+      "type": "image"
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:bmp.content.bmp_size_guide_block_help"
+    },
+    {
+      "type": "text",
+      "id": "bmp_size_guide_label",
+      "label": "t:settings.text",
+      "default": "t:bmp.text_defaults.bmp_size_guide"
+    },
+    {
+      "type": "checkbox",
+      "id": "bmp_size_guide_icon",
+      "label": "t:settings.icon",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:bmp.names.bmp_size_guide"
+    }
+  ]
+}
+{% endschema %}

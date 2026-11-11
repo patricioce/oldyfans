@@ -1,0 +1,59 @@
+{%- doc -%}
+  Renders the BMP variant-price treatment: a "From <min>" prefix for a product
+  whose variants differ in price.
+
+  Emits nothing at all (not even whitespace) when the feature is off, when the
+  product has a single price, or when the surface gate decides the shopper has
+  already chosen a variant. snippets/price.liquid captures this output and
+  falls back to the stock price string whenever it is blank, which is what
+  keeps the off state byte-identical to stock Horizon.
+
+  Takes no `price` param on purpose: this runs after price.liquid:73, where the
+  stock `price` local has already been money-formatted. The money filter is
+  applied here, last, to the product's own price_min — never to the stock
+  `price_min` local, which price.liquid leaves null on any product page
+  without volume pricing.
+
+  @param {product} product_resource - The product being priced
+  @param {boolean} use_currency - Format with money_with_currency instead of money
+  @param {boolean} is_product_card - True on card surfaces, false on product pages
+  @param {boolean} [bmp_show_from] - Per-block override resolved by blocks/price.liquid; nil falls back to settings.bmp_price_from_show (allow_false keeps an explicit false from being swallowed)
+
+  @example
+  {%- capture bmp_variation_price -%}
+    {%- render 'bmp-price-variation', product_resource: product_resource, use_currency: use_currency, is_product_card: is_product_card, bmp_show_from: bmp_show_from -%}
+  {%- endcapture -%}
+{%- enddoc -%}
+{%- liquid
+  assign bmp_show = bmp_show_from | default: settings.bmp_price_from_show, allow_false: true
+
+  unless product_resource.price_varies
+    assign bmp_show = false
+  endunless
+
+  # Surface gate (spec 4.2). Cards ignore selection on purpose: Shopify sets
+  # product.selected_variant by relevance on filtered collections and search
+  # (documented at snippets/variant-swatches.liquid:78), which is not a
+  # shopper's choice. Suppressing the label there would hide it on exactly the
+  # surfaces carrying the most legal exposure. Product pages do clear the
+  # label, once the shopper has actually picked.
+  unless is_product_card
+    if product_resource.selected_variant != blank
+      assign bmp_show = false
+    endif
+  endunless
+
+  if bmp_show
+    if use_currency
+      assign bmp_min_money = product_resource.price_min | money_with_currency
+    else
+      assign bmp_min_money = product_resource.price_min | money
+    endif
+
+    # Placeholder-then-replace mirrors stock Horizon's own handling of this
+    # key at blocks/_featured-product-price.liquid:12-13, which keeps the
+    # money string out of the t filter's interpolation escaping.
+    assign bmp_from = 'content.price_from' | t: price: '__PRICE__'
+    echo bmp_from | replace: '__PRICE__', bmp_min_money
+  endif
+-%}

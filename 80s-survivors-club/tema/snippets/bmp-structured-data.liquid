@@ -1,0 +1,61 @@
+{%- doc -%}
+  bmp-structured-data — BMP SEO structured data.
+
+  Emits a schema.org WebSite entity with a SearchAction (the Google "sitelinks
+  search box") on the HOME page only. schema.org's WebSite + SearchAction is a
+  public, documented standard; self-gated so it adds zero bytes on every other
+  page (request.page_type is the canonical Shopify object for this check —
+  see Shopify.dev "request" reference).
+
+  The Organization "sameAs" is NOT emitted here — it is injected directly into
+  the existing core Organization node (sections/header.liquid) via
+  snippets/bmp-org-sameas.liquid behind a BMP-HOOK, so there is exactly ONE
+  Organization node site-wide (two would be worse for SEO than none).
+
+  Escaping: every dynamic value is piped through the built-in `json` filter,
+  which serializes it as a valid, escaped JSON string literal (quotes,
+  backslashes, and control characters are escaped) — the same filter the core
+  Organization node in sections/header.liquid already uses for shop.name, so
+  the two script blocks share one escaping convention. `escape` is HTML-entity
+  escaping (wrong context here — this is JSON-string, not HTML-attribute,
+  context) and is not used.
+
+  Rendered once per page from snippets/bmp-globals.liquid. No CSS, no JS.
+{%- enddoc -%}
+{%- if request.page_type == 'index' -%}
+  {%- liquid
+    comment
+      request.origin, not shop.url. shop.url is always the store's PRIMARY
+      domain, never the host the shopper is actually on, so under Shopify
+      Markets international domains a shopper on https://example.fr/ would get
+      a WebSite node claiming "url": "https://example.com" and a SearchAction
+      target pointing cross-domain, while canonical_url and the sibling
+      Organization node both say example.fr. Everywhere else this theme derives
+      URLs from the request: sections/header.liquid:323
+      (request.origin | append: page.url -- the Organization node this same PR
+      edits) and snippets/meta-tags.liquid:23,32. routes.* already carries the
+      locale prefix. On a single-domain store request.origin equals shop.url
+      and this renders identically; the reason to close it now is that this PR
+      would otherwise ship two structured-data nodes in one <head> deriving
+      their URL two different ways and agreeing only by coincidence.
+    endcomment
+    assign bmp_seo_home_url = request.origin | append: routes.root_url
+    assign bmp_seo_search_url_template = request.origin | append: routes.search_url | append: '?q={search_term_string}'
+  -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": {{ bmp_seo_home_url | json }},
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": {{ bmp_seo_search_url_template | json }}
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+{%- endif -%}

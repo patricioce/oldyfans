@@ -1,0 +1,227 @@
+{%- comment -%}
+  OldyFans — Centro de ayuda (copiado de slothhikingclub.com/pages/contact?view=sbs-help)
+  Bloques en orden: tarjetas (card), aviso (callout), grupo (group) seguido de sus preguntas
+  (qa / size_chart), y al final contacto (contact). Cada "group" abre una caja nueva.
+{%- endcomment -%}
+{%- liquid
+  assign ink = section.settings.ink
+  assign soft = section.settings.soft
+  assign line = section.settings.line
+  assign muted = section.settings.muted
+  assign support_email = section.settings.email | default: shop.email
+-%}
+<style>
+  div.ofh{--ofh-ink:{{ ink }};--ofh-soft:{{ soft }};--ofh-line:{{ line }};--ofh-muted:{{ muted }};color:var(--ofh-ink);font-family:var(--font-body-family)}
+  div.ofh *{box-sizing:border-box}
+  div.ofh .ofh__hd{background:var(--ofh-soft);padding:clamp(48px,6vw,84px) 20px;text-align:center}
+  div.ofh h1{margin:0 0 14px!important;font-family:var(--font-heading-family);font-weight:800;font-size:clamp(48px,7vw,84px);line-height:.95;text-transform:uppercase;color:var(--ofh-ink)}
+  div.ofh .ofh__intro{max-width:52ch;margin:0 auto;font-size:18px;line-height:1.6}
+  div.ofh .ofh__intro p{margin:0}
+  div.ofh a{color:var(--ofh-ink);text-underline-offset:3px}
+  div.ofh .ofh__in{max-width:880px;margin:0 auto;padding:clamp(36px,5vw,64px) 20px clamp(64px,8vw,104px);display:flex;flex-direction:column;gap:20px}
+  div.ofh .ofh__cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0}
+  div.ofh .ofh__cards a{display:flex;flex-direction:column;gap:8px;padding:22px 24px;border:1px solid var(--ofh-line);border-radius:14px;text-decoration:none;background:#fff;transition:border-color .15s}
+  div.ofh .ofh__cards a:hover{border-color:var(--ofh-ink)}
+  div.ofh .ofh__cards b,div.ofh .ofh__callout b{font-family:var(--font-heading-family);font-weight:800;font-size:24px;line-height:1;text-transform:uppercase}
+  div.ofh .ofh__cards span{color:var(--ofh-muted);font-size:15px;line-height:1.45}
+  div.ofh .ofh__callout{display:flex;flex-direction:column;gap:8px;background:var(--ofh-ink);color:#fff;border-radius:14px;padding:24px 26px;margin:0}
+  div.ofh .ofh__callout b{font-size:26px}
+  div.ofh .ofh__callout p{margin:0;line-height:1.55}
+  div.ofh .ofh__callout a{color:#fff}
+  div.ofh .ofh__group{border:1px solid var(--ofh-line);border-radius:14px;padding:26px 26px 8px;background:#fff;scroll-margin-top:110px}
+  div.ofh .ofh__group h2,div.ofh .ofh__contact h2{margin:0 0 6px!important;font-family:var(--font-heading-family);font-weight:800;font-size:clamp(28px,3.2vw,36px);line-height:1;text-transform:uppercase;color:var(--ofh-ink)}
+  div.ofh .ofh__qa{border-top:1px solid var(--ofh-line);padding:0;margin:0}
+  div.ofh .ofh__group h2+.ofh__qa{border-top:0}
+  div.ofh .ofh__qa summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;font-weight:700;font-size:17px;line-height:1.35}
+  div.ofh .ofh__qa summary::-webkit-details-marker{display:none}
+  div.ofh .ofh__qa summary::after{content:"";flex:none;width:8px;height:8px;border-right:1.5px solid var(--ofh-ink);border-bottom:1.5px solid var(--ofh-ink);transform:rotate(45deg);transition:transform .2s}
+  div.ofh .ofh__qa[open] summary::after{transform:rotate(-135deg)}
+  div.ofh .ofh__qa>div{padding:0 0 20px;color:var(--ofh-muted);font-size:16px;line-height:1.65}
+  div.ofh .ofh__qa>div p{margin:0 0 10px}
+  div.ofh .ofh__qa>div p:last-child{margin:0}
+  div.ofh .ofh__cap{margin:6px 0 8px!important;font-weight:700;color:var(--ofh-ink)}
+  div.ofh .ofh__scroll{overflow-x:auto;margin:0 0 18px}
+  div.ofh table{border-collapse:collapse;width:100%;min-width:520px;margin:0;font-variant-numeric:tabular-nums;font-size:15px;border:0}
+  div.ofh th,div.ofh td{border:0;border-bottom:1px solid var(--ofh-line);padding:10px 8px;text-align:center;color:var(--ofh-ink)}
+  div.ofh th[scope=row]{text-align:left;font-weight:700;white-space:nowrap;padding-right:16px}
+  div.ofh .ofh__note{font-size:14px;color:var(--ofh-muted);margin:0!important}
+  div.ofh .ofh__contact{padding:26px;border-radius:14px;background:var(--ofh-soft);margin:0}
+  div.ofh .ofh__contact h2{font-size:30px;margin-bottom:8px!important}
+  div.ofh .ofh__contact p{margin:0;line-height:1.55}
+  @media (max-width:640px){div.ofh .ofh__cards{grid-template-columns:1fr}div.ofh .ofh__group{padding:20px 18px 4px}}
+  @media (prefers-reduced-motion:reduce){div.ofh .ofh__qa summary::after,div.ofh .ofh__cards a{transition:none}}
+</style>
+
+<div class="ofh">
+  <header class="ofh__hd">
+    <h1>{{ section.settings.title | escape }}</h1>
+    {%- if section.settings.intro != blank -%}<div class="ofh__intro">{{ section.settings.intro }}</div>{%- endif -%}
+  </header>
+  <div class="ofh__in">
+    {%- liquid
+      assign cards_open = false
+      assign group_open = false
+    -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'card' -%}
+        {%- unless cards_open -%}<nav class="ofh__cards" aria-label="{{ section.settings.cards_label | escape }}">{%- assign cards_open = true -%}{%- endunless -%}
+        <a href="#help-{{ block.settings.target | handleize }}" {{ block.shopify_attributes }}><b>{{ block.settings.title | escape }}</b><span>{{ block.settings.text | escape }}</span></a>
+        {%- continue -%}
+      {%- endif -%}
+      {%- if cards_open -%}</nav>{%- assign cards_open = false -%}{%- endif -%}
+
+      {%- case block.type -%}
+        {%- when 'callout' -%}
+          {%- if group_open -%}</section>{%- assign group_open = false -%}{%- endif -%}
+          <aside class="ofh__callout" {{ block.shopify_attributes }}><b>{{ block.settings.title | escape }}</b><div>{{ block.settings.text }}</div></aside>
+
+        {%- when 'group' -%}
+          {%- if group_open -%}</section>{%- endif -%}
+          <section class="ofh__group" id="help-{{ block.settings.anchor | handleize }}" {{ block.shopify_attributes }}>
+            <h2>{{ block.settings.title | escape }}</h2>
+          {%- assign group_open = true -%}
+
+        {%- when 'qa' -%}
+          <details class="ofh__qa" {{ block.shopify_attributes }}><summary>{{ block.settings.question | escape }}</summary><div>{{ block.settings.answer }}</div></details>
+
+        {%- when 'size_chart' -%}
+          <details class="ofh__qa" {{ block.shopify_attributes }}><summary>{{ block.settings.question | escape }}</summary>
+            <div class="ofh__sizes">
+              {%- for i in (1..3) -%}
+                {%- liquid
+                  assign k_cap = 'cap_' | append: i
+                  assign k_sizes = 'sizes_' | append: i
+                  assign k_w = 'widths_' | append: i
+                  assign k_l = 'lengths_' | append: i
+                  assign cap = block.settings[k_cap]
+                  assign sizes = block.settings[k_sizes] | split: ','
+                  assign widths = block.settings[k_w] | split: ','
+                  assign lengths = block.settings[k_l] | split: ','
+                -%}
+                {%- if sizes.size > 0 -%}
+                  {%- if cap != blank -%}<p class="ofh__cap">{{ cap | escape }}</p>{%- endif -%}
+                  <div class="ofh__scroll"><table>
+                    <thead><tr><th scope="col">{{ block.settings.label_size | escape }}</th>{%- for s in sizes -%}<th scope="col">{{ s | strip | escape }}</th>{%- endfor -%}</tr></thead>
+                    <tbody>
+                      <tr><th scope="row">{{ block.settings.label_width | escape }}</th>{%- for v in widths -%}<td>{{ v | strip | escape }}</td>{%- endfor -%}</tr>
+                      <tr><th scope="row">{{ block.settings.label_length | escape }}</th>{%- for v in lengths -%}<td>{{ v | strip | escape }}</td>{%- endfor -%}</tr>
+                    </tbody>
+                  </table></div>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if block.settings.note != blank -%}<p class="ofh__note">{{ block.settings.note | escape }}</p>{%- endif -%}
+            </div>
+          </details>
+
+        {%- when 'contact' -%}
+          {%- if group_open -%}</section>{%- assign group_open = false -%}{%- endif -%}
+          <aside class="ofh__contact" {{ block.shopify_attributes }}>
+            <h2>{{ block.settings.title | escape }}</h2>
+            <div>{{ block.settings.text | replace: '[email]', support_email }}</div>
+          </aside>
+      {%- endcase -%}
+    {%- endfor -%}
+    {%- if cards_open -%}</nav>{%- endif -%}
+    {%- if group_open -%}</section>{%- endif -%}
+  </div>
+</div>
+
+{%- comment -%} FAQ en datos estructurados para Google {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- assign first = true -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'qa' -%}
+        {%- unless first -%},{%- endunless -%}{%- assign first = false -%}
+        {"@type":"Question","name":{{ block.settings.question | json }},"acceptedAnswer":{"@type":"Answer","text":{{ block.settings.answer | strip_html | json }}}}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+
+{% schema %}
+{
+  "name": "Centro de ayuda",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Título", "default": "Help center" },
+    { "type": "richtext", "id": "intro", "label": "Introducción", "default": "<p>Most answers live right here. If yours isn’t, <a href=\"/pages/contact\">tell us</a> and a real human will sort it out.</p>" },
+    { "type": "text", "id": "cards_label", "label": "Etiqueta accesible de las tarjetas", "default": "Help topics" },
+    { "type": "text", "id": "email", "label": "Email de soporte", "info": "Vacío = email de la tienda. Se inserta donde diga [email] en el bloque de contacto." },
+    { "type": "header", "content": "Colores" },
+    { "type": "color", "id": "ink", "label": "Texto / acento", "default": "#111111" },
+    { "type": "color", "id": "soft", "label": "Fondo suave", "default": "#F1F0EC" },
+    { "type": "color", "id": "line", "label": "Bordes", "default": "#E2E0DA" },
+    { "type": "color", "id": "muted", "label": "Texto secundario", "default": "#555555" }
+  ],
+  "blocks": [
+    {
+      "type": "card", "name": "Tarjeta de tema",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "text", "label": "Texto" },
+        { "type": "text", "id": "target", "label": "Ancla del grupo destino", "info": "Igual al ancla del bloque Grupo (ej. orders)" }
+      ]
+    },
+    {
+      "type": "callout", "name": "Aviso destacado",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "richtext", "id": "text", "label": "Texto" }
+      ]
+    },
+    {
+      "type": "group", "name": "Grupo (abre caja)",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "text", "id": "anchor", "label": "Ancla", "info": "Queda como #help-<ancla>" }
+      ]
+    },
+    {
+      "type": "qa", "name": "Pregunta",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Pregunta" },
+        { "type": "richtext", "id": "answer", "label": "Respuesta" }
+      ]
+    },
+    {
+      "type": "size_chart", "name": "Tablas de talles",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Título desplegable", "default": "Size charts" },
+        { "type": "text", "id": "label_size", "label": "Etiqueta talle", "default": "Size" },
+        { "type": "text", "id": "label_width", "label": "Etiqueta ancho", "default": "Width (in)" },
+        { "type": "text", "id": "label_length", "label": "Etiqueta largo", "default": "Length (in)" },
+        { "type": "header", "content": "Tabla 1" },
+        { "type": "text", "id": "cap_1", "label": "Prenda" },
+        { "type": "text", "id": "sizes_1", "label": "Talles (separados por coma)" },
+        { "type": "text", "id": "widths_1", "label": "Anchos" },
+        { "type": "text", "id": "lengths_1", "label": "Largos" },
+        { "type": "header", "content": "Tabla 2" },
+        { "type": "text", "id": "cap_2", "label": "Prenda" },
+        { "type": "text", "id": "sizes_2", "label": "Talles (separados por coma)" },
+        { "type": "text", "id": "widths_2", "label": "Anchos" },
+        { "type": "text", "id": "lengths_2", "label": "Largos" },
+        { "type": "header", "content": "Tabla 3" },
+        { "type": "text", "id": "cap_3", "label": "Prenda" },
+        { "type": "text", "id": "sizes_3", "label": "Talles (separados por coma)" },
+        { "type": "text", "id": "widths_3", "label": "Anchos" },
+        { "type": "text", "id": "lengths_3", "label": "Largos" },
+        { "type": "text", "id": "note", "label": "Nota al pie" }
+      ]
+    },
+    {
+      "type": "contact", "name": "Contacto final",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Still need a hand?" },
+        { "type": "richtext", "id": "text", "label": "Texto", "info": "[email] se reemplaza por el email de soporte", "default": "<p>Email <a href=\"mailto:[email]\">[email]</a> with your order number, or use our <a href=\"/pages/contact\">contact form</a>.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Centro de ayuda" }]
+}
+{% endschema %}

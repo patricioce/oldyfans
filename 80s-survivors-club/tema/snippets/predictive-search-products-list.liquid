@@ -1,0 +1,195 @@
+{%- doc -%}
+  Renders the predictive search products list for empty state and recently viewed products
+
+  @param {string} title - title of the result list
+  @param {object[]} products - array of products
+  @param {string[]} [order_ids] - array of product ids
+  @param {number} [limit] - limit of products to display
+  @param {string} [products_test_id] - a playwright test id, used to differentiate empty state from 'real' search results
+{%- enddoc -%}
+{%- liquid
+  assign recently_viewed_title_text = 'content.recently_viewed_products' | t
+-%}
+<div
+  id="predictive-search-products"
+  class="predictive-search-results__products"
+  {% if products_test_id %}
+    data-testid="{{ products_test_id }}"
+  {% endif %}
+>
+  {% if title == recently_viewed_title_text %}
+    <div
+      class="recently-viewed-wrapper"
+      ref="recentlyViewedWrapper"
+    >
+      <h4
+        class="predictive-search-results__title"
+        ref="recentlyViewedTitle[]"
+      >
+        {{ title }}
+        <button
+          class="predictive-search-results__clear button button-unstyled"
+          type="button"
+          on:click="/clearRecentlyViewedProducts"
+        >
+          {{ 'actions.clear' | t }}
+        </button>
+      </h4>
+      <ul
+        class="predictive-search-results__list predictive-search-results__wrapper-products list-unstyled"
+      >
+        {% liquid
+          assign limit = limit | default: 8
+        %}
+        {% comment %}
+          If we're searching for recently viewed products by id, we need to reorder the products.
+          The order here comes from the search terms, and we display the products in the order of the ids.
+        {% endcomment %}
+        {% if order_ids != blank %}
+          {% for _id in order_ids %}
+            {% assign int_id = _id | times: 1 %}
+            {% assign product = products | find: 'id', int_id %}
+            {%- comment -%}BMP-HOOK-START:search-missing-recent{%- endcomment -%}
+            {%- comment -%}
+              A recently-viewed id can miss: the product may since have been
+              unpublished or deleted, and `find` then yields nil. The card snippet
+              already guards and emits nothing, but assets/predictive-search.js
+              collects `.predictive-search-results__card` unconditionally, so the
+              bare native <li> below would stay an arrow-key stop that renders
+              nothing and does nothing on Enter. Skip the row entirely instead.
+            {%- endcomment -%}
+            {%- if product != blank -%}
+            {%- comment -%}BMP-HOOK-END:search-missing-recent{%- endcomment -%}
+            <li
+              class="predictive-search-results__card predictive-search-results__card--product"
+              ref="recentlyViewedItems[]"
+            >
+              {%- comment -%}BMP-HOOK-START:search-global-card{%- endcomment -%}
+              {%- comment -%}
+              Global card. snippets/resource-card.liquid reads exactly one theme
+              setting and hardcodes both a cross-fade hover and a 4 / 5 media ratio, so
+              the popup ignored every global product card setting. Suppressed rather
+              than deleted, per the wrap-never-delete rule; the native bytes below are
+              byte-identical to the pinned Horizon base and must be re-applied after a
+              bump. The replacement snippet's first child must stay the
+              `a.product-card__link`, which assets/predictive-search.js activates with
+              querySelector('a').click() on Enter.
+                          {%- endcomment -%}
+              {% if false %}
+              {%- comment -%}BMP-HOOK-END:search-global-card{%- endcomment -%}
+              {% render 'resource-card',
+                resource_type: 'product',
+                resource: product,
+                image_width: 500,
+                image_hover: true,
+                image_aspect_ratio: '4 / 5',
+                product_view_context: 'search'
+              %}
+              {%- comment -%}BMP-HOOK-START:search-global-card-close{%- endcomment -%}
+              {% endif %}
+              {% render 'bmp-global-product-card',
+                product: product,
+                image_sizes: '(min-width: 850px) 17vw, (min-width: 750px) 33vw, 45vw',
+                loading: 'lazy',
+                product_view_context: 'search',
+                id_prefix: 'ps-recent-'
+              %}
+              {%- comment -%}BMP-HOOK-END:search-global-card-close{%- endcomment -%}
+            </li>
+            {%- comment -%}BMP-HOOK-START:search-missing-recent-close{%- endcomment -%}
+            {%- endif -%}
+            {%- comment -%}BMP-HOOK-END:search-missing-recent-close{%- endcomment -%}
+          {% endfor %}
+        {% else %}
+          {% for product in products limit: limit %}
+            <li
+              class="predictive-search-results__card predictive-search-results__card--product"
+              ref="recentlyViewedItems[]"
+            >
+              {%- comment -%}BMP-HOOK-START:search-global-card{%- endcomment -%}
+              {%- comment -%}
+              Global card. snippets/resource-card.liquid reads exactly one theme
+              setting and hardcodes both a cross-fade hover and a 4 / 5 media ratio, so
+              the popup ignored every global product card setting. Suppressed rather
+              than deleted, per the wrap-never-delete rule; the native bytes below are
+              byte-identical to the pinned Horizon base and must be re-applied after a
+              bump. The replacement snippet's first child must stay the
+              `a.product-card__link`, which assets/predictive-search.js activates with
+              querySelector('a').click() on Enter.
+                          {%- endcomment -%}
+              {% if false %}
+              {%- comment -%}BMP-HOOK-END:search-global-card{%- endcomment -%}
+              {% render 'resource-card',
+                resource_type: 'product',
+                resource: product,
+                image_width: 500,
+                image_hover: true,
+                image_aspect_ratio: '4 / 5',
+                product_view_context: 'search'
+              %}
+              {%- comment -%}BMP-HOOK-START:search-global-card-close{%- endcomment -%}
+              {% endif %}
+              {% render 'bmp-global-product-card',
+                product: product,
+                image_sizes: '(min-width: 850px) 17vw, (min-width: 750px) 33vw, 45vw',
+                loading: 'lazy',
+                product_view_context: 'search',
+                id_prefix: 'ps-recent-'
+              %}
+              {%- comment -%}BMP-HOOK-END:search-global-card-close{%- endcomment -%}
+            </li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+  {% else %}
+    <h4 class="predictive-search-results__title">
+      {{ title }}
+    </h4>
+    <ul
+      class="predictive-search-results__list predictive-search-results__wrapper-products list-unstyled"
+    >
+      {% liquid
+        assign limit = limit | default: 8
+      %}
+      {% for product in products limit: limit %}
+        <li
+          class="predictive-search-results__card predictive-search-results__card--product"
+          ref="resultsItems[]"
+        >
+          {%- comment -%}BMP-HOOK-START:search-global-card{%- endcomment -%}
+          {%- comment -%}
+          Global card. snippets/resource-card.liquid reads exactly one theme
+          setting and hardcodes both a cross-fade hover and a 4 / 5 media ratio, so
+          the popup ignored every global product card setting. Suppressed rather
+          than deleted, per the wrap-never-delete rule; the native bytes below are
+          byte-identical to the pinned Horizon base and must be re-applied after a
+          bump. The replacement snippet's first child must stay the
+          `a.product-card__link`, which assets/predictive-search.js activates with
+          querySelector('a').click() on Enter.
+                      {%- endcomment -%}
+          {% if false %}
+          {%- comment -%}BMP-HOOK-END:search-global-card{%- endcomment -%}
+          {% render 'resource-card',
+            resource_type: 'product',
+            resource: product,
+            image_width: 500,
+            image_hover: true,
+            image_aspect_ratio: '4 / 5',
+            product_view_context: 'search'
+          %}
+          {%- comment -%}BMP-HOOK-START:search-global-card-close{%- endcomment -%}
+          {% endif %}
+          {% render 'bmp-global-product-card',
+            product: product,
+            image_sizes: '(min-width: 850px) 17vw, (min-width: 750px) 33vw, 45vw',
+            loading: 'lazy',
+            product_view_context: 'search',
+            id_prefix: 'ps-results-'
+          %}
+          {%- comment -%}BMP-HOOK-END:search-global-card-close{%- endcomment -%}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>

@@ -1,0 +1,334 @@
+{%- doc -%}
+  Emits the global product-card style layer for the "BMP: Product cards"
+  theme-settings panel (Plans 1+2: Card wrapper, Media, Title, Price, Swatches). Rendered once per page inside
+  a <style> tag by snippets/bmp-globals.liquid, AFTER the bmp-styles.css link.
+
+  Two kinds of output, matching the property classes documented in the
+  "GLOBAL CARD STYLE" section of assets/bmp-styles.css:
+
+  1. :root tokens (--bmp-cardg-*) — consumed by the STATIC LAYOUT rules
+     in bmp-styles.css (width / align / align-flex, always emitted;
+     background and radius ONLY inside the background guard; the four
+     paddings of each group ONLY inside that group's *_pad_enable guard
+     since 2026-08-17 — every guarded consumer carries a var() fallback,
+     0px for the paddings).
+
+  2. Token-gated RULES for font / size / line-height / letter-spacing /
+     color / case / weight — properties whose baseline comes from
+     per-instance preset classes (.paragraph, .h6, ...). No static
+     fallback can reproduce a preset value, and an `inherit` fallback
+     stomps preset rules on the element and .compare-at-price /
+     .unit-price on descendants (caught in code review).
+     So the rule is only emitted when the merchant set the global: at
+     "Default" the rule does not exist and the render is untouched by
+     construction.
+
+     Each rule targets the element AND its direct child (`> *`), never
+     ` *`. The child half is load-bearing (2026-08-14 review, thread 11):
+     Horizon declares these very properties on the direct child for every
+     preset except `rte` — `.paragraph > *` (base.css:669),
+     `.text-block.h6 > *` (:810), `.custom-typography > *` (:1396),
+     `.custom-font-size > *` (:1422) — and a child that declares a
+     property never inherits the parent's. Without the child selector all
+     SIX activated price blocks (3 `h6` + 3 `paragraph`) and three of the
+     six title blocks (2 `paragraph` + 1 `custom`) ignored every
+     typography global; only the three `rte` titles worked, which is the
+     preset the original verification happened to test. (Counts are for
+     the tree AFTER the cart pair was de-activated earlier in this same
+     round; they read 7 and 4-of-7 before that.)
+     Stopping at `> *` is equally load-bearing: .compare-at-price and
+     .unit-price live two levels down, inside `<div ref=priceContainer>`,
+     and must keep inheriting exactly as they do for block-level settings.
+     A descendant ` *` would flatten them — the regression an earlier
+     review round already caught.
+     <product-price> has FOUR direct children, and `> *` reaches all of
+     them (snippets/price.liquid:84 priceContainer, :135
+     <small class="volume-pricing-note">; blocks/price.liquid:75 .tax-note,
+     :91 .installments). Per element, what protects it:
+       - priceContainer  — nothing; it is the intended target.
+       - .tax-note       — `.tax-note.tax-note.tax-note` (0,3,0),
+                           base.css:1313. Beats (0,2,1) for the three
+                           properties it declares (font-size, font-weight,
+                           color); the global still governs the rest.
+       - .installments   — nothing; it follows the global. Intended.
+       - .volume-pricing-note — `product-price .volume-pricing-note` is only
+                           (0,1,1) (base.css:1327) and LOSES to (0,2,1), so
+                           it is excluded by name below. Its h1-h6 sibling
+                           rule is (0,3,1) and would have saved it, but only
+                           on heading presets; three of the six activated
+                           price blocks are `paragraph`. Caught in the
+                           2026-08-14 audit of this very round — the earlier
+                           version of this comment called the note "deeper",
+                           which is what let it through.
+     The PRICE selectors repeat the class on purpose.
+     `product-price.bmp-card-global-price > *` is (0,1,1) and LOSES to
+     `.text-block.h6 > *` (0,2,0). The ELEMENT half reaches (0,2,1) by
+     doubling the class — <product-price> carries the preset class itself,
+     so `.h6.h6` (0,2,0) and `.paragraph:not(.button)` (0,2,0) match it
+     directly. The CHILD half gets there a different way, via the
+     `:not(.volume-pricing-note)` carve-out: 1 type + 1 class + the
+     :not() argument's class is also (0,2,1). Doubling the class AND
+     keeping the :not() would be (0,3,1), which would newly beat
+     `.tax-note.tax-note.tax-note` (0,3,0) and break the tax note instead.
+
+     Case and weight joined class 2 on 2026-08-14. They used to be static
+     rules whose var() fallback chained onto the always-on --bmp-card-*
+     tokens; those are declared at bare :root while every always-on
+     consumer is .product-card-scoped, so the fallback imported the card
+     look into any block toggled ON outside a card. A8 now forbids them in
+     the static section and A14 forbids that fallback on any unscoped
+     global selector.
+
+  These are GLOBAL settings (one state per page) — this is the layer's sanctioned
+  token-gated global-rules exception, not the forbidden
+  per-instance style block.
+  Naming: --bmp-cardg-*, NOT --bmp-card-* — those older hardcoded tokens
+  drive always-on rules and must not become settings-driven.
+{%- enddoc -%}
+{%- liquid
+  echo ':root{'
+  echo '--bmp-cardg-title-width:' | append: settings.bmp_card_title_width | append: ';'
+  echo '--bmp-cardg-title-align:' | append: settings.bmp_card_title_align | append: ';'
+  comment
+    Second, flex-valued form of the same setting. text_alignment yields
+    left/center/right; align-self / align-items need flex-start/center/flex-end.
+    Both forms are consumed: the text form by the child rule (text-align), the
+    flex form by the box rule (align-self, which places the whole block in the
+    card column). Overriding Horizon's own --horizontal-alignment instead would
+    NOT work: snippets/text.liquid derives --text-align-default from
+    [style*='--horizontal-alignment: ...'], an attribute-substring match on an
+    ancestor's INLINE style that no stylesheet rule can satisfy.
+  endcomment
+  assign bmp_title_align_flex = 'flex-start'
+  if settings.bmp_card_title_align == 'center'
+    assign bmp_title_align_flex = 'center'
+  elsif settings.bmp_card_title_align == 'right'
+    assign bmp_title_align_flex = 'flex-end'
+  endif
+  echo '--bmp-cardg-title-align-flex:' | append: bmp_title_align_flex | append: ';'
+  comment
+    max-width. `none` is deliberately emitted as the literal 100% rather than a
+    --max-width--body-none token: no such token exists, and stock relies on the
+    var() going invalid so text.liquid's own `min(100%, var(--max-width, 100%))`
+    falls back to 100%. Pinned to the `body` family on purpose — text.liquid
+    picks body/heading/display from the per-block font_size (:16-24), which a
+    global cannot see. The pin is EXACT for the body and heading families at
+    `normal` (both 32.5em); it differs at heading-`narrow` (19.5em vs body's
+    22.75em) and differs a lot for the DISPLAY family (13em / 9.75em,
+    theme-styles-variables.liquid:203-204), which a block reaches by storing a
+    local font_size >= 3rem. All six shipped activations store font_size 1rem,
+    so every one is body today and the pin is exact; a display-family card
+    title would have its measure widened to 32.5em. Recorded rather than
+    worked around — a global genuinely cannot see the per-block size.
+  endcomment
+  assign bmp_title_max_width = 'var(--max-width--body-normal)'
+  if settings.bmp_card_title_max_width == 'narrow'
+    assign bmp_title_max_width = 'var(--max-width--body-narrow)'
+  elsif settings.bmp_card_title_max_width == 'none'
+    assign bmp_title_max_width = '100%'
+  endif
+  echo '--bmp-cardg-title-max-width:' | append: bmp_title_max_width | append: ';'
+  if settings.bmp_card_title_font != blank
+    echo '--bmp-cardg-title-font:' | append: settings.bmp_card_title_font | append: ';'
+  endif
+  if settings.bmp_card_title_size != blank
+    echo '--bmp-cardg-title-size:' | append: settings.bmp_card_title_size | append: ';'
+  endif
+  if settings.bmp_card_title_size_mobile != blank
+    echo '--bmp-cardg-title-size-mobile:' | append: settings.bmp_card_title_size_mobile | append: ';'
+  endif
+  if settings.bmp_card_title_weight != blank
+    echo '--bmp-cardg-title-weight:' | append: settings.bmp_card_title_weight | append: ';'
+  endif
+  if settings.bmp_card_title_line_height != blank
+    echo '--bmp-cardg-title-line-height:var(--line-height--body-' | append: settings.bmp_card_title_line_height | append: ');'
+  endif
+  if settings.bmp_card_title_letter_spacing != blank
+    echo '--bmp-cardg-title-letter-spacing:var(--letter-spacing--body-' | append: settings.bmp_card_title_letter_spacing | append: ');'
+  endif
+  if settings.bmp_card_title_case != blank
+    echo '--bmp-cardg-title-case:' | append: settings.bmp_card_title_case | append: ';'
+  endif
+  if settings.bmp_card_title_color != blank
+    echo '--bmp-cardg-title-color:' | append: settings.bmp_card_title_color | append: ';'
+  endif
+  if settings.bmp_card_title_background and settings.bmp_card_title_background_color != blank
+    echo '--bmp-cardg-title-bg:' | append: settings.bmp_card_title_background_color | append: ';'
+    echo '--bmp-cardg-title-radius:' | append: settings.bmp_card_title_corner_radius | append: 'px;'
+  endif
+  if settings.bmp_card_title_pad_enable
+    echo '--bmp-cardg-title-pad-top:' | append: settings.bmp_card_title_pad_top | append: 'px;'
+    echo '--bmp-cardg-title-pad-bottom:' | append: settings.bmp_card_title_pad_bottom | append: 'px;'
+    echo '--bmp-cardg-title-pad-left:' | append: settings.bmp_card_title_pad_left | append: 'px;'
+    echo '--bmp-cardg-title-pad-right:' | append: settings.bmp_card_title_pad_right | append: 'px;'
+  endif
+  echo '--bmp-cardg-price-width:' | append: settings.bmp_card_price_width | append: ';'
+  echo '--bmp-cardg-price-align:' | append: settings.bmp_card_price_align | append: ';'
+  assign bmp_price_align_flex = 'flex-start'
+  if settings.bmp_card_price_align == 'center'
+    assign bmp_price_align_flex = 'center'
+  elsif settings.bmp_card_price_align == 'right'
+    assign bmp_price_align_flex = 'flex-end'
+  endif
+  echo '--bmp-cardg-price-align-flex:' | append: bmp_price_align_flex | append: ';'
+  if settings.bmp_card_price_font != blank
+    echo '--bmp-cardg-price-font:' | append: settings.bmp_card_price_font | append: ';'
+  endif
+  if settings.bmp_card_price_size != blank
+    echo '--bmp-cardg-price-size:' | append: settings.bmp_card_price_size | append: ';'
+  endif
+  if settings.bmp_card_price_weight != blank
+    echo '--bmp-cardg-price-weight:' | append: settings.bmp_card_price_weight | append: ';'
+  endif
+  if settings.bmp_card_price_line_height != blank
+    echo '--bmp-cardg-price-line-height:var(--line-height--body-' | append: settings.bmp_card_price_line_height | append: ');'
+  endif
+  if settings.bmp_card_price_letter_spacing != blank
+    echo '--bmp-cardg-price-letter-spacing:var(--letter-spacing--body-' | append: settings.bmp_card_price_letter_spacing | append: ');'
+  endif
+  if settings.bmp_card_price_case != blank
+    echo '--bmp-cardg-price-case:' | append: settings.bmp_card_price_case | append: ';'
+  endif
+  if settings.bmp_card_price_color != blank
+    echo '--bmp-cardg-price-color:' | append: settings.bmp_card_price_color | append: ';'
+  endif
+  if settings.bmp_card_price_pad_enable
+    echo '--bmp-cardg-price-pad-top:' | append: settings.bmp_card_price_pad_top | append: 'px;'
+    echo '--bmp-cardg-price-pad-bottom:' | append: settings.bmp_card_price_pad_bottom | append: 'px;'
+    echo '--bmp-cardg-price-pad-left:' | append: settings.bmp_card_price_pad_left | append: 'px;'
+    echo '--bmp-cardg-price-pad-right:' | append: settings.bmp_card_price_pad_right | append: 'px;'
+  endif
+  echo '--bmp-cardg-card-gap:' | append: settings.bmp_card_gap | append: 'px;'
+  if settings.bmp_card_background_color != blank
+    echo '--bmp-cardg-card-bg:' | append: settings.bmp_card_background_color | append: ';'
+  endif
+  echo '--bmp-cardg-card-border-style:' | append: settings.bmp_card_border | append: ';'
+  echo '--bmp-cardg-card-border-width:' | append: settings.bmp_card_border_width | append: 'px;'
+  assign bmp_card_border_alpha = settings.bmp_card_border_opacity | divided_by: 100.0
+  echo '--bmp-cardg-card-border-opacity:' | append: bmp_card_border_alpha | append: ';'
+  if settings.bmp_card_border_color != blank
+    echo '--bmp-cardg-card-border-color:' | append: settings.bmp_card_border_color | append: ';'
+  endif
+  echo '--bmp-cardg-card-border-radius:' | append: settings.bmp_card_border_radius | append: 'px;'
+  if settings.bmp_card_pad_enable
+    echo '--bmp-cardg-card-pad-top:' | append: settings.bmp_card_pad_top | append: 'px;'
+    echo '--bmp-cardg-card-pad-bottom:' | append: settings.bmp_card_pad_bottom | append: 'px;'
+    echo '--bmp-cardg-card-pad-left:' | append: settings.bmp_card_pad_left | append: 'px;'
+    echo '--bmp-cardg-card-pad-right:' | append: settings.bmp_card_pad_right | append: 'px;'
+  endif
+  echo '--bmp-cardg-media-border-style:' | append: settings.bmp_card_media_border | append: ';'
+  echo '--bmp-cardg-media-border-width:' | append: settings.bmp_card_media_border_width | append: 'px;'
+  assign bmp_media_border_alpha = settings.bmp_card_media_border_opacity | divided_by: 100.0
+  echo '--bmp-cardg-media-border-opacity:' | append: bmp_media_border_alpha | append: ';'
+  if settings.bmp_card_media_border_color != blank
+    echo '--bmp-cardg-media-border-color:' | append: settings.bmp_card_media_border_color | append: ';'
+  endif
+  echo '--bmp-cardg-media-border-radius:' | append: settings.bmp_card_media_border_radius | append: 'px;'
+  if settings.bmp_card_media_pad_enable
+    echo '--bmp-cardg-media-pad-top:' | append: settings.bmp_card_media_pad_top | append: 'px;'
+    echo '--bmp-cardg-media-pad-bottom:' | append: settings.bmp_card_media_pad_bottom | append: 'px;'
+    echo '--bmp-cardg-media-pad-left:' | append: settings.bmp_card_media_pad_left | append: 'px;'
+    echo '--bmp-cardg-media-pad-right:' | append: settings.bmp_card_media_pad_right | append: 'px;'
+  endif
+  echo '--bmp-cardg-sw-align:' | append: settings.bmp_card_swatches_align | append: ';'
+  echo '--bmp-cardg-sw-align-mobile:' | append: settings.bmp_card_swatches_align_mobile | append: ';'
+  assign bmp_sw_align_logical = 'center'
+  if settings.bmp_card_swatches_align == 'flex-start'
+    assign bmp_sw_align_logical = 'start'
+  elsif settings.bmp_card_swatches_align == 'flex-end'
+    assign bmp_sw_align_logical = 'end'
+  endif
+  echo '--bmp-cardg-sw-align-logical:' | append: bmp_sw_align_logical | append: ';'
+  assign bmp_sw_align_logical_mobile = 'center'
+  if settings.bmp_card_swatches_align_mobile == 'flex-start'
+    assign bmp_sw_align_logical_mobile = 'start'
+  elsif settings.bmp_card_swatches_align_mobile == 'flex-end'
+    assign bmp_sw_align_logical_mobile = 'end'
+  endif
+  echo '--bmp-cardg-sw-align-logical-mobile:' | append: bmp_sw_align_logical_mobile | append: ';'
+  if settings.bmp_card_swatches_pad_enable
+    echo '--bmp-cardg-sw-pad-top:' | append: settings.bmp_card_swatches_pad_top | append: 'px;'
+    echo '--bmp-cardg-sw-pad-bottom:' | append: settings.bmp_card_swatches_pad_bottom | append: 'px;'
+    echo '--bmp-cardg-sw-pad-left:' | append: settings.bmp_card_swatches_pad_left | append: 'px;'
+    echo '--bmp-cardg-sw-pad-right:' | append: settings.bmp_card_swatches_pad_right | append: 'px;'
+  endif
+  echo '}'
+  comment
+    Case and weight are token-gated too, since 2026-08-14. They used to be
+    static rules carrying a var() fallback onto the always-on card baseline
+    (--bmp-card-title-transform / --bmp-card-title-weight /
+    --bmp-card-price-weight). Those baseline tokens are declared at bare :root
+    while every rule that consumes them is scoped under .product-card — but
+    these global selectors are NOT, by design decision 6 (an ON toggle acts
+    wherever the block renders). So a block toggled ON outside a card took
+    uppercase/600 with every global still at "Default". Gating removes the
+    fallback entirely: at "Default" no rule exists and nothing is imposed
+    anywhere, while inside a card the always-on baseline still applies.
+    Rank: (0,2,1) title / (0,1,1) price — exact ties with the always-on rules
+    they must beat, won by SOURCE ORDER. That is load-bearing:
+    snippets/bmp-globals.liquid renders this snippet after the bmp-styles.css
+    link. Do not move the render earlier.
+  endcomment
+  if settings.bmp_card_title_case != blank
+    echo 'div.bmp-card-global-title .text-block,div.bmp-card-global-title .text-block > *{text-transform:var(--bmp-cardg-title-case);}'
+  endif
+  if settings.bmp_card_title_weight != blank
+    echo 'div.bmp-card-global-title .text-block,div.bmp-card-global-title .text-block > *{font-weight:var(--bmp-cardg-title-weight);}'
+  endif
+  comment
+    Price weight uses a DESCENDANT ` *`, not `> *`, unlike every other price
+    rule here. It has to match the always-on baseline it overrides —
+    `.product-card product-price *` — which reaches `.price` inside the
+    priceContainer, two levels down. A `> *` form would leave the visible price
+    at the baseline weight. Weight is the only property where this is correct:
+    the baseline applies it that broadly too, so nothing is being flattened that
+    was not already flat.
+  endcomment
+  if settings.bmp_card_price_weight != blank
+    echo 'product-price.bmp-card-global-price.bmp-card-global-price,product-price.bmp-card-global-price.bmp-card-global-price *{font-weight:var(--bmp-cardg-price-weight);}'
+  endif
+  if settings.bmp_card_title_font != blank
+    echo 'div.bmp-card-global-title .text-block,div.bmp-card-global-title .text-block > *{font-family:var(--bmp-cardg-title-font);}'
+  endif
+  if settings.bmp_card_title_size != blank
+    echo 'div.bmp-card-global-title .text-block,div.bmp-card-global-title .text-block > *{font-size:var(--bmp-cardg-title-size);}'
+  endif
+  comment
+    Per-device title size. The mobile rule is ADDITIVE and
+    media-wrapped: at a blank mobile setting no rule exists and the unscoped
+    desktop rule above governs every width — fallback-to-desktop by
+    construction, the same shape as the hero adapt ratio. Same
+    (0,2,1) selector, echoed AFTER the desktop rule, so below 750px it wins
+    the tie by source order inside this very style element.
+  endcomment
+  if settings.bmp_card_title_size_mobile != blank
+    echo '@media screen and (max-width: 749px){div.bmp-card-global-title .text-block,div.bmp-card-global-title .text-block > *{font-size:var(--bmp-cardg-title-size-mobile);}}'
+  endif
+  if settings.bmp_card_title_line_height != blank
+    echo 'div.bmp-card-global-title .text-block,div.bmp-card-global-title .text-block > *{line-height:var(--bmp-cardg-title-line-height);}'
+  endif
+  if settings.bmp_card_title_letter_spacing != blank
+    echo 'div.bmp-card-global-title .text-block,div.bmp-card-global-title .text-block > *{letter-spacing:var(--bmp-cardg-title-letter-spacing);}'
+  endif
+  if settings.bmp_card_title_color != blank
+    echo 'div.bmp-card-global-title .text-block,div.bmp-card-global-title .text-block > *{color:var(--bmp-cardg-title-color);}'
+  endif
+  if settings.bmp_card_price_font != blank
+    echo 'product-price.bmp-card-global-price.bmp-card-global-price,product-price.bmp-card-global-price > *:not(.volume-pricing-note){font-family:var(--bmp-cardg-price-font);}'
+  endif
+  if settings.bmp_card_price_size != blank
+    echo 'product-price.bmp-card-global-price.bmp-card-global-price,product-price.bmp-card-global-price > *:not(.volume-pricing-note){font-size:var(--bmp-cardg-price-size);}'
+  endif
+  if settings.bmp_card_price_line_height != blank
+    echo 'product-price.bmp-card-global-price.bmp-card-global-price,product-price.bmp-card-global-price > *:not(.volume-pricing-note){line-height:var(--bmp-cardg-price-line-height);}'
+  endif
+  if settings.bmp_card_price_letter_spacing != blank
+    echo 'product-price.bmp-card-global-price.bmp-card-global-price,product-price.bmp-card-global-price > *:not(.volume-pricing-note){letter-spacing:var(--bmp-cardg-price-letter-spacing);}'
+  endif
+  if settings.bmp_card_price_color != blank
+    echo 'product-price.bmp-card-global-price.bmp-card-global-price,product-price.bmp-card-global-price > *:not(.volume-pricing-note){color:var(--bmp-cardg-price-color);}'
+  endif
+  if settings.bmp_card_price_case != blank
+    echo 'product-price.bmp-card-global-price.bmp-card-global-price,product-price.bmp-card-global-price > *:not(.volume-pricing-note){text-transform:var(--bmp-cardg-price-case);}'
+  endif
+-%}

@@ -1,0 +1,1029 @@
+{%- comment -%}
+  BMP-MANIFEST (never rendered — grep-able contract for humans and tooling)
+
+  bmp_version: 2.0.0 (config/settings_schema.json theme_info: BuildMyPOD 2.0.0)
+  horizon_base: 4.1.4
+
+  This file is one whole-file Liquid comment and renders NOTHING. It is
+  rendered from snippets/bmp-globals.liquid purely so theme check's
+  OrphanedSnippet stays quiet — only inert whitespace lands in the output.
+  Because the repo's docs and markdown files are shopify-ignored,
+  this manifest is the only contract artifact that travels with the deployed
+  theme. Register of record: the repo's internal upstream-diff register (not
+  shipped) — one row per modified
+  core file; this index mirrors its hook-name column. Keep the two in sync.
+
+  hooks (every core .liquid file BMP touches, by hook name; names bind to the
+  greppable BMP-HOOK markers — adding one requires a register row):
+    - layout/theme.liquid#globals              [renders bmp-globals —
+        LOAD-BEARING: the whole BMP layer (bmp-styles.css with the visual-
+        parity rules, the aria shim, the manifest) loads only because of
+        this render line; losing it in an upstream merge fails silently;
+        tools/visual-regression.mjs exists to catch exactly that]
+    - layout/theme.liquid#body                 [renders bmp-body — the empty
+        end-of-body widget slot]
+    - layout/theme.liquid#platform-body + #platform-layout    [body class
+        buildmypodai-theme + data-buildmypodai-layout="theme"; frozen API]
+    - layout/password.liquid#platform-body + #platform-layout [body class
+        buildmypodai-theme + data-buildmypodai-layout="password"; frozen API]
+    - snippets/cart-drawer.liquid#cart-drawer-progress  [renders
+        bmp-free-shipping-bar at the top of the drawer content, inside the
+        cart-items-component subtree so cart morphs re-render it]
+    - snippets/cart-drawer.liquid#cart-drawer-announcements [renders
+        bmp-cart-announcements at the bottom of the cart drawer]
+    - snippets/cart-drawer.liquid#cart-drawer-script [script_only
+        render next to the cart-drawer.js loader — kept OUTSIDE the morphed
+        subtree because section-rendering morphs never re-execute scripts]
+    - snippets/variant-main-picker.liquid#pdp-option-value [option legends show
+        colon + selected value for every option style ("Size: M"); the legend
+        also renders bmp-size-guide-trigger — the in-row size-guide link]
+    - snippets/variant-main-picker.liquid#size-required-unselected [the
+        RENDER half of forced size selection. Gated on the
+        bmp_size_required checkbox (default ON) AND the option name matching
+        bmp_size_guide_option (default 'Size') AND the option having MORE THAN
+        ONE value: the size option renders with no checked radio
+        (data-current-checked="false" kept — core reads that attribute) and, in
+        dropdown style, a value="" selected disabled placeholder. Marks the
+        gated fieldset data-bmp-size-fieldset="true" for the module's focus and
+        outline target. Native pre-selection lines are WRAPPED, never deleted.
+        The values.size > 1 condition is load-bearing: a single-value size
+        option offers nothing to choose, so gating it would leave Layer 2's
+        `disabled` on the hidden input forever. No `required` on the <select>
+        on purpose — it would fail form.checkValidity() and show the browser's
+        native validation bubble instead of the designed presentation, which is
+        how v1.1.5's own guard was bypassed. Gate:
+        scripts/check-size-required.mjs]
+    - snippets/variant-main-picker.liquid#swatch-name-fallback [marks configured
+        Color/Colour options swatch-capable without native linked swatch data and
+        passes option/value names to the shared renderer]
+    - snippets/swatch.liquid#swatch-name-fallback [override-mode probe ranked
+        between native swatch.image and swatch.color, then the final
+        full-map fallback after every native branch; resolves validated
+        backgrounds through bmp-swatch-color-map and preserves
+        swatch--unavailable when blank]
+    - snippets/variant-swatches.liquid#swatch-name-fallback [product-card option
+        eligibility plus option/value arguments for the shared renderer]
+    - blocks/swatches.liquid#swatch-name-fallback [prevents the product-card
+        swatches block self-hiding when only name-based fallback data exists]
+    - snippets/quick-add.liquid#swatch-name-fallback [keeps single-option card
+        Add-vs-Choose behavior aligned with fallback swatch eligibility]
+    - blocks/buy-buttons.liquid#size-required-gate + #size-required-layer2
+        [captures bmp-size-required-state into
+        bmp_size_state (''/open/closed); marks <product-form-component> with
+        data-bmp-size-required + data-bmp-size-satisfied, carries the
+        data-bmp-size-option / pipe-joined data-bmp-size-values payload the
+        module matches app-rendered controls against (moved here from the
+        retired message element), and feeds the prompt string into the
+        cascade as --bmp-size-required-prompt (core
+        add-to-cart-button.liquid:50 emits its label as a bare TEXT NODE, so
+        CSS content: fed by an inheriting property is the only label swap that
+        touches no further core file and rewrites no textContent — the
+        cta-prompt in bmp-styles.css consumes it on a refused interaction —
+        data-bmp-size-missing, per the coach decision of 2026-08-18, with the
+        shake replayed per blocked click); and stamps `disabled` on the hidden input[name="id"]
+        while the gate is shut - Layer 2, the no-JS floor, so a blocked or
+        broken script yields NO line item rather than a wrong one. Gate:
+        scripts/check-size-required.mjs]
+    - blocks/accelerated-checkout.liquid#size-required-express [extends
+        the native `unless can_add_to_cart` hidden condition to the
+        forced-size gate. The block renders Shopify's own form_obj |
+        payment_button, which posts through Shopify's script and not through
+        handleSubmit, so Layer 1 cannot intercept it - hiding is the only
+        reliable control (D1). The added branch is guarded by
+        `can_add_to_cart and ...` so a variant that is both sold out and
+        unchosen never emits `hidden` twice on one element. Gate:
+        scripts/check-size-required.mjs]
+    - sections/header.liquid#org-sameas [renders bmp-org-sameas inside the core
+        Organization JSON-LD object, immediately before the native "url" key;
+        injects a "sameAs" array built from settings.bmp_seo_social_profiles
+        (one absolute URL per line); emits nothing when unset, so the core
+        object stays byte-equivalent to stock. Phase-6 opt-in, approved
+        2026-08-03]
+    - snippets/section.liquid#device-visibility [binds bmp_device_visibility to
+        the bmp-hide-on-mobile/desktop classes; this core file carries zero
+        CSS — the utility rules live in the overrides layer]
+    - blocks/filters.liquid#facets-bar-labels    [gated on bmp_show_bar_labels,
+        default off: "Filter:" bar label, "N products" count copy (desktop +
+        mobile), mobile "Filter and sort" toggle copy, passes bmp_bar_labels
+        to the desktop sorting render]
+    - blocks/_slide.liquid#hero-mobile-image     [gated on bmp_image_1_mobile
+        (additive schema entry, BMP-SCHEMA:hero-mobile-image): renders the
+        desktop crop with hidden--mobile and the mobile crop with
+        hidden--desktop at the native 750px breakpoint; unset = stock render]
+    - snippets/sorting.liquid#facets-bar-labels  [optional bmp_bar_labels param:
+        "Sort by:" summary label + selected value visible on desktop]
+    - snippets/header-drawer.liquid#brand-menu-icon [open-state icon swap to
+        bmp-icon-menu.svg — the brand three-line hamburger; the artwork lives
+        in its own bmp- asset so upstream can never silently overwrite it]
+    - snippets/card-gallery.liquid#product-labels
+    - snippets/product-media-gallery-content.liquid#pdp-gallery-arrows
+        [with bottom-thumbnail pagination, slide arrows render inside the
+        controls row instead of overlaying the main image]
+    - snippets/product-media-gallery-content.liquid#perf-gallery-lazy [the four
+        media render sites pass lazy loading for non-first gallery media]
+    - snippets/product-media-gallery-content.liquid#product-labels [first
+        child of the <media-gallery> wrapper, so the overlay covers both the
+        grid and carousel presentations it renders]
+    - snippets/product-media-gallery-content.liquid#gallery-variant-scope
+        [gated on bmp_scope_media_to_variant (additive schema entry,
+        BMP-SCHEMA:gallery-variant-scope on blocks/_product-media-gallery
+        .liquid), default off = stock: rebuilds sorted_media as the selected
+        variant's MEDIA GROUP — its attached image plus every following
+        unassigned image, to the next variant-attached one — with non-image
+        media appended after it, and re-derives slideshow_controls_style /
+        slideshow_class / render_slideshow_arrows / render_controls_arrows
+        from the SCOPED count (stock computes them off the unscoped
+        selected_product.media.size above the splice point, so a group of one
+        would otherwise render carousel arrows over a single slide). One
+        splice covers slides, thumbnails, grid and the zoom dialog — all four
+        iterate sorted_media. Supersedes hide_variants by construction. Gate:
+        scripts/check-gallery-scope.mjs]
+    - snippets/product-media-gallery-content.liquid#pdp-gallery-mobile-controls-ref
+        [the mobile-only second slideshow-controls render passes the
+        stock secondary param, so ref="slideshowControls" is emitted once
+        instead of twice when the desktop and mobile pagination styles differ.
+        Without it component.js keeps the last write and the Slideshow's
+        slideshowControls ref resolves to the mobile element on every
+        breakpoint. Gate: scripts/check-pdp-gallery-thumbnails.mjs]
+    - snippets/product-media.liquid#perf-srcset [default widths list gains
+        480, 640 so 2-col mobile grids stop fetching 832px files]
+    - snippets/card-gallery.liquid#perf-sizes [sub-750px sizes term mirrors the
+        real mobile grid (50vw at 2 mobile columns) instead of 100vw]
+    - snippets/util-autofill-img-size-attr.liquid#perf-sizes [optional
+        mobile_vw param (default 100 = stock) for honest mobile sizes terms]
+    - snippets/card-gallery.liquid#card-hover-attrs [renders
+        bmp-card-hover inside the opening tag of <div ref="cardGallery">,
+        appended after data-product-id with no separator; emits zero bytes at
+        the theme default (bmp_card_hover_effect == zoom)]
+    - snippets/card-gallery.liquid#card-hover-native-off + #card-hover-
+        native-off-close [wraps the native on:pointerenter /
+        on:pointerleave pair so Horizon's own hover flip runs only while
+        bmp_card_hover_effect is zoom or unset (nil-safe, matches
+        bmp-card-hover.liquid's own | default: 'zoom')]
+    - snippets/card-gallery.liquid#card-hover-slide-budget [inside the
+        native slide-rendering {% liquid %} block, raises
+        max_visible_slide_count to product.media.size only in second_image
+        mode, so unassigned media past the native cap still render]
+    - snippets/card-gallery.liquid#card-hover-next-variant-visible [uses the
+        '#' line-comment marker form (inside the same native {% liquid %}
+        tag, mid-for-loop, where a block-form Liquid comment marker cannot be
+        split across the loop body). Placed AFTER the native
+        max_visible_slide_count cap guard: in next_variant mode only, unhides
+        the SECOND variant-attached media so the slideshow's non-hidden slide
+        count reaches 2 — core slideshow.js only creates #scroll (and
+        select() only then reaches its reveal branch) once setupSlideshow()
+        runs, which needs at least 2 non-hidden slides; every next_variant
+        card otherwise rendered exactly one non-hidden slide and
+        previewVariant()'s select() call was a permanent no-op. Inert at
+        zoom/none/second_image — rendered output there is unchanged. See
+        the register of record for the full slideshow.js chain]
+    - sections/header-announcements.liquid#announcement-bar-classes [inline
+        hook on two elements — the .section-background div and the
+        <aside class="announcement-bar"> open tag — binding
+        bmp_device_visibility (bmp-hide-on-mobile/desktop) to both and
+        bmp_alignment (bmp-announcement-align-left/right) to the <aside>
+        only; both default to their stock-equivalent value (all / center) so
+        neither class emits at defaults]
+    - blocks/_announcement.liquid#announcement-countdown-state [computes
+        THIS block's own countdown state via bmp-countdown (mode:
+        'state') only — no cross-block sibling scan. An earlier version
+        attempted to re-derive the native block_index when a sibling was
+        server-skipped; deleted 2026-08-13 once measurement showed a
+        sibling's .settings is unreadable from inside another block's own
+        render in Horizon's theme-block architecture. block_index stays the
+        untouched native find_index value; see #announcement-countdown-
+        fallback below for how the resulting aria-hidden gap is closed]
+    - blocks/_announcement.liquid#announcement-countdown-hide +
+        #announcement-countdown-hide-close [§4(c) wrap-never-delete
+        around the whole native <slideshow-slide> block, so an announcement
+        whose countdown expired with bmp_countdown_hide_on_end on leaves the
+        rotation server-side]
+    - blocks/_announcement.liquid#announcement-countdown-render [renders
+        bmp-countdown immediately after the native
+        .announcement-bar__text paragraph, only while the computed state is
+        'active']
+    - blocks/_announcement.liquid#announcement-countdown-fallback [renders
+        bmp-countdown in mode: 'fallback' (a <script> tag for
+        assets/bmp-countdown-fallback.js) only when THIS block's own
+        countdown state is 'hidden'. Placed AFTER the hide-wrap closes and
+        BEFORE the native endunless — load-bearing, because inside the wrap
+        the block is skipped in the one case this hook exists for. Replaces
+        a zero-core CSS fix that shipped briefly and was reverted the same
+        day (axe-core aria-hidden-focus, WCAG 4.1.2 — see the
+        assets/bmp-countdown-fallback.js entry below)]
+    - blocks/product-title.liquid#title-truncate [block form for the
+        top-of-file computation, inline non-trimming form on both render 'text'
+        call sites (the trimming form would eat the native newline+indent and
+        change the rendered HTML at the default). Computes bmp_truncate_class
+        from the bmp_truncate_setting alias — block bmp_truncate_lines with
+        bmp_use_global_style off, global bmp_card_title_truncate_lines with it
+        on (additive schema entry, BMP-SCHEMA:title-truncate in the same
+        file, since 2026-08-17 in the COUNTERPART mirror) — and passes it through
+        snippets/text.liquid's own `class` param onto the text-block wrapper;
+        '' at none/blank, which text.liquid interpolates exactly like an absent
+        param, so the default render is byte-identical to stock. The clamp
+        itself is the "Product title truncate" group in
+        assets/bmp-styles.css. NOTE: that `class` param has ZERO upstream
+        consumers — all 10 core render 'text' sites omit it, on the pinned
+        Horizon base and upstream — so a Horizon refactor can drop it as
+        dead code and the
+        clamp dies silently with CI green. Gate:
+        scripts/check-title-truncate.mjs, whose A1 pins both the @param
+        declaration and the {{ class }} interpolation for exactly that reason]
+    - blocks/product-title.liquid#pdp-title-fit-open + #pdp-title-fit-close
+        [one-line auto-fit for the PDP title. The open half computes
+        bmp_title_fit_on (bmp_title_autofit AND a real product AND a stripped
+        title of 1-48 characters — longer titles wrap normally, the character
+        cap replaces a minimum-font rule) and bmp_title_fit_msize (the block
+        bmp_font_size_mobile value, only with bmp_use_global_style off and the
+        custom preset, where native font_size is live), then opens a
+        <bmp-title-fit> wrapper around BOTH native render 'text' sites — a
+        display:contents element, OUTSIDE the pinned title-truncate marker
+        pairs, INSIDE the card-global-title div, the same wrap shape as
+        card-global-title-open. data-bmp-fit commits the title to one line in
+        CSS from first paint (the "PDP title auto-fit + per-device size
+        " group in assets/bmp-styles.css); the mobile size travels as
+        an inline --bmp-title-size-mobile custom property (sanctioned §6
+        travel). The close half closes the wrapper and renders
+        snippets/bmp-title-fit.liquid (the module loader) only when the fit
+        engaged — zero nodes and zero bytes at the default. Gate:
+        scripts/check-title-fit.mjs]
+    - blocks/product-title.liquid#pdp-title-heading [default-off
+        re-assign of the product_title string as a real <h1>/<h2>/<h3> when
+        bmp_heading_tag is set, one marked block after EACH native assign
+        (placeholder and product branches). The PDP main title needs a literal
+        <h1> — templates/product.json's title block became a product-title
+        block in the same change, and stock product-title only emits
+        <p role="heading" aria-level="3">, which crawlers do not read as a
+        heading. Default "" renders stock bytes]
+    - sections/main-collection.liquid#curated-first [renders bmp-curated-first
+        after the native results-list.js script tag; gated on
+        bmp_curated_first_enabled (default true) — emits a deferred ES module
+        that no-ops unless a URL param is present, so the default-on cost is
+        one extra script request per collection view. Added 2026-08-03,
+        ported from an earlier Horizon 3.5.1 build]
+    - sections/product-information.liquid#a11y-sticky-atc [explicit aria-label
+        on the sticky add-to-cart button]
+    - sections/product-recommendations.liquid#a11y-recs [role="status" on the
+        loading-skeleton divs so their aria-label is valid]
+    - snippets/slideshow-controls.liquid#a11y-slideshow-aria + #a11y-dot-target
+        [pagination dots/thumbnails use aria-current instead of invalid
+        aria-selected; dots get a >=24px hit area (WCAG 2.5.8) with the visual
+        dot unchanged — the hit-area rules live in the section's own style
+        block, so those edits carry CSS-comment markers]
+    - platform hooks on the 7 route sections (frozen API, see below):
+        #platform-hook (renders bmp-layout-hook) + #platform-section
+        + #platform-template on each route's main element:
+      - sections/main-404.liquid             [page: '404';   + __inner]
+      - sections/main-blog.liquid            [page: 'blog';  + __inner]
+      - sections/main-blog-post.liquid       [page: 'article'; + __inner]
+      - sections/main-collection-list.liquid [page: 'collection-list']
+      - sections/main-page.liquid            [page: 'page';  + __inner]
+      - sections/password.liquid             [page: 'password'; + __inner]
+      - sections/search-results.liquid       [page: 'search']
+
+  schema-row exceptions (JSON inside schema tags cannot carry Liquid markers;
+  convention: comment above the schema tag + the register row):
+    - blocks/add-to-cart.liquid      — the
+        BMP-SCHEMA:cta-global-pointer paragraph, visible only for Horizon's
+        native button-custom style; explains the per-property fallback behind
+        the global BMP: CTA buttons settings without changing native controls
+    - blocks/filters.liquid          — bmp_show_bar_labels setting entry
+    - sections/section.liquid        — bmp_device_visibility setting entry
+        (all/desktop_only/mobile_only, default all)
+    - sections/footer-utilities.liquid — "bmp-localization" block allowlist entry
+    - blocks/_product-media-gallery.liquid — bmp_scope_media_to_variant
+        checkbox (default false), appended after the native hide_variants
+        entry so both variant-media controls sit together; no visible_if, so
+        it applies to grid and carousel alike. The file's ONLY edit; read by
+        product-media-gallery-content.liquid#gallery-variant-scope
+    - blocks/product-title.liquid — bmp_truncate_lines select (none/1/2/3,
+        default none), placed in the existing Layout header group immediately
+        after the native alignment setting; hidden while bmp_use_global_style
+        is on, when the global bmp_card_title_truncate_lines replaces it; read
+        by the BMP-HOOK:title-truncate computation at the top of the same file. Like
+        blocks/_slide.liquid and blocks/filters.liquid, the delta shares a file
+        with its own render hook, so the file counts once — as render-edited,
+        not as a fourth schema-JSON-only file
+    - blocks/product-title.liquid — three more settings
+        (BMP-SCHEMA:pdp-title-fit, stacked above the pinned title-truncate
+        one-liner): bmp_title_autofit checkbox (default false, NO visible_if —
+        reachable in both style modes, LOCAL_BY_DESIGN in
+        check-card-global-style.mjs A9), bmp_heading_tag select (""/h1/h2/h3,
+        default "" = stock bytes, also LOCAL_BY_DESIGN — outline level is a
+        property of the placement, not of the card style), and
+        bmp_font_size_mobile select (same rem option list as native font_size,
+        default "", hidden with the toggle on in favour of the global
+        bmp_card_title_size_mobile — COUNTERPART pair)
+    - config/settings_schema.json    — nine BMP panels appended last (eight
+        after the 2026-08-17 fold of the single-purpose Pricing panel into
+        Product cards; "BMP: Swatches" was then added —
+        bmp_swatch_fallback_enabled / bmp_swatch_option_names /
+        bmp_swatch_value_list; "BMP: CTA buttons" came last). RE-DERIVED
+        2026-08-18: 9 panels, 119 bmp_ setting ids (the six global CTA
+        colours plus bmp_card_title_size_mobile in the Card title (global)
+        group). All
+        setting ids bmp_-prefixed: "Free shipping bar" (6: bmp_show_cart_
+        progress_bar, bmp_cart_progress_bar_goal_type / _goal / _message /
+        _success_message / _message_icon), "Cart announcements" (11: bmp_bottom_
+        announcement_bar_speed, bmp_bottom_announcement_bar_text_1..5 /
+        _icon_1..5 — the color_scheme setting was removed in the 4.1.3
+        color-scheme purge; Horizon 4.x has no scheme system), "SEO" (1:
+        bmp_seo_social_profiles — textarea, one absolute URL per line, feeds
+        sections/header.liquid#org-sameas), "Curated first"
+        (3, added 2026-08-03: bmp_curated_first_enabled checkbox default true,
+        bmp_curated_first_param text default "first", bmp_curated_first_
+        swap_image checkbox default true), "Product labels" (simplified
+        2026-08-06, reworked 2026-08-07 in the Iago feedback round:
+        19 bmp_-prefixed ids down from 44 — bmp_badges_enabled master switch,
+        no position select (placement follows the stock badge_position), then
+        three progressively-disclosed types visible_if-gated on their own
+        toggles: Sale label bmp_label_sale_* [show/format/text/text_color/bg,
+        ids kept bmp_label_sale_* not bmp_label_discount_* — spec D10: the
+        two-way-synced dev store holds saved values for the retired ids], New in
+        bmp_label_new_* [show/method=date|tag|collection + days/tag/collection
+        per method + text/text_color/bg], Tag labels bmp_label_tags_* [show
+        default OFF, allowlist text default "TRENDING,BEST SELLER" +
+        text_color/bg]. Every colour default resolves through
+        {{ settings.color_palette.background }} / .foreground so a niche palette
+        swap carries the labels; no icons, no images, no cap. Shape, typography
+        and the native fallback overlay still come from the stock t:names.badges
+        panel, which bmp-styles.css suppresses while a bmp-product-labels
+        container is present), [the original single-purpose "Pricing" panel
+        was deleted 2026-08-17 — its bmp_price_from_show checkbox and
+        off-state help paragraph moved, id intact, into the Card price
+        (global) group of "Product cards"], "Product cards" (added
+        2026-08-10: 1: bmp_card_hover_effect select — zoom (default)
+        / second_image / next_variant / none — plus three per-option help
+        paragraphs. Also flips the stock show_second_image_on_hover checkbox's
+        visible_if to always-false, a registered stock-setting exception),
+        "BMP: Size" (2: bmp_size_guide_option text default "Size" —
+        relocated here from the retired "BMP: Size guide" panel
+        because the server-side cart gate resolves it from
+        blocks/buy-buttons.liquid and blocks/accelerated-checkout.liquid,
+        which cannot read a sibling block (D2) — and bmp_size_required
+        checkbox default true. The size guide's own link
+        text and icon live on blocks/bmp-size-guide.liquid, not here),
+        "Swatches" (3 settings: fallback enabled default true, option names
+        default "Color,Colour", and newline-delimited value overrides), and
+        "CTA buttons" (6 alpha-capable colors, background/text for main + sticky
+        Add to Cart, cart Checkout, and unbranded Buy Now; no defaults, so every
+        property independently falls back to Horizon or the block's native
+        Custom style)
+
+  grandfathered core-asset exceptions (non-Liquid core files — CSS/JS comment
+  markers only; retirement triggers recorded in the register):
+    - RETIRED 2026-07-18 (4.1.3 upgrade): the cross-document view-transition
+        kill (originally assets/base.css#perf-view-transitions, re-homed to
+        bmp-styles.css in Phase 2). Its trigger fired: Horizon 4.1.3 gates the
+        MPA opt-in per-layout on the transition settings (both false in our
+        settings_data.json) and disables the feature at runtime in every
+        Android WebView + FB/IG/TikTok in-app browsers. Zero BMP delta remains.
+    - assets/slideshow.js#a11y-slideshow-aria [aria-selected replaced by
+        aria-current on the dots/thumbnails — a native line CHANGED, not
+        additive; re-audit on every upstream merge]
+
+  frozen platform API (queried by external BuildMyPod scripts across customer
+  stores — NEVER rename):
+    - body class buildmypodai-theme + attr data-buildmypodai-layout
+      ("theme" | "password")
+    - snippets/bmp-layout-hook.liquid — hidden per-route marker
+      element: div class buildmypodai-layout-hook with data-buildmypodai-page
+      + data-buildmypodai-section attributes
+    - route main-element classes buildmypodai-section +
+      buildmypodai-section--<route>, attr data-buildmypodai-template="<route>"
+      (+ buildmypodai-section__inner on 404/blog/article/page/password —
+      v1-exact contract, kept by design; do not strip to "match" other trees)
+
+  files (every bmp-*/buildmypodai-* basename in blocks/snippets/assets):
+    blocks (4):
+      - blocks/_bmp-size-guide-image.liquid — private child of bmp-size-guide;
+          shows its chart image only when its "Product type" setting matches
+          the current product's type (one template, per-type charts). An
+          EMPTY Product type marks the default chart: always
+          rendered with --default, CSS-suppressed by the parent when a typed
+          --match sibling exists — a typed chart always wins
+      - blocks/bmp-icon.liquid — brand icon block; renders one named icon as a
+          cacheable external svg <img> (composes the asset filename from the
+          icon setting: bmp-icon-<value>.svg — grep for direct asset
+          references misses these BY DESIGN, check the option values below)
+      - blocks/bmp-localization.liquid — footer country/language selectors
+          (stock only offers header localization); reuses the stock
+          dropdown-localization-component + localization-form, panel opens up
+      - blocks/bmp-size-guide.liquid — size-chart modal dialog (stock
+          dialog-component, per-product id bmp-size-guide-dialog-<product.id>
+          so quick-add's page-clone into its popup never collides two
+          dialogs on one id; the in-legend trigger opens it via
+          bmp-size-guide-portal.js, which resolves that id, and a bare
+          data-bmp-size-guide-dialog attribute lets the portal find size-guide
+          dialogs generically, without knowing whose product they are). Also
+          the home of the feature's presentation: its schema
+          carries bmp_size_guide_label / _icon (the "BMP: Size guide" global
+          panel is retired). The label is published as
+          data-bmp-size-guide-config + -label on the dialog element and copied
+          onto the trigger by the portal. The ICON never crosses into JS, and
+          neither does the trigger's REVEAL: this block emits both as CSS, from
+          a Liquid style tag INSIDE its dialog-component, keyed on
+          .bmp-size-guide__trigger[data-bmp-size-guide-product="<its own
+          product id>"]. That is the one place in the theme where per-instance
+          Liquid may interpolate CSS besides the global-only
+          bmp-card-style-vars / bmp-cta-button-style-vars snippets,
+          and both halves of the placement are
+          load-bearing: a style tag because a stylesheet block renders no
+          Liquid and so cannot carry a product id, and inside the component
+          because the portal's mobile quick-add route adopts the dialog element
+          alone. Before this, the reveal and the icon were document-wide
+          :has() guards in the trigger's own sheet, which lit up every trigger
+          on any page holding any size-guide dialog. The option name is NOT here: it stays
+          the theme setting settings.bmp_size_guide_option ("BMP: Size"
+          panel), because the server-side cart gate reads the same value
+          from buy-buttons / accelerated-checkout, which cannot reach a
+          sibling block's settings (D2 — one naming setting for both
+          features). In design mode a product without that option renders a
+          visible editor note instead of the dialog, carrying
+          block.shopify_attributes so the sidebar has something to select
+    sections (1):
+      - sections/bmp-curated-product-card.liquid — standalone single-card
+          section fetched by bmp-curated-first.js via the Section Rendering
+          API (/products/{handle}?section_id=bmp-curated-product-card) when
+          the pinned product isn't already in the visited grid; renders one
+          product-grid item byte-compatible with main-collection's own items
+    snippets (21, including this file):
+      - snippets/bmp-card-hover.liquid — server-side computation of
+          the product-card hover-target map (data-bmp-hover /
+          data-bmp-hover-map), rendered at
+          snippets/card-gallery.liquid#card-hover-attrs. Emits zero bytes at
+          the theme default (bmp_card_hover_effect == zoom); the JS that
+          applies the map is assets/bmp-card-hover.js. second_image targets
+          the very next media after each variant-attached one in
+          product.media order, ONLY when that next media is itself
+          unassigned — no cross-fallback, dead cases are deliberate by
+          design. On this store's real Printify catalog (all
+          variant-attached media grouped before all unassigned) that yields
+          exactly one working target per product, at the variant/unassigned
+          boundary; a same-day pair-by-position alternative was tried and
+          withdrawn once the catalog's unassigned-to-variant ratio measured
+          3.0 on all 20 products (three mockups per colour, not generic
+          filler), which would have made positional pairing an actively
+          wrong image rather than a dead case.
+          next_variant chains each
+          VARIANT's featured media to the next variant's featured media (not
+          every variant-attached media) — a variant that owns more than one
+          image (POD front + back mockup per colour) steps to the next
+          colour, matching the panel copy's "next variant's image (e.g.
+          another color)" promise
+      - snippets/bmp-card-style-vars.liquid — emits the global
+          product-card style layer from the "BMP: Product cards" panel
+          settings, rendered inside a <style> tag by bmp-globals right after
+          the bmp-styles.css link. Two mechanisms (rationale in the GLOBAL
+          CARD STYLE section of bmp-styles.css): one :root token block
+          (--bmp-cardg-title-* / --bmp-cardg-price-*) consumed by the static
+          LAYOUT rules there, plus token-gated RULES for typography AND (since
+          2026-08-14) case and weight, which only exist when the merchant set
+          the global — their baseline is per-instance preset classes, which no
+          static var() fallback can reproduce, so "Default" leaves the render
+          untouched by construction. Global settings only — not a per-instance
+          style block. Scope: only elements carrying the bmp-card-global-title
+          / bmp-card-global-price classes, i.e. blocks whose
+          bmp_use_global_style toggle is ON — WHEREVER they render, not only
+          inside a product card (design decision 6: no context detection).
+          That is why case and weight moved out of static CSS: their var()
+          fallback pointed at the always-on --bmp-card-* tokens, which sit at
+          bare :root while every always-on consumer is .product-card-scoped,
+          so a block toggled ON outside a card took the card look at
+          "Default" (gated by check-card-global-style.mjs A14). Every
+          TYPOGRAPHY rule targets the element AND its direct child, because
+          Horizon declares those same properties on `> *` for every preset
+          except rte (A13); the price ones exclude .volume-pricing-note by
+          name, which is a direct child Horizon protects at only (0,1,1). The
+          static LAYOUT rules pair an element rule with a separate child rule
+          for width and text-align only, since Horizon re-declares those on
+          `.text-block > *` from per-instance inline custom properties (A12)
+      - snippets/bmp-cta-button-style-vars.liquid — conditionally
+          emits six global CTA color tokens plus the scoped consumers for main
+          and sticky Add to Cart, cart Checkout, and only Shopify's unbranded
+          Buy Now button.
+          Every property is gated independently and the whole snippet emits
+          zero bytes while all six settings are blank. Add to Cart background
+          and text override the block's native Custom value only when their
+          matching global is configured; the text rules preserve both Add to
+          Cart added-state animations while feeding --button-color to their
+          checkmarks.
+          Branded wallet/additional-checkout selectors are deliberately absent
+      - snippets/bmp-cart-announcements.liquid — up to 5 rotating icon+text
+          messages pinned to the cart drawer bottom; stock announcement-bar
+          rotation, module loaded only when more than one message is set
+      - snippets/bmp-countdown.liquid — dual-mode announcement-block
+          countdown. mode: 'state' returns one token (off / active / expired /
+          hidden); the default mode renders the <bmp-countdown-timer> markup,
+          only when the state is 'active'. All date arithmetic (store
+          timezone, empty-date "tonight 23:59" fallback) runs here so both
+          modes share one computation. Rendered at
+          blocks/_announcement.liquid#announcement-countdown-state (state
+          mode) and #announcement-countdown-render (markup mode); loads
+          assets/bmp-countdown.js itself, feature-scoped, only on the render
+          that actually needs it
+      - snippets/bmp-curated-first.liquid — loader for the curated-first
+          product-pin feature (BMP-HOOK:curated-first in
+          sections/main-collection.liquid); gated on bmp_curated_first_enabled
+      - snippets/bmp-free-shipping-bar.liquid — live-updating free-shipping
+          progress bar in the cart drawer (cents-correct money math)
+      - snippets/bmp-global-product-card.liquid — a product card that follows
+          the GLOBAL card settings on a surface with no block instance to read
+          them from. The predictive-search popup is that surface:
+          sections/predictive-search.liquid is fetched only through the Section
+          Rendering API and sits in no template JSON, so a static _product-card
+          block there resolves zero configured child blocks and renders an
+          empty, still-clickable shell — the same trap
+          sections/bmp-curated-product-card.liquid documents, and the reason
+          Horizon's own sections/section-rendering-product-card.liquid inlines
+          its markup too. Mirrors snippets/product-card.liquid plus the four
+          card blocks it composes, emitting the bmp-card-global-* carriers
+          UNCONDITIONALLY (no per-block toggle exists here). The gallery is
+          NOT reimplemented: it delegates to snippets/card-gallery.liquid
+          through that file's card-param-surface / card-param-loading hooks, so
+          all four bmp_card_hover_effect modes, the slideshow, the global media
+          ratio and the BMP labels come from one place and cannot drift from a
+          collection-grid card. Three of its details are load-bearing and
+          pinned by gates: the a.product-card__link must stay the FIRST anchor
+          (predictive-search.js Enter-activates querySelector('a')), it must
+          carry ref="productCardLink" (product-card.js requiredRefs, throws
+          without it) and an id (navigateToProduct early-returns without one).
+          Two deliberate exceptions to grid parity, both documented at the
+          emit site: no swatch row (swatch presence is a per-template block
+          instance, and no template in this theme enables one) and no quick
+          add (search-modal wraps the results in a form, and quick-add opens
+          its own product form for single-variant products -- the nested form
+          is dropped by the parser and its hidden inputs reparent onto the
+          search form). It also asks card-gallery for the lean slide shape,
+          which card-gallery grants only where no hover mode can reveal the
+          hidden variant slides
+      - snippets/bmp-globals.liquid — the single global entry point
+          (BMP-HOOK:globals in theme.liquid): loads bmp-styles.css (preload),
+          the global card and CTA setting styles, the aria shim, the
+          structured-data render, and this manifest
+      - snippets/bmp-body.liquid — empty end-of-body widget slot
+          (BMP-HOOK:body in theme.liquid)
+      - snippets/bmp-manifest.liquid — this file
+      - snippets/bmp-nav-dropdown.liquid — renders ONE child-bearing
+          level-1 desktop menu item as a content-sized dropdown card (button
+          trigger, parent-collection first row, collapsible level-3 groups),
+          replacing Horizon's full-viewport mega-menu band for that item.
+          Rendered from the §4(c) wrap at
+          blocks/_header-menu.liquid#nav-dropdown; childless items fall through
+          to the untouched native <li> in the same wrap. Deliberately emits NO
+          on:pointerenter/on:pointerleave — core JS is uneditable, so omitting
+          the attribute is the only lever that removes hover-to-open — while
+          keeping on:focus/on:blur, ref="menuitem", ref="submenu[]" and
+          data-skip-node-update so core's findMenuItem/findSubmenu, the
+          overflow-list slotting and the hydration morph all still work.
+          Behaviour lives in assets/bmp-header-menu.js, geometry and surface in
+          the "BMP nav dropdown" group of assets/bmp-styles.css
+      - snippets/bmp-org-sameas.liquid — emits a "sameAs" JSON-LD fragment
+          from settings.bmp_seo_social_profiles; injected into the core
+          Organization node via sections/header.liquid#org-sameas; renders
+          nothing when no valid absolute URL is configured
+      - snippets/bmp-price-variation.liquid — variant-price
+          treatment: "From <min>" when a product's variants differ in price,
+          gated on settings.bmp_price_from_show (checkbox, default off; since
+          2026-08-17 living in the Card price (global) group) and a
+          per-surface selection gate. Since that same day the price block
+          mirrors the global like the other behavior settings:
+          blocks/price.liquid's bmp_price_from checkbox (visible only with
+          bmp_use_global_style off) reaches here as the bmp_show_from param,
+          defaulted with allow_false so nil callers follow the global and an
+          explicit false survives. The PDP main price — the one toggle-off
+          instance — was seeded ON in templates/product.json at the handover.
+          Captured and substituted at snippets/price.liquid#price-variation
+          (the three active-price output sites); emits nothing when off, when
+          the product has a single price, or once a PDP shopper has selected
+      - snippets/bmp-product-labels.liquid — the global product-label overlay
+          system; single source of truth for label computation. Simplified
+          2026-08-06 to three uncapped label types emitted
+          tag -> new -> sale: Tag labels (allowlist, default off), New in
+          (date / tag / collection), and the price-derived Sale label
+          (ids stay bmp_label_sale_*). The three deprecated bmp-*-badge
+          blocks were DELETED (not deprecated) in the same round. Position
+          follows the stock badge_position (Theme settings > Badges) since the
+          2026-08-07 feedback round; the BMP position setting is gone. Horizon's
+          native Sale/Sold-out overlay never renders at all: gated off in Liquid
+          at blocks/_product-card-gallery.liquid#native-badge-off, with the
+          unconditional bmp-styles.css rule as a second layer. Rendered at
+          snippets/card-gallery.liquid#product-labels (cards) and
+          snippets/product-media-gallery-content.liquid#product-labels (PDP,
+          first child of <media-gallery>)
+      - snippets/bmp-size-guide-trigger.liquid — "Size Guide" link rendered
+          inside the variant picker's option legend; self-gates server-side on
+          settings.bmp_size_guide_option so exactly one renders, in the one
+          matching legend, in the first response. This snippet's own stylesheet
+          only HIDES — it renders no Liquid and so cannot name a product; the
+          reveal and the icon are per-product rules that
+          blocks/bmp-size-guide.liquid emits, so they arrive exactly where the
+          dialog arrives and no JS-applied class stands between the response
+          and a visible trigger. The block's own label is copied on afterwards
+          by bmp-size-guide-portal.js over a server-rendered default. Also owns the editor-only
+          (request.design_mode) missing-block warning on that same legend —
+          keyed on the merchant's real option name, so a renamed axis is warned
+          too — CSS-suppressed by a [data-bmp-size-guide-config] marker, which
+          the block emits only on its dialog, and excluded inside a design-mode
+          quick-add clone by :not(.quick-add-modal *). Carries no on:click —
+          bmp-size-guide-portal.js opens the dialog, because the popup surface
+          needs the node reparented to <body> first. It must NOT
+          re-acquire a .quick-add-modal display:none rule; that was the first
+          quick-add fix and it deleted the feature from the popup
+      - snippets/bmp-size-required-state.liquid — the single
+          server-side gate decision, echoed as one token ('' / open / closed)
+          and captured by BOTH core edit sites so the condition exists exactly
+          once. Gated on the bmp_size_required checkbox (default ON, and nil
+          normalised to ON so an unmaterialised setting cannot make the halves
+          disagree), the option name matching bmp_size_guide_option, and that
+          option having MORE THAN ONE
+          value. Reads product.selected_variant (D7 signal 1 — the only signal
+          a third-party app cannot forge, the same one bmp-price-variation
+          .liquid:40 uses) and never writes it (spec §7.4 —
+          check-price-variation depends on it)
+      - snippets/bmp-slide-link.liquid — full-media overlay link for
+          a hero slide (bmp_slide_link, Symmetry slide_link parity). Rendered
+          from blocks/_slide.liquid#slide-link as a direct child of
+          <slideshow-slide>, earlier sibling of .slide__content, named by the
+          slide image's alt with the bmp.accessibility.bmp_slide_link_fallback
+          locale fallback. Click routing, aria-hidden inertness and the
+          below-mobile grid live in assets/bmp-styles.css. Sits at
+          --layer-flat BELOW .slide__content — a deliberate inversion of
+          core's --layer-raised .card__link idiom
+      - snippets/bmp-swatch-color-map.liquid — metafield-free swatch resolver:
+          exact downcased option/value matching, 241 defaults seeded
+          2026-08-17 from the live Printify catalogs of the four standard
+          blanks (hexes harvested from real Printify product payloads; 26
+          cross-blank name conflicts carry merchant-decided hexes), validated
+          one- or two-color merchant overrides (ranked ahead of native
+          swatch.color via mode 'override'), blank on
+          invalid/unmapped input
+      - snippets/bmp-structured-data.liquid — schema.org WebSite +
+          SearchAction JSON-LD, self-gated to request.page_type == 'index';
+          rendered from bmp-globals so it adds zero bytes elsewhere
+      - snippets/bmp-title-fit.liquid — loader for the PDP title
+          auto-fit module (script tag for assets/bmp-title-fit.js,
+          module/low priority). Rendered only from
+          blocks/product-title.liquid#pdp-title-fit-close and only when the
+          fit engaged, so the default state ships zero bytes; duplicate tags
+          from several engaged blocks dedupe via the browser's module map
+      - assets/bmp-styles.css — THE visual-parity layer: one
+          style block of computed-style-verified overrides (card title/price
+          tokens, device-visibility utilities, page frame 60px/1600px, ATC
+          scheme colors, button weight, FAQ/accordion rows + dividers, cart
+          drawer + cart page layout, product-card hover, search-modal cards,
+          hero content page-frame cap, PDP gallery arrows/thumbnail strip, mobile collection toolbar,
+          filter-bar labels, quantity stepper, mobile nav drawer, hero
+          slides/dots, footer spacing), plus third-party overhang containment
+          (.page-wrapper clips overflow-x below 990px so an app's
+          hidden-but-laid-out tooltip cannot widen the document; RTE iframes
+          capped to the frame). No !important; selectors carry one
+          extra specificity level to win over base.css regardless of order.
+          Loads ONLY via the bmp-globals render (theme.liquid#globals).
+      - snippets/bmp-layout-hook.liquid — frozen-API route marker
+          (see platform API above)
+    assets (11 js + 1 css + 11 svg):
+      - bmp-aria-current.js         — a11y shim: mirrors runtime aria-selected
+          from stock slideshow.js onto aria-current and strips the invalid
+          attribute (loaded by bmp-globals, module/low priority)
+      - bmp-card-hover.js           — applies the hover-target map
+          snippets/bmp-card-hover.liquid computes server-side, via core's own
+          public previewVariant()/resetVariant() (assets/product-card.js);
+          delegated pointerover/pointerout listeners on document, mouse-only.
+          Loaded by bmp-globals, module/low priority, gated on
+          bmp_card_hover_effect being second_image or next_variant (zero
+          bytes at zoom/none)
+      - bmp-dialog-close-guard.js   - two document-level capture
+          listeners (cancel, close) that route a NATIVE dialog close request
+          (the Android back button, which CloseWatcher sends straight to the
+          native dialog close with no keydown) into the owning component's own
+          public closeDialog() (dialog.js family) or close() (theme-drawer),
+          resolved by ref identity so a nested dialog never drives its parent.
+          Without it the lock taken in showDialog()/open() is never released
+          and html[scroll-lock] freezes the page until a reload. When the
+          request is not cancelable it unlocks and still calls the owner, so a
+          theme-drawer finishes its teardown instead of stranding its `open`
+          attribute (which would silently kill cart auto-open). Bails when
+          dialog.open is still true, because theme-drawer.js closes and
+          immediately reopens the panel at three sites. Never dispatches
+          dialog:close itself, so consumers still see it once.
+          Loaded by bmp-globals, module/low priority, unconditional
+      - bmp-drawer-focus-scope.js   - releases focus.js's global focus
+          trap while an open theme-drawer is showing a NON-modal dialog (the
+          >= 990px squeeze mode). Core theme-drawer.js opens that panel with
+          show(), leaving the page beside it visible and interactive, yet
+          still installs the trap - a capturing document `focusin` listener
+          that pulls focus back into the panel from anywhere on the page. In
+          the header that closes the open submenu mid-press, and a closed
+          submenu is inert, so the pressed link or group toggle stops being
+          hit-testable between mousedown and mouseup and the click lands on
+          an ancestor instead of navigating or expanding. It also left
+          keyboard users unable to Tab out of a dialog that is not modal.
+          Modal mode below 990px keeps the native top-layer trap, which is
+          correct. Calls only core's exported removeTrapFocus(); zero core
+          JS is patched.
+          Loaded by bmp-globals, module/low priority, unconditional
+      - bmp-header-menu.js          — drives the content-sized
+          desktop nav dropdown card (click to open, outside click / Escape /
+          second click to close, opening one closes any other, collapsible
+          level-3 groups). Delegated document listeners registered once at
+          import — deliberately NOT a custom element, because the nodes live
+          inside the header's data-hydration-key subtree that section
+          hydration, morph.js, the theme editor and overflow-list re-slotting
+          all replace; delegation is the only wiring that needs no
+          re-initialisation. All state lives in DOM attributes
+          (aria-expanded on the trigger, data-bmp-open on a group), so a morph
+          that resets them merely closes the panel. Records the pre-focus
+          expanded state on pointerdown because the <li> keeps the stock
+          on:focus="/activate" and a mouse press fires
+          pointerdown -> focus -> click, so core has already opened the panel
+          by the time click runs; keyboard activation is told apart by
+          event.detail === 0. Loaded by bmp-globals, module/low priority
+      - bmp-product-labels.js       — custom element that keeps the
+          bmp-product-labels overlay in sync with the selected variant on both
+          the product page and product cards, by listening for
+          StandardEvents.productSelect on the closest product-card (else
+          section/dialog) — the same event product-price.js/product-inventory.js
+          use, so no core JS is patched. Morphs only the element's CHILDREN,
+          re-applying this element's own class/style/data attributes to the
+          fetched node first, because a card's fetched HTML is the product
+          page (context "pdp") and morphing the whole element would swap the
+          card's own context/inset-scale class for the product page's. Loaded
+          by bmp-globals, module/low priority; self-gated (inert on pages with
+          no label element)
+      - bmp-size-required.js        — Layer 1 of the forced-size
+          gate. window-capture click + submit listeners cancel any add-to-cart
+          interaction (preventDefault + stopImmediatePropagation) until
+          satisfaction is proven by the server-rendered
+          data-bmp-size-satisfied or a TRUSTED interaction inside a size
+          control (D7 — an app's `input.checked = true` fires no event and a
+          synthetic change reports isTrusted false, so neither opens it).
+          Bound to window, not document: Horizon's on:submit dispatcher is
+          already a document capture listener registered ahead of us
+          (assets/component.js:239-323), so a document listener would fire
+          second, after handleSubmit. Cancels the CLICK and not only the
+          submit, because AddToCartComponent.handleClick plays the added
+          animation and appends fly-to-cart on the click
+          (assets/product-form.js:71-92) — which is also what suppresses the
+          sticky bar's false success. Sets state attributes only: never
+          styles, never rewrites textContent. Releases the Layer-2 `disabled`
+          and unhides express checkout when the gate opens. Resolves a
+          RELOCATED (app-rendered) size control by matching control labels
+          against the wrapper's data-bmp-size-values (moved off the retired
+          message element), using DIRECT text nodes because the
+          measured app duplicates each value inside its own wrapper; the group
+          is the nearest ancestor showing >= 2 values, which is also what
+          stops a stray token elsewhere in the page from matching. No vendor
+          class name in our code. Loaded by bmp-globals, module/low priority,
+          gated on bmp_size_required (zero bytes when unchecked)
+      - bmp-size-guide-portal.js    — keeps the size guide reachable in a
+          hostile DOM, and copies ONE value onto the trigger (reads
+          the dialog element's data-bmp-size-guide-label for the SAME product.
+          The option name is resolved server-side, and the reveal and the icon
+          are per-product CSS the block emits, so none of the three is part of
+          the handoff and this module never decides whether a trigger shows or
+          how it looks). Reachability works two ways. (a) opens the dialog for
+          bmp-size-guide-trigger, guaranteeing the dialog is a <body> child and
+          never a descendant of the open quick-add dialog (nesting breaks event
+          routing AND the fixed-position containing block). Adopts quick-add's
+          cloned copy on desktop, fetches the product page once on mobile (where
+          quick-add drops .product-details), releases what it adopted on
+          quick-add close. (b) moves the TRIGGER out of a
+          <variant-picker> that a swatch app has made unrenderable — the trigger
+          renders inside that picker's legend, so it goes 0x0 and CSS cannot
+          reach it; detection is generic (checkVisibility/getClientRects, never
+          an app's class names), driven by a MutationObserver, reverted if the
+          picker renders again. Loaded by bmp-globals, module/low priority
+      - bmp-curated-first.js        — ES module: pins one product to position
+          #1 of a collection grid via a URL param (Meta/FB ad landings);
+          loaded by snippets/bmp-curated-first.liquid, module/low priority,
+          no-ops unless the param is present
+      - bmp-countdown.js            — <bmp-countdown-timer> custom
+          element for the announcement-block countdown. Feature-scoped like
+          bmp-curated-first.js above — loaded only by
+          snippets/bmp-countdown.liquid, at the render site of an active
+          countdown, module/low priority. The server already computed the
+          correct starting digits from data-bmp-end; this element's only job
+          is a 1s setInterval that keeps them ticking, clearInterval at zero.
+          Nothing on window, no digit-transition animations (YAGNI for v1)
+      - bmp-countdown-fallback.js   — one-time aria-hidden correction
+          for the announcement bar. Feature-scoped, loaded only by
+          snippets/bmp-countdown.liquid (mode: 'fallback') from
+          blocks/_announcement.liquid#announcement-countdown-fallback, and
+          ONLY when that block's own countdown state is 'hidden' — so it
+          never loads at any default state. The render site sits AFTER the
+          hide-wrap closes and before the native endunless: that placement is
+          load-bearing, because inside the wrap the script would never load
+          in the one case it exists for. WHY: native block_index counts every
+          configured block, rendered or not, and a sibling's resolved state is
+          unreadable from inside another block's render pass (measured
+          2026-08-13 — see the A6 comment in
+          scripts/check-announcement-countdown.mjs), so when an earlier block
+          is server-skipped no survivor is guaranteed aria-hidden="false" and
+          stock's own rule then hides every remaining slide. Writes the
+          attribute rather than forcing opacity/visibility: a CSS-only version
+          shipped briefly and was reverted the same day, because making an
+          aria-hidden="true" slide visible leaves its covering link
+          keyboard-focusable inside an aria-hidden subtree (axe-core
+          aria-hidden-focus, WCAG 4.1.2 — a defect stock does not have).
+          Runs once per document load and does not re-touch the attribute
+          afterwards, so it cannot fight assets/announcement-bar.js for
+          control. Known limitation, deliberate: that is also a ceiling --
+          the module map means the correction does not re-apply after an
+          in-place theme-editor section re-render. Editor-only, self-heals
+          at the next autoplay tick.
+      - bmp-title-fit.js            — <bmp-title-fit> custom element
+          for the PDP title one-line auto-fit. Feature-scoped like
+          bmp-countdown.js above — loaded only by snippets/bmp-title-fit.liquid
+          at an engaged render site, module/low priority. The one-line
+          commitment is CSS ([data-bmp-fit] nowrap from first paint); this
+          element only SHRINKS the font to the measured available width
+          (shrink-only, no minimum — the Liquid 48-character gate is the
+          readability floor) and pins the base line-height so the box height
+          never moves. Re-measures on ResizeObserver (nearest box-generating
+          ancestor, walking past display:contents — never .text-block, whose
+          fit-content width would feed back), on title MutationObserver, and
+          on document.fonts.ready (font-display: swap means the real face
+          lands late; this is what keeps the webfont swap shift-free).
+          Writes only two custom properties + data-bmp-fit-ready on itself,
+          equality-guarded. Nothing on window
+      - bmp-icon-menu.svg           — header-drawer open-state hamburger (3 lines)
+      - bmp-icon-ruler.svg          — size-guide trigger icon
+      - bmp-icon-truck.svg          — free-shipping-bar message icon ('truck')
+                                      + cart-announcements icon option 'truck'
+      - bmp-icon-refresh.svg        — cart-announcements icon option 'refresh'
+      - bmp-icon-trust-shipping.svg   } bmp-icon block illustrated set
+      - bmp-icon-trust-checkout.svg   } (icon values trust-*): homepage trust
+      - bmp-icon-trust-materials.svg  } badges, templates/index.json
+      - bmp-icon-trust-returns.svg    } trust_badges section (desktop-only)
+      - bmp-icon-pdp-satisfaction.svg } bmp-icon block line-art set (icon
+      - bmp-icon-pdp-returns.svg      } values pdp-*): PDP trust row,
+      - bmp-icon-pdp-shipping.svg     } templates/product.json group blocks
+
+  features:
+    - free-shipping bar: snippets/bmp-free-shipping-bar.liquid via
+        header-actions#cart-drawer-progress; "Free shipping bar" settings panel;
+        goal by cart subtotal or item quantity; renders nothing when disabled
+        or goal < 1; locale key accessibility.bmp_free_shipping_progress
+    - cart announcements: snippets/bmp-cart-announcements.liquid via
+        header-actions#cart-drawer-announcements (+ #cart-drawer-script);
+        "Cart announcements" settings panel (speed, color scheme, 5 slots);
+        single message renders static — no rotation module loaded
+    - size guide: blocks/bmp-size-guide.liquid + blocks/_bmp-size-guide-image
+        .liquid + snippets/bmp-size-guide-trigger.liquid +
+        assets/bmp-size-guide-portal.js; the bmp-size-guide BLOCK's own
+        schema carries the link text and icon (the former global
+        "BMP: Size guide" panel is retired). Only the link text is handed over
+        client-side, as a config data attribute on the dialog element; the icon
+        and the trigger's reveal are per-product CSS the block emits from a
+        Liquid style tag inside that element, so both are right in the first
+        paint and right with JS off, and neither leaks onto a second product's
+        trigger on the same page. The
+        option name is the exception and stays global as
+        settings.bmp_size_guide_option in the "BMP: Size" panel: the
+        cart gate resolves it server-side from buy-buttons /
+        accelerated-checkout, where no sibling block is readable, on
+        templates that may carry no size-guide block at all (D2);
+        wired in templates/product.json (bmp_size_guide block hosting
+        three per-type _bmp-size-guide-image children); trigger placed by
+        variant-main-picker#pdp-option-value, which also passes product_url —
+        the portal's mobile-quick-add fallback source for the dialog markup
+    - footer localization: blocks/bmp-localization.liquid, allowlisted by the
+        footer-utilities schema-row exception
+    - brand icon (trust badges): blocks/bmp-icon.liquid; homepage trust_badges
+        section (device-visibility desktop_only) + PDP trust row
+    - product labels (simplified 2026-08-06):
+        snippets/bmp-product-labels.liquid — three uncapped types (Tag / New
+        in / Sale) configured from one Theme-settings panel, rendered at
+        snippets/card-gallery.liquid#product-labels (cards) and
+        snippets/product-media-gallery-content.liquid#product-labels (PDP).
+        The three deprecated bmp-*-badge blocks were deleted in this round;
+        blocks/_product-card.liquid's allow-list delta returned to stock
+    - bar labels toolbar: filters#facets-bar-labels + sorting#facets-bar-labels, default off
+        (stock behavior unchanged when off); locale keys content.bmp_filter_
+        label / bmp_filter_and_sort / bmp_sort_by_label / bmp_product_count
+    - device visibility: sections/section.liquid schema row + snippets/
+        section.liquid#device-visibility binding + utility CSS in the
+        overrides layer; live usage: homepage trust badges desktop-only
+    - platform markers: the frozen API above (layout hooks + body/route markers)
+    - visual-parity overrides: assets/bmp-styles.css (see files)
+    - SEO structured data: snippets/bmp-structured-data.liquid (WebSite +
+        SearchAction, home page only, via bmp-globals) + snippets/
+        bmp-org-sameas.liquid (sameAs fragment injected into the core
+        Organization node, sections/header.liquid#org-sameas); "SEO" settings
+        panel (bmp_seo_social_profiles); Phase-6 opt-in, approved 2026-08-03
+    - curated first: snippets/bmp-curated-first.liquid + assets/bmp-curated-
+        first.js via sections/main-collection.liquid#curated-first; "Curated
+        first" settings panel (enabled true by default, param name, swap-image
+        checkbox); pins one product to grid position #1 from a URL param for
+        Meta/FB ad landings; no-ops without the param; falls back to
+        sections/bmp-curated-product-card.liquid (Section Rendering API) when
+        the pinned product isn't already in the visited collection. Added
+        2026-08-03, ported from an earlier Horizon 3.5.1 build
+    - card hover: snippets/bmp-card-hover.liquid (target computation)
+        + assets/bmp-card-hover.js (applies the map) via
+        snippets/card-gallery.liquid#card-hover-attrs and
+        snippets/bmp-globals.liquid; "Product cards" settings panel
+        (bmp_card_hover_effect: zoom default / second_image / next_variant /
+        none); replaces Horizon's native show_second_image_on_hover flip for
+        every mode but zoom (native flip wrapped off at
+        snippets/card-gallery.liquid#card-hover-native-off)
+    - metafield-free color swatches: snippets/bmp-swatch-color-map.liquid plus
+        #swatch-name-fallback hooks in variant-main-picker, swatch,
+        variant-swatches, blocks/swatches and quick-add; "Swatches" settings
+        panel; zero JavaScript. Variant images and native swatch images always
+        win; a validated merchant override row outranks native
+        swatch.color; the 241 baked defaults stay last-resort behind everything
+        native. Invalid or unmapped names retain Horizon's neutral unavailable
+        swatch
+    - title truncate: blocks/product-title.liquid#title-truncate +
+        the "Product title truncate" group in assets/bmp-styles.css
+        (.bmp-title-clamp > * plus the --1 / --2 / --3 modifiers); per-block
+        bmp_truncate_lines select (none default = stock render), mirrored
+        since 2026-08-17 by the global bmp_card_title_truncate_lines with the
+        block select as the toggle-off override. Zero JS and
+        zero per-instance inline CSS — the line count travels as a modifier
+        class, not a style attribute — and the full title
+        stays in the DOM, so SEO and assistive tech are unaffected. Gate:
+        scripts/check-title-truncate.mjs (one of the CI static gates); canary: the
+        synthetic clamp probe in tools/visual-regression.mjs, which probes a
+        detached wrapper/child pair rather than a live card, since the option
+        is per-instance opt-in and no reference storefront has it on
+    - PDP title auto-fit + per-device title size:
+        blocks/product-title.liquid#pdp-title-fit-open/-close +
+        #pdp-title-heading, snippets/bmp-title-fit.liquid,
+        assets/bmp-title-fit.js, and the "PDP title auto-fit + per-device
+        size" CSS group in assets/bmp-styles.css (placed BEFORE the
+        GLOBAL CARD STYLE banners — gate A8 forbids typography properties
+        from the first div.bmp-card-global-title rule to EOF). Auto-fit:
+        titles of 1-48 characters commit to one line in CSS from first paint
+        and the module shrinks the font to fit (shrink-only; longer titles
+        wrap normally; @media (scripting: none) restores wrapping without
+        JS). Per-device size: global bmp_card_title_size_mobile (Card title
+        (global) group — token + media-wrapped gated rule in
+        snippets/bmp-card-style-vars.liquid, falling back to the desktop
+        bmp_card_title_size by rule absence) mirrored by the block
+        bmp_font_size_mobile via the COUNTERPART map. bmp_heading_tag makes
+        the block emit a real heading. templates/product.json's PDP title
+        block was ALREADY a stock product-title block (id
+        product_title_nT77dF, from a manual theme-editor swap that reached
+        this repo in the 2026-08-18 Shopify sync), and had therefore lost the
+        page's only <h1>; this feature CONFIGURES that block rather than swapping
+        it — bmp_heading_tag h1, autofit on, and type_preset h3 -> custom,
+        which bmp_font_size_mobile requires, at h3-equivalent typography
+        (font_size 2rem = --font-size--h3, the heading family type_font_h3
+        already selected, line_height tight = --line-height--body-tight 1.2 =
+        h3's display-loose 1.2). No other stored value is touched.
+        Gate: scripts/check-title-fit.mjs; canaries in
+        tools/visual-regression.mjs
+
+  locales:
+    - 31 storefront files: accessibility.bmp_free_shipping_progress +
+        content.bmp_filter_label / bmp_filter_and_sort / bmp_sort_by_label /
+        bmp_product_count (bmp_-prefixed keys nested under native namespaces)
+    - 20 schema files: bmp_-prefixed keys in names / settings / options /
+        text_defaults / info (theme check errors on missing translations)
+
+  contract: 45 modified core code files (42 render-edited + 3 schema-JSON-only
+  — this line has drifted stale more than once: it read 27 long after several
+  feature rounds had landed, and it only advanced (30, 31, 38, 45) when a
+  docs pass actually re-measured the tree. The drift went unnoticed because
+  nothing diffs this line against the register's own tally line; two parallel
+  work streams once computed 34 and 33 for it, each correct in isolation and both
+  wrong together after the merge, which is precisely why this line says to
+  MEASURE. RE-DERIVED 2026-08-17 on the swatch-fallback merge: the register
+  command reports 47 M entries, minus the two sections/*-group.json
+  merchant-data files = 45, of which 3 are schema-JSON-only
+  (blocks/_product-media-gallery.liquid, sections/footer-utilities.liquid,
+  sections/section.liquid) and 42 carry a BMP-HOOK-START marker. That set of
+  three has been stable across rounds and is the figure the register's Tally
+  briefly disagreed with — at the earlier 38-file count (35 + 3 was correct)
+  it read 37 + 1 for a day, having reclassified two of the three off a bare
+  grep for the string BMP-HOOK, which both of them contain as PROSE inside
+  their BMP-SCHEMA comment. Classify by
+  BMP-HOOK-START, or by whether the file's whole diff lands inside its schema
+  region. The swatch hooks land on five files — two already registered by
+  earlier features (variant-main-picker, blocks/swatches);
+  snippets/swatch.liquid, snippets/variant-swatches.liquid and
+  snippets/quick-add.liquid are first-touch.
+  Re-measure rather than trusting this line the next
+  time a core file changes — that is exactly the failure mode this note
+  itself is an example of. The register of record
+  must mirror, row for row, the modified files of the shipped code dirs
+  (assets blocks layout sections snippets) diffed against the pinned Horizon
+  base, minus sections/*-group.json (merchant data — like config/settings_data.json
+  and templates/*.json, owned wholesale and out of contract scope).
+
+  verification tooling (repo-only, shopify-ignored — pointers, not shipped):
+    - tools/visual-regression.mjs   — the computed-style storefront canary
+        suite (the "45" this line long carried had gone stale — the count
+        grows with nearly every feature; run the tool for the live number);
+        catches silent loss of the overrides render line or contracted edits
+    - tools/check-schema-ranges.mjs — upload-time schema range validation
+    - tools/full-sweep.mjs, tools/ui-audit-capture.mjs — QA capture harnesses
+
+  doctrine (repo-internal, none of it shipped): the repo rules · the
+  upstream-diff register (core contract) · the parity plan · the visual-parity
+  report · the upstream-PR notes
+{%- endcomment -%}

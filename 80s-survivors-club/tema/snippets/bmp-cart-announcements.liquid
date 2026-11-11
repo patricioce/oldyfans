@@ -1,0 +1,131 @@
+{% doc %}
+  BMP cart drawer announcements — up to 5 rotating icon+text messages pinned
+  to the bottom of the cart drawer.
+
+  Reads the global "Cart drawer announcements" theme settings; renders nothing
+  when every message slot is blank. Rotation reuses the stock
+  announcement-bar-component (autoplay seconds + aria-hidden fade) — the
+  module is only loaded when more than one message is configured, and a single
+  message renders as a static line (matches the live store, which has exactly
+  one). Replaces the old Swiper-based implementation (site-wide vendored
+  library + inline script).
+
+  @param {boolean} [script_only] - When true, only emit the rotation module
+    script tag (when needed). Must be rendered once OUTSIDE the drawer's
+    cart-items-component subtree: scripts inside it arrive via Section
+    Rendering morphs and never execute.
+
+  @example
+  {% render 'bmp-cart-announcements', script_only: true %}
+  {% render 'bmp-cart-announcements' %}
+{% enddoc %}
+
+{%- liquid
+  assign bmp_ca_count = 0
+  for i in (1..5)
+    assign text_key = 'bmp_bottom_announcement_bar_text_' | append: i
+    if settings[text_key] != blank
+      assign bmp_ca_count = bmp_ca_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if script_only -%}
+  {%- if bmp_ca_count > 1 -%}
+    <script
+      src="{{ 'announcement-bar.js' | asset_url }}"
+      type="module"
+      fetchpriority="low"
+    ></script>
+  {%- endif -%}
+{%- elsif bmp_ca_count > 0 -%}
+  <aside class="bmp-cart-announcements">
+    <announcement-bar-component
+      class="bmp-cart-announcements__slider"
+      {% if bmp_ca_count > 1 %}
+        autoplay="{{ settings.bmp_bottom_announcement_bar_speed }}"
+        aria-live="polite"
+      {% endif %}
+    >
+      <div class="bmp-cart-announcements__slides">
+        {%- liquid
+          assign slide_index = 0
+        -%}
+        {%- for i in (1..5) -%}
+          {%- liquid
+            assign text_key = 'bmp_bottom_announcement_bar_text_' | append: i
+            assign icon_key = 'bmp_bottom_announcement_bar_icon_' | append: i
+            assign text = settings[text_key]
+            assign icon = settings[icon_key]
+          -%}
+          {%- if text != blank -%}
+            <div
+              ref="slides[]"
+              class="bmp-cart-announcements__slide"
+              aria-hidden="{% if slide_index == 0 %}false{% else %}true{% endif %}"
+            >
+              <p class="bmp-cart-announcements__text">
+                {%- if icon != blank and icon != 'none' -%}
+                  {%- assign icon_asset = 'bmp-icon-' | append: icon | append: '.svg' -%}
+                  <span
+                    class="svg-wrapper bmp-cart-announcements__icon"
+                    aria-hidden="true"
+                  >
+                    {{- icon_asset | inline_asset_content -}}
+                  </span>
+                {%- endif -%}
+                <span>{{ text }}</span>
+              </p>
+            </div>
+            {%- assign slide_index = slide_index | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </announcement-bar-component>
+  </aside>
+{%- endif -%}
+
+{% stylesheet %}
+  /* Inline padding matches the drawer items (.cart-drawer__items uses the
+     same token). Horizon 4.1.1 dropped the 3.5.1 --cart-drawer-padding-desktop
+     token — --cart-drawer-padding (= --theme-drawer-padding) is now the single
+     drawer gutter at every width. */
+  .bmp-cart-announcements {
+    border-block-start: var(--style-border-width) solid var(--color-border);
+    padding-block: var(--padding-sm);
+    padding-inline: var(--cart-drawer-padding);
+    text-align: center;
+  }
+
+  .bmp-cart-announcements__slides {
+    display: grid;
+    grid: [stack] auto / [stack] auto;
+  }
+
+  .bmp-cart-announcements__slides > * {
+    grid-area: stack;
+  }
+
+  .bmp-cart-announcements__slide {
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+
+    &[aria-hidden='true'] {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  .bmp-cart-announcements__text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-2xs);
+    margin: 0;
+    font-size: var(--font-size--sm);
+  }
+
+  .bmp-cart-announcements__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+{% endstylesheet %}

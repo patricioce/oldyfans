@@ -1,0 +1,195 @@
+{%- doc -%}
+  BMP card hover effect — server-side target computation for the
+  product-card hover swap.
+
+  Rendered from inside the opening tag of card-gallery.liquid's
+  <div ref="cardGallery" …> element (wired in a later task), right after an
+  existing attribute with no separator of its own. Emits data attributes
+  that assets/bmp-card-hover.js (wired in a later task) reads to decide
+  which media to swap to on hover — this file does the ONLY computation;
+  the JS just applies whatever map it is handed.
+
+  ZERO-EMISSION CONTRACT: at settings.bmp_card_hover_effect == 'zoom' (the
+  theme default) this file emits NOT ONE BYTE — no space, no newline.
+  Because it lands inside an HTML opening tag, one stray character there
+  changes the rendered page and breaks the requirement that the default
+  render stay byte-identical to stock. Enforced structurally: the doc
+  block and the single {% liquid %} tag that follows are the only two
+  constructs in the file, both whitespace-trimming ({%- … -%}), and the
+  liquid tag's own `echo` statement is what emits output — so the file's
+  last tag is `-%}` and its own trailing newline is trimmed too.
+
+  When it DOES emit (non-zoom modes), every attribute carries its own
+  leading space, since it is appended with no separator after
+  data-image-ratio="…".
+
+  second_image targets the media IMMEDIATELY AFTER each variant-attached
+  one in product.media order, and only when that next media is itself
+  unassigned — never skip an intervening variant image to find a later
+  unassigned one. No such image -> no map entry: the specified behavior is
+  "no cross-fallback — dead cases are deliberate." A
+  same-day pair-by-position alternative (variant-attached media #n ->
+  unassigned media #n, by list position) was tried and withdrawn once this
+  store's real Printify catalog was measured: the unassigned-to-variant
+  ratio is exactly 3.0 on all 20 products, so positional pairing would
+  substitute an actively wrong image far more often than adjacency's known
+  dead cases. See the second_image branch's own comment below for the full
+  rationale.
+
+  @param {object} [product] - the product driving snippets/card-gallery.liquid
+
+  @example
+  {% render 'bmp-card-hover', product: product %}
+{%- enddoc -%}
+{%- liquid
+  assign bmp_mode = settings.bmp_card_hover_effect | default: 'zoom'
+  assign bmp_output = ''
+
+  if bmp_mode != 'zoom'
+    assign bmp_output = bmp_output | append: ' data-bmp-hover="' | append: bmp_mode | append: '"'
+
+    if product != blank and product.media.size > 1
+      comment
+        Core's own variant-detection idiom (snippets/card-gallery.liquid:150),
+        reused rather than reinvented so "variant-attached" means the same
+        thing everywhere in the theme.
+      endcomment
+      assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src'
+      assign bmp_map_pairs = ''
+
+      if bmp_mode == 'second_image'
+        comment
+          ADJACENCY, not pair-by-position. For each variant-attached media,
+          the target is the very next media in product.media order, and
+          only that one — never skip over an intervening variant image to
+          find a later unassigned one. No such image -> no map entry: the
+          specified behavior is "no cross-fallback — dead
+          cases are deliberate." When no media at all is variant-attached,
+          fall back to a single default entry (media[0] -> media[1]) for
+          the no-swatch-checked case.
+
+          A pair-by-position alternative (build V = variant-attached media
+          ids and U = unassigned media ids, both in product.media order,
+          and map V[n] -> U[n]) was tried and withdrawn the same day.
+          It was adopted because
+          this store's real Printify catalog groups ALL variant-attached
+          media first and ALL unassigned media after, so adjacency only
+          ever matches the single media at that boundary — 23 of 23
+          catalog products yielded 0 or 1 target. But measurement showed
+          the unassigned-to-variant ratio is exactly 3.0 on all 20 Printify
+          products (10 variant-attached, 30 unassigned) — three mockups
+          per colour, not generic filler — so under pair-by-position colour
+          #2 would map to unassigned #1, almost certainly colour #1's own
+          second mockup: an actively wrong image, which is precisely what
+          "dead cases are deliberate" exists to avoid. Adjacency is also
+          the rule under which the merchant's remedy (reordering media so
+          each colour is followed by its own shots) actually works; a
+          pair-by-position mapping would stay inert on this catalog even
+          after reordering.
+        endcomment
+        assign bmp_any_variant = false
+        for media in product.media limit: 250
+          if variant_images contains media.src
+            assign bmp_any_variant = true
+            assign bmp_next_index = forloop.index0 | plus: 1
+            if bmp_next_index < product.media.size
+              assign bmp_target = product.media[bmp_next_index]
+              unless variant_images contains bmp_target.src
+                assign bmp_map_pairs = bmp_map_pairs | append: media.id | append: ':' | append: bmp_target.id | append: ','
+              endunless
+            endif
+          endif
+        endfor
+        unless bmp_any_variant
+          assign bmp_default_target = product.media[1]
+          assign bmp_map_pairs = bmp_map_pairs | append: 'default:' | append: bmp_default_target.id | append: ','
+        endunless
+        comment
+          split/join round-trip drops the trailing separator left by the
+          loop's append, without a dedicated "trim last char" filter.
+        endcomment
+        assign bmp_map_pairs = bmp_map_pairs | split: ',' | join: ','
+        assign bmp_output = bmp_output | append: ' data-bmp-hover-map="' | append: bmp_map_pairs | append: '"'
+
+      elsif bmp_mode == 'next_variant'
+        comment
+          Chains each VARIANT's featured media to the next variant's
+          featured media - not every variant-attached media in product.media
+          order. A variant that owns more than one image (a POD front + back
+          mockup per colour - the exact catalog shape this ticket exists
+          for) must step to the NEXT VARIANT's image on hover, never to its
+          own second image: the shipped copy promises "the next variant's
+          image (e.g. another color)", so hovering green-front must reach
+          blue-front, not green-back.
+            product = Green(front, back) + Blue(front):
+              media-level (old, wrong): green-front -> green-back,
+                green-back -> blue-front, blue-front -> green-front
+              variant-level (this): green-front -> blue-front,
+                blue-front -> green-front
+          Candidates are each variant's featured_media id, de-duplicated (two
+          variants can share one image) and walked in product.media order -
+          not product.variants order - so "next" still means next in the
+          merchant's media ordering, consistent with second_image above. Map
+          only emitted with >=2 distinct variant-featured media - fewer than
+          that has no "next" to swap to. Variants with no featured_media
+          (unassigned image) are skipped, not treated as a candidate.
+        endcomment
+        comment
+          Membership test below is a delimiter-guarded STRING contains, not
+          `array contains id`: product.variants | map: 'featured_media' |
+          map: 'id' would yield INTEGERS, and `contains` has no numeric
+          "is this id in this list" semantics of its own to lean on safely
+          here - wrapping every id in its own comma pair (',123,' tested
+          against a ',...,'-joined haystack) is what stops an id like 123
+          from false-matching inside a longer id like 1234 (plain '123' IS a
+          substring of '1234'; ',123,' is not a substring of ',1234,').
+        endcomment
+        comment
+          Explicit limit: Shopify's `for` tag docs cap a bare for loop at 50
+          iterations by default, but a theme can see up to 250 variants on
+          one product - and BMP's POD catalogs (colour x size) cross 50
+          routinely (e.g. 10 colours x 6 sizes = 60). A bare `for variant in
+          product.variants` here would silently drop every variant past #50
+          from bmp_featured_media_ids, so later colours get no next_variant
+          target and hover silently no-ops for them - the same
+          "works-for-some-colours-not-others" failure the
+          card-hover-slide-budget hook exists to prevent in second_image
+          mode. 250 is the platform's own ceiling on variants a theme can
+          fetch for one product, so this limit can never itself truncate.
+          Do not delete this as "redundant" - it is the fix, not decoration.
+        endcomment
+        assign bmp_featured_media_ids = ''
+        for variant in product.variants limit: 250
+          unless variant.featured_media == blank
+            assign bmp_featured_media_ids = bmp_featured_media_ids | append: ',' | append: variant.featured_media.id
+          endunless
+        endfor
+        assign bmp_featured_media_ids = bmp_featured_media_ids | append: ','
+
+        assign bmp_variant_ids = ''
+        for media in product.media
+          assign bmp_needle = ',' | append: media.id | append: ','
+          if bmp_featured_media_ids contains bmp_needle
+            assign bmp_variant_ids = bmp_variant_ids | append: media.id | append: ','
+          endif
+        endfor
+        assign bmp_variant_id_list = bmp_variant_ids | split: ','
+        assign bmp_variant_count = bmp_variant_id_list.size
+        if bmp_variant_count >= 2
+          for bmp_id in bmp_variant_id_list
+            assign bmp_next_pos = forloop.index0 | plus: 1
+            if bmp_next_pos == bmp_variant_count
+              assign bmp_next_pos = 0
+            endif
+            assign bmp_next_id = bmp_variant_id_list[bmp_next_pos]
+            assign bmp_map_pairs = bmp_map_pairs | append: bmp_id | append: ':' | append: bmp_next_id | append: ','
+          endfor
+        endif
+        assign bmp_map_pairs = bmp_map_pairs | split: ',' | join: ','
+        assign bmp_output = bmp_output | append: ' data-bmp-hover-map="' | append: bmp_map_pairs | append: '"'
+      endif
+    endif
+  endif
+
+  echo bmp_output
+-%}

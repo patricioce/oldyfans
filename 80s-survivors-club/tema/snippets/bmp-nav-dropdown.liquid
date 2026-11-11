@@ -1,0 +1,170 @@
+{% doc %}
+  Renders ONE child-bearing level-1 desktop menu item as a content-sized
+  dropdown card, replacing Horizon's full-viewport mega-menu band for that
+  item. Rendered from the §4(c) wrap at
+  blocks/_header-menu.liquid#nav-dropdown; items WITHOUT children fall through
+  to the untouched native `<li>` in that same wrap.
+
+  Every class, ref and attribute core relies on is preserved deliberately:
+
+  - `class="menu-list__list-item"` on the `<li>` — `overflow-list` counts and
+    re-slots its children by that class, so the "More" flyout keeps working.
+  - `on:focus="/activate"` / `on:blur="/deactivate"` and NO
+    `on:pointerenter` / `on:pointerleave` (decision D5). Core JS is uneditable,
+    so omitting the pointer attributes is the only lever that removes
+    hover-to-open: assets/component.js dispatches purely off the attribute and
+    refuses the `closest()` fallback for pointer enter/leave, so an absent
+    attribute means the event can never reach this item. Keeping focus/blur
+    preserves focus-open and blur-close — the latter is the established
+    focus-out dismissal. (Horizon 4.1.4 removed `on:focus` from the NATIVE
+    item, moving keyboard-open onto a dedicated disclosure button; this card
+    keeps D5's focus-open deliberately — its trigger is already a real button,
+    so Enter/Space toggle too — and the focus-driven `activate` is also what
+    keeps core's own state writes, `inert` clearing and the transparent-header
+    `header-menu[aria-expanded]` signal in the loop for every BMP open.)
+  - `ref="menuitem"` on the trigger and `ref="submenu[]"` on the panel —
+    assets/header-menu.js resolves both through those refs (`findMenuItem`,
+    `findSubmenu`); since 4.1.4 `findSubmenu` reads
+    `listItem.querySelector(':scope > [ref="submenu[]"]')`, so the panel must
+    stay a DIRECT CHILD of this `<li>`.
+  - `inert` on the panel, exactly like the 4.1.4 native submenu: it keeps the
+    collapsed card out of the tab order and the accessibility tree, and the
+    header's row-elevation rule (sections/header.liquid) keys on
+    `.menu-list__submenu:not([inert])`, so a panel that never carried the
+    attribute would keep the row permanently elevated. Core's activate /
+    deactivate toggle it on the focus/blur paths and
+    assets/bmp-header-menu.js mirrors it on the click / Escape /
+    outside-press paths.
+  - `data-skip-node-update="true"` on the trigger — it must survive the idle
+    header hydration morph, exactly as the native `<a>` does.
+  - `aria-expanded` on the trigger is the SINGLE state signal (R6). Core's
+    `#expandableFor` (4.1.4) writes the state onto a `[ref="disclosure[]"]`
+    button when one exists and falls back to the `[ref="menuitem"]` element
+    when none does — this card ships no disclosure, so core keeps writing the
+    trigger on focus/blur, assets/bmp-header-menu.js writes it on click /
+    Escape / outside-click, and the CSS reveal needs no second mechanism.
+
+  The trigger is a `<button>`, not an `<a href>` whose navigation is cancelled
+  (decision D2) — that role conflict is v1.1.5 bug #7. The parent collection
+  stays reachable as the panel's first row (D3), which is also where
+  `aria-current="page"` belongs, since a button never navigates.
+
+  `data-bmp-submenu-size` on the card carries the merchant's Submenu size
+  option. The stock preset `submenu-font-styles` writes inverts
+  levels 2 and 3 on Medium/Large — level 2 small and subdued, level 3 large and
+  foreground — because it was written for Horizon's mega-menu, where level-2
+  entries are column headers above a list of links. This card is a cascading
+  list, so consuming those vars literally renders children bigger and darker
+  than their parents. The card re-derives its own size/colour map from this
+  attribute (assets/bmp-styles.css, the submenu size-map block in the nav
+  dropdown group): every submenu row renders ONE size per option (14/16/18,
+  product decision 2026-08-19), with hierarchy carried by colour and indent.
+  Family, weight and case still come from the stock vars, which is why the
+  `submenu-font-styles` render below stays.
+
+  @param {object} link - The level-1 link. Must have `link.links` present; the
+    caller gates on that.
+  @param {number} index - `forloop.index` of the link in the caller's loop, used
+    to build the `submenu-N` id the trigger's aria-controls points at.
+  @param {object} block_settings - The header-menu block's settings, forwarded to
+    `submenu-font-styles`.
+  @param {string} [background_color_classes] - Scheme classes the caller already
+    computed for the submenu (`color-custom-<block.id>`,
+    `background-matches-parent`).
+
+  @example
+  {% render 'bmp-nav-dropdown',
+    link: link,
+    index: forloop.index,
+    block_settings: block_settings,
+    background_color_classes: background_color_classes %}
+{% enddoc %}
+
+<li
+  class="menu-list__list-item bmp-nav-item"
+  on:focus="/activate"
+  on:blur="/deactivate"
+>
+  <button
+    type="button"
+    data-skip-node-update="true"
+    class="menu-list__link button-unstyled bmp-nav-trigger{% if link.active %} menu-list__link--active{% endif %}"
+    aria-controls="submenu-{{ index }}"
+    aria-haspopup="true"
+    aria-expanded="false"
+    ref="menuitem"
+  >
+    <span class="menu-list__link-title">{{- link.title -}}</span>
+    <span class="bmp-nav-trigger__caret">
+      {{- 'icon-caret.svg' | inline_asset_content -}}
+    </span>
+  </button>
+  <div class="menu-list__submenu bmp-nav-panel{{ background_color_classes }}" ref="submenu[]" inert>
+    <div
+      id="submenu-{{ index }}"
+      class="menu-list__submenu-inner"
+      style="{% render 'submenu-font-styles', settings: block_settings %}"
+    >
+      <div
+        class="bmp-nav-panel__card"
+        data-bmp-submenu-size="{{ block_settings.menu_font_style | default: 'regular' }}"
+      >
+        {%- for group in link.links -%}
+          {%- assign group_panel_id = 'bmp-nav-group-' | append: index | append: '-' | append: forloop.index -%}
+          <div class="bmp-nav-group" data-bmp-nav-group>
+            <div class="bmp-nav-group__title">
+              <a
+                href="{{ group.url }}"
+                class="bmp-nav-group__link"
+                {% if group.current %}
+                  aria-current="page"
+                {% endif %}
+              >
+                {{- group.title -}}
+              </a>
+              {%- if group.links != blank -%}
+                <button
+                  type="button"
+                  class="button-unstyled bmp-nav-group__toggle"
+                  aria-expanded="false"
+                  aria-controls="{{ group_panel_id }}"
+                  aria-label="{{ 'bmp.accessibility.bmp_nav_expand' | t: title: group.title }}"
+                >
+                  <span class="bmp-nav-group__caret">
+                    {{- 'icon-caret.svg' | inline_asset_content -}}
+                  </span>
+                </button>
+              {%- endif -%}
+            </div>
+            {%- if group.links != blank -%}
+              <div id="{{ group_panel_id }}" class="bmp-nav-group__panel">
+                {%- comment -%}
+                  role="list" is not redundant: Safari/VoiceOver drops list
+                  semantics from a <ul> whose list-style is none, which
+                  .list-unstyled sets. Stock has the same gap in
+                  snippets/mega-menu-list.liquid; this is the cheap half.
+                {%- endcomment -%}
+                <ul class="bmp-nav-group__list list-unstyled" role="list">
+                  {%- for item in group.links -%}
+                    <li>
+                      <a
+                        href="{{ item.url }}"
+                        class="bmp-nav-group__item"
+                        {% if item.current %}
+                          aria-current="page"
+                        {% endif %}
+                      >
+                        {{- item.title -}}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</li>
+

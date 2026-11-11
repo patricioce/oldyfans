@@ -1,0 +1,1128 @@
+<!doctype html>
+<html
+  {% if request.design_mode %}
+    class="shopify-design-mode"
+  {% endif %}
+  lang="{{ request.locale.iso_code }}"
+>
+  <head>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WD2HNPKW');</script>
+    <!-- End Google Tag Manager -->
+
+    {%- if settings.favicon != blank -%}
+      <link
+        rel="icon"
+        type="image/png"
+        href="{{ settings.favicon | image_url: width: 32, height: 32 }}"
+      >
+    {%- endif -%}
+
+    {% comment %}
+      Opt into cross-document (MPA) view transitions and hold first paint until #MainContent
+      parses, so the transition runs consistently.
+      Both are gated on the same settings as the view-transitions.js opt-out switch (see snippets/scripts.liquid).
+    {% endcomment %}
+
+    {% if settings.transition_to_main_product or settings.page_transition_enabled %}
+      {% style %}
+        @media (prefers-reduced-motion: no-preference) {
+          @view-transition {
+            navigation: auto;
+          }
+        }
+      {% endstyle %}
+
+      {% if settings.transition_to_main_product or settings.page_transition_enabled %}
+        <link
+          rel="expect"
+          href="#MainContent"
+          blocking="render"
+          id="view-transition-render-blocker"
+        >
+      {% endif %}
+    {% endif %}
+
+    {%- render 'meta-tags' -%}
+    {%- render 'stylesheets' -%}
+    {%- render 'card-hover-effect-styles' -%}
+    {%- render 'fonts' -%}
+    {%- render 'scripts' -%}
+    {%- render 'theme-styles-variables' -%}
+    {%- render 'color-palette' -%}
+
+    {%- comment -%}BMP-HOOK-START:globals{%- endcomment -%}
+    {%- render 'bmp-globals' -%}
+    {%- comment -%}BMP-HOOK-END:globals{%- endcomment -%}
+
+    {% if request.design_mode %}
+      {%- render 'theme-editor' -%}
+    {% endif %}
+
+    {{ content_for_header }}
+
+  <style>
+  /* bmp-card-price: en tarjetas de producto, tachado chico y claro primero, precio real despues (gana a la regla de la ficha) */
+  product-card product-price [ref="priceContainer"],
+  product-card product-price > div { display:flex !important; flex-wrap:wrap; align-items:baseline !important; gap:8px !important; }
+  product-card product-price .price-item__group.price:not(.compare-at-price) { order:2 !important; font-size:1rem !important; font-weight:700 !important; line-height:inherit !important; }
+  product-card product-price .compare-at-price { order:1 !important; font-size:13px !important; font-weight:400 !important; color:rgba(0,0,0,.35) !important; opacity:1 !important; }
+</style>
+
+{{ 'tipografia-sloth.css' | asset_url | stylesheet_tag }}
+
+{{ 'mini-cart-sloth.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mini-cart-sloth.js' | asset_url }}" defer></script>
+
+{{ 'imagen-producto-sloth.css' | asset_url | stylesheet_tag }}
+
+{{ 'colecciones-sloth.css' | asset_url | stylesheet_tag }}
+
+{{ 'oldyfans-policies.css' | asset_url | stylesheet_tag }}
+
+</head>
+
+  <body
+    class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}{% comment %}BMP-HOOK-START:platform-body{% endcomment %} buildmypodai-theme{% comment %}BMP-HOOK-END:platform-body{% endcomment %}"
+    {% comment %}BMP-HOOK-START:platform-layout{% endcomment %}
+    data-buildmypodai-layout="theme"
+    {% comment %}BMP-HOOK-END:platform-layout{% endcomment %}
+  >
+
+    {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
+
+    {% render 'chat-drawer' %}
+
+    <div class="page-wrapper">
+
+      <div id="header-group">
+        {% sections 'header-group' %}
+      </div>
+
+      <script>
+        /**
+         * Sets `--header-height` and `--header-group-height` to measured values before first paint.
+         */
+        window.measureHeaderHeights = (function () {
+          let measured = false;
+
+          return function measureHeaderHeights() {
+            if (measured) return;
+
+            const header = document.querySelector('#header-component');
+            const headerGroup = document.querySelector('#header-group');
+
+            if (!header || !headerGroup) return;
+            measured = true;
+
+            const headerHeight = header.offsetHeight;
+
+            let headerGroupHeight = 0;
+
+            for (const element of headerGroup.children) {
+              if (element instanceof HTMLElement) {
+                headerGroupHeight += element.offsetHeight;
+              }
+            }
+
+            if (header.hasAttribute('transparent') && header.parentElement?.nextElementSibling) {
+              headerGroupHeight += headerHeight;
+            }
+
+            document.body.style.setProperty('--header-height', `${headerHeight}px`);
+            document.body.style.setProperty('--header-group-height', `${headerGroupHeight}px`);
+          };
+        })();
+
+        if (document.querySelector('#header-component')?.hasAttribute('transparent')) {
+          measureHeaderHeights();
+        }
+
+        (function setTopRowHeight() {
+          const header = document.querySelector('#header-component');
+          const headerTopRow = header?.querySelector('.header__row--top');
+
+          if (!headerTopRow) return;
+
+          window.requestAnimationFrame(function () {
+            header.style.setProperty('--top-row-height', `${headerTopRow.offsetHeight}px`);
+          });
+        })();
+
+        (function updateTransparentHeaderOffset() {
+          const header = document.querySelector('#header-component');
+          const headerSection = document.querySelector('#header-group .header-section');
+
+          if (!headerSection || !header?.hasAttribute('transparent')) return;
+
+          const hasImmediateSection =
+            headerSection.nextElementSibling?.classList.contains('shopify-section');
+
+          if (!hasImmediateSection) {
+            document.body.style.setProperty('--transparent-header-offset-boolean', '1');
+          }
+        })();
+
+        (function setHeaderMenuStyle() {
+          const headerComponent = document.querySelector('#header-component');
+
+          if (headerComponent) {
+            const isTouchDevice =
+              'ontouchstart' in window && navigator.maxTouchPoints > 0;
+
+            const overflowList =
+              headerComponent.querySelector('overflow-list');
+
+            const hasReachedMinimum =
+              overflowList &&
+              overflowList.hasAttribute('minimum-reached');
+
+            headerComponent.dataset.menuStyle =
+              isTouchDevice || hasReachedMinimum ? 'drawer' : 'menu';
+          }
+        })();
+      </script>
+
+      <main
+        id="MainContent"
+        class="content-for-layout"
+        role="main"
+        data-page-transition-enabled="{{ settings.page_transition_enabled }}"
+        data-product-transition="{{ settings.transition_to_main_product }}"
+        data-template="{{ template }}"
+      >
+        {{ content_for_layout }}
+      </main>
+
+      <footer>
+        {% sections 'footer-group' %}
+      </footer>
+
+    </div>
+
+    {% render 'cart-drawer', render_wrapper: true %}
+    {% render 'theme-drawer' %}
+    {% render 'search-modal' %}
+
+    {% if settings.quick_add or settings.mobile_quick_add %}
+      {% render 'quick-add-modal' %}
+    {% endif %}
+
+    {%- comment -%}BMP-HOOK-START:body{%- endcomment -%}
+    {%- render 'bmp-body' -%}
+    {%- comment -%}BMP-HOOK-END:body{%- endcomment -%}
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe
+        loading="lazy"
+        src="https://www.googletagmanager.com/ns.html?id=GTM-WD2HNPKW"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+
+    <!-- ========================================= -->
+    <!-- CUSTOM CODE -->
+    <!-- ========================================= -->
+
+
+    <!-- Add to Cart price suffix -->
+    <style>
+      add-to-cart-component.price_false span.add-to-cart-text__suffix-price {
+        display: none;
+      }
+
+      add-to-cart-component.price_true span.add-to-cart-text__suffix-price {
+        display: inline-flex;
+      }
+    </style>
+
+
+    <!-- Header menu -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+
+        document
+          .querySelectorAll('.header-menu__inner .menu-list .child_menu .has_child_menu')
+          .forEach(function (menuItem) {
+
+            menuItem.addEventListener('click', function (e) {
+
+              e.preventDefault();
+
+              document
+                .querySelectorAll(
+                  '.header-menu__inner .menu-list .child_menu .has_child_menu.active'
+                )
+                .forEach(function (openMenu) {
+
+                  if (openMenu !== e.currentTarget) {
+                    openMenu.classList.remove('active');
+                  }
+
+                });
+
+              this.classList.toggle('active');
+
+            });
+
+          });
+
+      });
+    </script>
+
+
+    <!-- General CSS -->
+    <style>
+
+      html,
+      body {
+        overflow-x: hidden;
+      }
+
+      .slideshow-controls__thumbnails button:hover {
+        opacity: .7 !important;
+      }
+
+    </style>
+
+
+    <!-- Fake Sale Price -->
+    <style>
+
+      .fake-sale-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .fake-sale-original {
+        text-decoration: line-through;
+        opacity: 0.6;
+      }
+
+      .fake-sale-new {
+        font-weight: 700;
+      }
+
+    </style>
+
+
+    <script>
+      (function () {
+
+        const DISCOUNT = 0.30;
+
+        function parsePrice(text) {
+
+          if (!text) return null;
+
+          const clean = text
+            .replace(/,/g, '')
+            .replace(/[^\d.]/g, '');
+
+          const number = parseFloat(clean);
+
+          return isNaN(number) ? null : number;
+        }
+
+        function formatUSD(value) {
+
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+          }).format(value);
+
+        }
+
+        function applyFakeDiscount() {
+          return; /* desactivado: ahora el precio real es $30 con compare-at $42.85 */
+
+          const selectors = [
+            '.price',
+            '.price-item',
+            '.product-price',
+            '.money',
+            '.price__regular',
+            '.price__sale',
+            '.card-information__text',
+            '[data-product-price]',
+            '.product__price',
+            '.product-single__price'
+          ];
+
+          const elements =
+            document.querySelectorAll(selectors.join(','));
+
+          elements.forEach(el => {
+
+            if (el.dataset.fakeSaleApplied === 'true') return;
+
+            const text = el.innerText?.trim();
+
+            if (!text) return;
+
+            if (el.querySelector('.fake-sale-wrapper')) return;
+
+            const originalPrice = parsePrice(text);
+
+            if (!originalPrice) return;
+
+            const discountedPrice =
+              Math.round(originalPrice * (1 - DISCOUNT) * 100 + 0.0001) / 100;
+
+            el.dataset.fakeSaleApplied = 'true';
+
+            el.innerHTML = `
+              <span class="fake-sale-wrapper">
+                <span class="fake-sale-original">
+                  ${formatUSD(originalPrice)}
+                </span>
+
+                <span class="fake-sale-new">
+                  ${formatUSD(discountedPrice)}
+                </span>
+              </span>
+            `;
+
+          });
+
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+          applyFakeDiscount();
+
+          const observer = new MutationObserver(() => {
+            applyFakeDiscount();
+          });
+
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+
+        });
+
+      })();
+    </script>
+
+
+    <!-- Guarantee Badge -->
+    <style>
+
+      .shc-guarantee-badge {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        margin-top: 16px;
+        padding: 14px 16px;
+        background: #EEF3EE;
+        border-radius: 8px;
+        width: 100%;
+        text-align: left;
+      }
+
+      .shc-guarantee-check {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .shc-guarantee-text {
+        color: #1B2A4A;
+        font-size: 13px;
+        line-height: 1.4;
+        font-weight: 400;
+        text-align: left;
+      }
+
+      .shc-guarantee-text strong {
+        font-weight: 700;
+      }
+
+      .shc-guarantee-text a {
+        color: inherit;
+        text-decoration: underline;
+        font-weight: 700;
+      }
+
+    </style>
+
+
+    <!-- Cart Checkout Button -->
+    <style>
+
+      .cart__checkout-button {
+        border-radius: 12px !important;
+        font-size: 17px !important;
+        background-color: #E73123 !important;
+        border-color: #E73123 !important;
+        color: #ffffff !important;
+      }
+
+      p.ca-font-size {
+        display: none !important;
+      }
+
+    </style>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+
+        function changeCheckoutText() {
+
+          document
+            .querySelectorAll('.cart__checkout-button')
+            .forEach(function (button) {
+
+              button.childNodes.forEach(function (node) {
+
+                if (
+                  node.nodeType === Node.TEXT_NODE &&
+                  node.textContent.trim()
+                ) {
+                  node.textContent = 'Checkout Now';
+                }
+
+              });
+
+              if (button.textContent.trim() === 'Checkout') {
+                button.textContent = 'Checkout Now';
+              }
+
+            });
+
+        }
+
+        changeCheckoutText();
+
+        const observer =
+          new MutationObserver(changeCheckoutText);
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+
+      });
+    </script>
+
+
+    <!-- Add To Cart Button -->
+    <style>
+
+      add-to-cart-component .add-to-cart-button {
+        background-color: #E73123 !important;
+        border-color: #E73123 !important;
+        color: #ffffff !important;
+      }
+
+      add-to-cart-component .add-to-cart-button:hover {
+        background-color: #E73123 !important;
+        border-color: #E73123 !important;
+        color: #ffffff !important;
+      }
+
+    </style>
+
+
+    <!-- Sale Badge -->
+    {% if request.page_type == 'product' %}
+<style>
+  /* Relacionados en 3 columnas (escritorio), como la referencia */
+    @import url('https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@400;500;700&display=swap');
+    [id$='__about_brand'] h2, [id$='__about_brand'] p { font-family:'Anek Tamil',sans-serif !important; }
+    [id$='__about_brand'] h2 { font-weight:700 !important; letter-spacing:-.01em; }
+    @media screen and (max-width: 749px) { [id$='__about_brand'] .media-block, [id$='__about_brand'] .media-block__media { height:auto !important; aspect-ratio:1650 / 1000 !important; object-fit:contain !important; } }
+    .details-content h3 { font-size:1.5rem !important; font-weight:700 !important; line-height:1.2 !important; margin:1.6rem 0 .8rem !important; color:inherit !important; }
+    .details-content h3:first-child { margin-top:.4rem !important; }
+  @media screen and (min-width: 750px) {
+    .product-recommendations .resource-list--grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      column-gap: 24px !important;
+      row-gap: 28px !important;
+    }
+  }
+</style>
+<style>
+  /* Orden del precio en la ficha: precio final grande, tachado chico, luego SALE */
+  product-price[data-block-id] [ref="priceContainer"] {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  product-price[data-block-id] .price-item__group.price:not(.compare-at-price) {
+    order: 2;
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+  product-price[data-block-id] .compare-at-price {
+    order: 1;
+    font-size: 0.85em;
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+  product-price[data-block-id] .custom-sale-badge {
+    order: 3;
+    margin-left: 0;
+    align-self: center;
+  }
+</style>
+
+      <style>
+
+        .custom-sale-badge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          margin-left: 10px;
+          padding: 3px 8px;
+          border-radius: 4px;
+          background-color: #E73123;
+          color: #ffffff;
+          font-size: 0.9rem;
+          font-weight: 700;
+          line-height: 1;
+          white-space: nowrap;
+          vertical-align: middle;
+        }
+
+        @media screen and (max-width: 749px) {
+
+          .custom-sale-badge {
+            margin-left: 6px;
+            padding: 2px 7px;
+            font-size: 0.8rem;
+          }
+
+        }
+
+      </style>
+
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+          function addSaleBadge() {
+
+            const priceContainer =
+              document.querySelector('product-price');
+
+            if (!priceContainer) return;
+
+            if (
+              priceContainer.querySelector('.custom-sale-badge')
+            ) return;
+
+            const price =
+              priceContainer.querySelector(
+                '.fake-sale-new, .price-item--sale, .price-item--last, .price-item__group.price:not(.compare-at-price)'
+              );
+
+            if (!price) return;
+
+            const badge =
+              document.createElement('span');
+
+            badge.className =
+              'custom-sale-badge';
+
+            badge.textContent = 'SALE';
+
+            price.insertAdjacentElement(
+              'afterend',
+              badge
+            );
+
+          }
+
+          addSaleBadge();
+
+          const priceContainer =
+            document.querySelector('product-price');
+
+          if (priceContainer) {
+
+            const observer =
+              new MutationObserver(function () {
+                addSaleBadge();
+              });
+
+            observer.observe(priceContainer, {
+              childList: true,
+              subtree: true
+            });
+
+          }
+
+        });
+      </script>
+
+    {% endif %}
+
+
+    <!-- Money Back Guarantee -->
+    <script>
+      (function () {
+
+        function addGuaranteeBadge() {
+
+          if (
+            !window.location.pathname.includes('/products/')
+          ) return;
+
+          const addToCart =
+            document.querySelector(
+              '[data-testid="standalone-add-to-cart"]'
+            );
+
+          if (!addToCart) return;
+
+          if (
+            document.querySelector(
+              '.shc-guarantee-badge'
+            )
+          ) return;
+
+          const badge =
+            document.createElement('div');
+
+          badge.className =
+            'shc-guarantee-badge';
+
+          badge.innerHTML = `
+            <span
+              class="shc-guarantee-check"
+              aria-hidden="true"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill="#304128"
+                  d="M12 1.5l2.36 1.78 2.94-.31 1.27 2.67 2.67 1.27-.31 2.94L22.5 12l-1.78 2.36.31 2.94-2.67 1.27-1.27 2.67-2.94-.31L12 22.5l-2.36-1.78-2.94.31-1.27-2.67-2.67-1.27.31-2.94L1.5 12l1.78-2.36-.31-2.94 2.67-1.27 1.27-2.67 2.94.31L12 1.5z"
+                ></path>
+
+                <path
+                  d="M7.5 12.3l3 3 6-6"
+                  stroke="#ffffff"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  fill="none"
+                ></path>
+              </svg>
+            </span>
+
+<span class="shc-guarantee-text">
+  <strong>Less than 1% of customers use our <a href="https://oldyfans.store/policies/refund-policy" style="color: inherit; text-decoration: underline;">30-day money-back guarantee</a>.</strong>
+</span>
+          `;
+
+          let anchor = addToCart.parentNode.parentNode;
+
+          const trustShippingText = [...document.querySelectorAll('*')].find(
+            function (e) {
+              return e.children.length === 0 && e.textContent.trim() === 'Fast Shipping';
+            }
+          );
+
+          if (trustShippingText) {
+
+            const ancestorsOfButton = [];
+            let a = addToCart;
+            while (a) { ancestorsOfButton.push(a); a = a.parentElement; }
+            const ancestorSet = new Set(ancestorsOfButton);
+
+            let common = null;
+            let b = trustShippingText;
+            while (b) { if (ancestorSet.has(b)) { common = b; break; } b = b.parentElement; }
+
+            if (common) {
+              let child = trustShippingText;
+              while (child.parentElement && child.parentElement !== common) {
+                child = child.parentElement;
+              }
+              if (child.parentElement === common) {
+                anchor = child;
+              }
+            }
+
+          }
+
+          anchor.insertAdjacentElement(
+            'afterend',
+            badge
+          );
+
+        }
+
+
+        if (document.readyState === 'loading') {
+
+          document.addEventListener(
+            'DOMContentLoaded',
+            addGuaranteeBadge
+          );
+
+        } else {
+
+          addGuaranteeBadge();
+
+        }
+
+
+        const observer =
+          new MutationObserver(function () {
+            addGuaranteeBadge();
+          });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+
+      })();
+    </script>
+
+<script>
+(function () {
+  'use strict';
+
+  /*
+   * OLDYFANS
+   * Hace que los links de las tarjetas de producto en colecciones
+   * abran directamente la variante correspondiente al color mostrado.
+   */
+
+  const variantCache = {};
+
+  async function getProductData(handle) {
+    if (variantCache[handle]) {
+      return variantCache[handle];
+    }
+
+    try {
+      const response = await fetch('/products/' + handle + '.js');
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const product = await response.json();
+      variantCache[handle] = product;
+
+      return product;
+    } catch (error) {
+      console.error('OldyFans variant selector:', error);
+      return null;
+    }
+  }
+
+  function getVisibleMediaId(card) {
+    /*
+     * En tu HTML cada imagen/slide tiene:
+     *
+     * <slideshow-slide ... slide-id="43933217161261">
+     *
+     * Buscamos el slide que actualmente está visible.
+     */
+
+    const slides = card.querySelectorAll(
+      'slideshow-slide[slide-id]'
+    );
+
+    for (const slide of slides) {
+      const hidden = slide.hasAttribute('hidden');
+      const ariaHidden = slide.getAttribute('aria-hidden');
+
+      if (!hidden && ariaHidden !== 'true') {
+        return slide.getAttribute('slide-id');
+      }
+    }
+
+    /*
+     * Fallback: si el theme no marca correctamente el slide,
+     * usamos el primero.
+     */
+    if (slides.length) {
+      return slides[0].getAttribute('slide-id');
+    }
+
+    return null;
+  }
+
+  function getHandleFromUrl(url) {
+    try {
+      const parsed = new URL(url, window.location.origin);
+
+      const match = parsed.pathname.match(
+        /\/products\/([^\/]+)/
+      );
+
+      return match ? match[1] : null;
+
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async function handleProductClick(event) {
+
+    /*
+     * Solo nos interesan clicks que terminen entrando a un producto.
+     */
+    const link = event.target.closest(
+      'a[href*="/products/"]'
+    );
+
+    if (!link) {
+      return;
+    }
+
+    const card = link.closest('product-card');
+
+    if (!card) {
+      return;
+    }
+
+    /*
+     * Si ya tiene una variante específica, no hacemos nada.
+     */
+    const originalUrl = link.href;
+
+    if (/[?&]variant=\d+/.test(originalUrl)) {
+      /*
+       * Aunque tenga variant, la reemplazamos por la variante
+       * correspondiente a la imagen/color de esta tarjeta.
+       */
+    }
+
+    const handle = getHandleFromUrl(originalUrl);
+
+    if (!handle) {
+      return;
+    }
+
+    const mediaId = getVisibleMediaId(card);
+
+    if (!mediaId) {
+      return;
+    }
+
+    /*
+     * Evitamos que el theme navegue antes de terminar
+     * de identificar la variante.
+     */
+    event.preventDefault();
+    event.stopPropagation();
+
+    const product = await getProductData(handle);
+
+    if (!product || !product.variants) {
+      window.location.href = originalUrl;
+      return;
+    }
+
+    /*
+     * Buscamos la variante cuya imagen destacada corresponde
+     * al slide que se está mostrando en la tarjeta.
+     */
+    let matchingVariant = product.variants.find(function (variant) {
+
+      if (
+        variant.featured_media &&
+        String(variant.featured_media.id) === String(mediaId)
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+
+    /*
+     * Compatibilidad con estructuras antiguas de Shopify.
+     */
+    if (!matchingVariant) {
+      matchingVariant = product.variants.find(function (variant) {
+
+        if (
+          variant.featured_image &&
+          variant.featured_image.id &&
+          String(variant.featured_image.id) === String(mediaId)
+        ) {
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    /*
+     * Si encontramos la variante correspondiente al color,
+     * entramos directamente con ese ID.
+     */
+    if (matchingVariant) {
+
+      const destination =
+        '/products/' +
+        handle +
+        '?variant=' +
+        matchingVariant.id;
+
+      window.location.href = destination;
+
+    } else {
+
+      /*
+       * Si por alguna razón no encontramos correspondencia,
+       * mantenemos el comportamiento normal.
+       */
+      window.location.href = originalUrl;
+    }
+  }
+
+  /*
+   * Usamos captura para adelantarnos al comportamiento
+   * normal del link del theme.
+   */
+  document.addEventListener(
+    'click',
+    handleProductClick,
+    true
+  );
+
+})();
+</script>
+
+<style>
+@media screen and (max-width: 749px) {
+  .variant-option--swatches .variant-option__swatch {
+    transform: scale(0.5) !important;
+    transform-origin: center center;
+  }
+}
+</style>
+
+<style>
+.product-card:hover .product-media__image {
+  transform: scale(1.5) translateY(15px) !important;
+}
+</style>
+
+<!-- Mobile: Title + Rating above product photo -->
+<style>
+  @media screen and (max-width: 749px) {
+    .bmp-mobile-title-rating-wrap {
+      margin-bottom: -32px;
+    }
+    .bmp-mobile-title-rating-wrap > [class*="__product_title_nT77dF"] {
+      margin-bottom: 4px;
+    }
+  }
+</style>
+<script>
+  (function () {
+    if (!window.location.pathname.includes('/products/')) return;
+
+    var mq = window.matchMedia('(max-width: 749px)');
+    var titleEl, reviewEl, gridEl, wrapper, titleAnchor, reviewAnchor, titleParent, reviewParent, moved = false;
+
+    function init() {
+      titleEl = document.querySelector('[class*="__product_title_nT77dF"]');
+      reviewEl = document.querySelector('[id$="__loox_reviews_loox_trust_badge_yMQhFR"]');
+      gridEl = document.querySelector('product-component');
+      if (!titleEl || !reviewEl || !gridEl) return false;
+      titleAnchor = titleEl.nextSibling;
+      titleParent = titleEl.parentNode;
+      reviewAnchor = reviewEl.nextSibling;
+      reviewParent = reviewEl.parentNode;
+      wrapper = document.createElement('div');
+      wrapper.className = 'bmp-mobile-title-rating-wrap';
+      return true;
+    }
+
+    function applyLayout(isMobile) {
+      if (!titleEl && !init()) return;
+
+      if (isMobile && !moved) {
+        gridEl.parentNode.insertBefore(wrapper, gridEl);
+        wrapper.appendChild(titleEl);
+        wrapper.appendChild(reviewEl);
+        moved = true;
+      } else if (!isMobile && moved) {
+        titleParent.insertBefore(titleEl, titleAnchor);
+        reviewParent.insertBefore(reviewEl, reviewAnchor);
+        wrapper.remove();
+        moved = false;
+      }
+    }
+
+    function run() {
+      applyLayout(mq.matches);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else {
+      run();
+    }
+
+    if (mq.addEventListener) {
+      mq.addEventListener('change', function (e) { applyLayout(e.matches); });
+    }
+  })();
+</script>
+
+
+<!-- Mobile: shrink home hero tags strip -->
+<style>
+  @media screen and (max-width: 749px) {
+    [id$="__hero_tags_strip"] .group-block,
+    [id$="__hero_tags_strip"] .group-block-content {
+      flex-wrap: wrap !important;
+      row-gap: 8px !important;
+      column-gap: 16px !important;
+      justify-content: center !important;
+      width: 100% !important;
+    }
+
+    [id$="__hero_tags_strip"] [class*="__tag_"],
+    [id$="__hero_tags_strip"] [class*="__sep_"] {
+      flex: 0 0 auto !important;
+      width: auto !important;
+    }
+
+    [id$="__hero_tags_strip"] [class*="__tag_"] {
+      --font-size: 0.9rem !important;
+      font-size: 0.9rem !important;
+    }
+
+    [id$="__hero_tags_strip"] [class*="__tag_"] p,
+    [id$="__hero_tags_strip"] [class*="__tag_"] strong {
+      font-size: 0.9rem !important;
+    }
+
+  }
+</style>
+
+</body>
+</html>

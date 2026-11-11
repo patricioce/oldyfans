@@ -1,0 +1,213 @@
+{%- doc -%}
+  Renders a product card that follows the GLOBAL card settings on a surface that has
+  no block instance to read them from.
+
+  The predictive-search popup is such a surface. sections/predictive-search.liquid is
+  fetched only through the Section Rendering API and appears in no template JSON, so a
+  static `_product-card` block there resolves zero configured child blocks and renders
+  an empty, still-clickable shell. Native precedent for hand-rolling a card instead of
+  delegating: sections/section-rendering-product-card.liquid, and the same reasoning is
+  written out at length in sections/bmp-curated-product-card.liquid.
+
+  Markup mirrors snippets/product-card.liquid plus the four card blocks it composes
+  (_product-card-gallery, product-title, price, swatches) so this card inherits the
+  same CSS. The `bmp-card-global-*` carrier classes are emitted UNCONDITIONALLY: there
+  is no per-block bmp_use_global_style toggle on this surface, and following the global
+  card is the whole point of the snippet.
+
+  The gallery is delegated to snippets/card-gallery.liquid through its
+  BMP-HOOK:card-param-surface params rather than reimplemented, so hover (all four
+  bmp_card_hover_effect modes), the slideshow, product_card_carousel,
+  show_second_image_on_hover, the global media ratio and the BMP product labels all
+  come from one place and cannot drift from a collection-grid card.
+
+  @param {object} product - The product to render
+  @param {string} [image_sizes] - sizes attribute for the gallery media
+  @param {string} [loading] - loading attribute for the featured media, e.g. 'lazy'
+  @param {string} [product_view_context] - context recorded in the view event payload
+  @param {string} [id_prefix] - namespace for the DOM ids this card mints
+
+  @example
+  {% render 'bmp-global-product-card', product: product, loading: 'lazy', id_prefix: 'ps-results-' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign bmp_id_prefix = id_prefix | default: 'bmp-global-card-'
+
+  # Title truncation: the global half of the mirror computed in
+  # blocks/product-title.liquid. The class lands on the .text-block itself because
+  # the clamp rule in assets/bmp-styles.css is `.bmp-title-clamp > *`.
+  assign bmp_truncate_class = ''
+  assign bmp_truncate_setting = settings.bmp_card_title_truncate_lines
+  unless bmp_truncate_setting == blank or bmp_truncate_setting == 'none'
+    assign bmp_truncate_class = 'bmp-title-clamp bmp-title-clamp--' | append: bmp_truncate_setting
+  endunless
+
+
+  assign bmp_selected_variant = product.selected_or_first_available_variant
+
+  if settings.transition_to_main_product
+    assign bmp_featured_image = bmp_selected_variant.featured_image
+    if bmp_featured_image == blank
+      assign bmp_featured_image = product.featured_media.preview_image
+    endif
+    if bmp_featured_image != blank
+      assign bmp_featured_media_url = bmp_featured_image | image_url: width: 500
+    endif
+  endif
+-%}
+
+{%- if product != blank and product.id != blank -%}
+  <div class="bmp-card-global-card">
+    <product-card
+      class="product-card"
+      data-product-id="{{ product.id }}"
+      id="product-card-{{ bmp_id_prefix }}{{ product.id }}"
+      {% if settings.transition_to_main_product %}
+        data-product-transition="true"
+        data-featured-media-url="{{ bmp_featured_media_url }}"
+        on:click="/handleViewTransition"
+      {% endif %}
+      {% # theme-check-disable-next-line UnknownFilter %}
+      view-event-payload="{{ product | standard_event_data: 'view', context: product_view_context | escape }}"
+    >
+      {%- comment -%}
+        Both the `id` and the ref are load-bearing, and this anchor must stay the FIRST
+        one in the card:
+          - assets/product-card.js declares requiredRefs = ['productCardLink'] and
+            throws from connectedCallback without it;
+          - navigateToProduct reads link.getAttribute('id') and early-returns when it is
+            absent, which is what makes clicks on the price row and the space beside the
+            title navigate at all;
+          - assets/predictive-search.js activates a keyboard-selected result with
+            querySelector('a').click(), so the first anchor has to be the product link.
+        The id is namespaced per list so the recently-viewed and results lists cannot
+        mint the same id for the same product.
+      {%- endcomment -%}
+      <a
+        id="{{ bmp_id_prefix | append: product.id | md5 }}"
+        class="product-card__link"
+        ref="productCardLink"
+        href="{{ product.url }}"
+        aria-label="{{ product.title | escape }}"
+      ></a>
+      {%- comment -%}
+        No quick add on this surface, and no --quick-add-* custom properties, because
+        there is no quick-add element here to drive.
+
+        This is the second documented exception. snippets/search-modal.liquid wraps the
+        whole results area in <form class="predictive-search-form">, and
+        snippets/quick-add.liquid opens its own {% form 'product' %} whenever it renders
+        the Add button -- which it does for a single-variant product, or a
+        single-option-with-swatches one. Nested forms are dropped by the HTML parser, so
+        those hidden id / quantity inputs reparent onto the SEARCH form: the header's
+        always-inline empty state would carry them on every page, and enabling
+        settings.quick_add would turn the Add button into a submit of the search form,
+        navigating to /search instead of adding to cart.
+
+        The native Sale / Sold-out pill is absent for a different reason: the BMP label
+        system owns every card overlay, and card-gallery renders it for us.
+      {%- endcomment -%}
+      <div class="product-card__content layout-panel-flex layout-panel-flex--column product-grid__card spacing-style border-style gap-style">
+        {%- comment -%}
+          bmp_lean_slides drops the hidden variant slides, which nothing on this surface
+          can reveal -- there are no swatches here and card-hover-native-off disables the
+          preview handlers. card-gallery decides whether that is safe: it ignores the
+          request at second_image / next_variant, where those slides are the hover
+          targets. Worth ~15 KB per page, since the empty state renders in the header on
+          every one.
+        {%- endcomment -%}
+        {%- render 'card-gallery',
+          bmp_product: product,
+          bmp_image_sizes: image_sizes,
+          bmp_loading: loading,
+          bmp_lean_slides: true
+        -%}
+
+        <div class="bmp-card-global-title">
+          <a
+            class="contents user-select-text"
+            ref="productTitleLink"
+            href="{{ product.url }}"
+          >
+            <div class="{{ bmp_truncate_class }} spacing-style text-block rte">
+              <p role="heading" aria-level="3">{{ product.title }}</p>
+            </div>
+          </a>
+        </div>
+
+        <product-price
+          class="text-block text-block--align-left text-left h6 spacing-style bmp-card-global-price"
+          data-product-id="{{ product.id }}"
+        >
+          {%- render 'price',
+            show_unit_price: true,
+            product_resource: product,
+            show_sale_price_first: settings.bmp_card_price_sale_first
+          -%}
+
+          {%- if settings.bmp_card_price_tax_info -%}
+            <div class="tax-note">
+              {%- if cart.duties_included and cart.taxes_included -%}
+                {{ 'content.duties_and_taxes_included' | t }}
+              {%- elsif cart.taxes_included -%}
+                {{ 'content.taxes_included' | t }}
+              {%- elsif cart.duties_included -%}
+                {{ 'content.duties_included' | t }}
+              {%- endif -%}
+
+              {%- if shop.shipping_policy.body != blank -%}
+                {{ 'content.shipping_policy' | t }}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- if bmp_selected_variant != blank and settings.bmp_card_price_installments -%}
+            <div class="installments">
+              {%- assign bmp_installment_form_id = 'product-form-installment-' | append: bmp_id_prefix | append: product.id -%}
+              {%- form 'product', product, id: bmp_installment_form_id, class: 'payment-terms' -%}
+                <input
+                  type="hidden"
+                  name="id"
+                  value="{{ bmp_selected_variant.id }}"
+                >
+                {{ form | payment_terms }}
+              {%- endform -%}
+            </div>
+          {%- endif -%}
+        </product-price>
+
+        {%- comment -%}
+          No swatch row, deliberately, and this is the one place this card does not
+          follow a card block. Swatch PRESENCE is not a theme setting: it is a block
+          instance in a template's JSON, and no template in this theme carries an
+          enabled one — templates/collection.json has the swatches block disabled and
+          every other template omits it. This surface has no template JSON to read, so
+          there is nothing global to follow, and rendering swatches anyway would make
+          the popup the only card in the theme that shows them. The BMP swatch STYLING
+          settings (bmp_card_swatches_align / _pad_*) only shape a row that exists, so
+          they are unaffected. If card swatches are ever enabled on the grid, add the
+          product-swatches element here with the bmp-card-global-swatches class and the
+          same option_any resolvable-value test blocks/swatches.liquid uses.
+        {%- endcomment -%}
+      </div>
+    </product-card>
+  </div>
+
+  {%- render 'product-card-styles' -%}
+  {%- render 'payment-terms-styles' -%}
+  {%- comment -%}
+    4.1.4 moved the .text-block base rules and the price family (.price,
+    .tax-note, .installments, .unit-price) out of always-loaded base.css into
+    render-scoped stylesheet snippets. This card emits .text-block classes
+    DIRECTLY (title clamp wrapper, price line) rather than through
+    snippets/text.liquid, and its typed-search render arrives through the
+    Section Rendering API, which installs no response stylesheets — so both
+    families must be preloaded here, exactly like the two renders above and
+    like stock quick-add.liquid does for the same reason. The empty state
+    renders this card inline in the header on every page, which is what puts
+    these styles in scope before any typed result arrives.
+  {%- endcomment -%}
+  {%- render 'text-block-styles' -%}
+  {%- render 'price-styles' -%}
+{%- endif -%}

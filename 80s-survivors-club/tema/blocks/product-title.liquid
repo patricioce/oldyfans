@@ -1,0 +1,611 @@
+{%- comment -%}BMP-HOOK-START:card-global-title-open{%- endcomment -%}
+{%- if block.settings.bmp_use_global_style -%}<div class="bmp-card-global-title">{%- endif -%}
+{%- comment -%}BMP-HOOK-END:card-global-title-open{%- endcomment -%}
+{%- comment -%}BMP-HOOK-START:title-truncate{%- endcomment -%}
+{%- liquid
+  assign bmp_truncate_class = ''
+  assign bmp_truncate_setting = block.settings.bmp_truncate_lines
+  if block.settings.bmp_use_global_style
+    assign bmp_truncate_setting = settings.bmp_card_title_truncate_lines
+  endif
+  unless bmp_truncate_setting == blank or bmp_truncate_setting == 'none'
+    assign bmp_truncate_class = 'bmp-title-clamp bmp-title-clamp--' | append: bmp_truncate_setting
+  endunless
+-%}
+{%- comment -%}BMP-HOOK-END:title-truncate{%- endcomment -%}
+{%- comment -%}BMP-HOOK-START:pdp-title-fit-open{%- endcomment -%}
+{%- liquid
+  assign bmp_title_fit_on = false
+  if block.settings.bmp_title_autofit and closest.product != blank
+    assign bmp_title_fit_len = closest.product.title | strip | size
+    if bmp_title_fit_len > 0 and bmp_title_fit_len <= 48
+      assign bmp_title_fit_on = true
+    endif
+  endif
+  assign bmp_title_fit_msize = ''
+  if block.settings.bmp_use_global_style == false and block.settings.type_preset == 'custom' and block.settings.bmp_font_size_mobile != blank
+    assign bmp_title_fit_msize = block.settings.bmp_font_size_mobile
+  endif
+-%}
+{%- if bmp_title_fit_on or bmp_title_fit_msize != blank -%}
+  <bmp-title-fit
+    class="bmp-title-fit{% if bmp_title_fit_msize != blank %} bmp-title-fit--msize{% endif %}"
+    {% if bmp_title_fit_on %}data-bmp-fit{% endif %}
+    {% if bmp_title_fit_msize != blank %}style="--bmp-title-size-mobile: {{ bmp_title_fit_msize }}"{% endif %}
+  >
+{%- endif -%}
+{%- comment -%}BMP-HOOK-END:pdp-title-fit-open{%- endcomment -%}
+{% if closest.product == blank %}
+  {% assign text = 'placeholders.product_title' | t %}
+  {% assign product_title = '<p role="heading" aria-level="3">' | append: text | append: '</p>' %}{% comment %}BMP-HOOK-START:pdp-title-heading{% endcomment %}{%- if block.settings.bmp_heading_tag != blank -%}{%- assign product_title = '<' | append: block.settings.bmp_heading_tag | append: '>' | append: text | append: '</' | append: block.settings.bmp_heading_tag | append: '>' -%}{%- endif -%}{% comment %}BMP-HOOK-END:pdp-title-heading{% endcomment %}
+  {% comment %}BMP-HOOK-START:title-truncate{% endcomment %}{% render 'text', fallback_text: product_title, block: block, class: bmp_truncate_class %}{% comment %}BMP-HOOK-END:title-truncate{% endcomment %}
+{% else %}
+  {% assign product_title = '<p role="heading" aria-level="3">' | append: closest.product.title | append: '</p>' %}{% comment %}BMP-HOOK-START:pdp-title-heading{% endcomment %}{%- if block.settings.bmp_heading_tag != blank -%}{%- assign product_title = '<' | append: block.settings.bmp_heading_tag | append: '>' | append: closest.product.title | append: '</' | append: block.settings.bmp_heading_tag | append: '>' -%}{%- endif -%}{% comment %}BMP-HOOK-END:pdp-title-heading{% endcomment %}
+  <a
+    class="contents user-select-text"
+    ref="productTitleLink"
+    href="{{ closest.product.url }}"
+  >
+    {% comment %}BMP-HOOK-START:title-truncate{% endcomment %}{% render 'text', fallback_text: product_title, block: block, class: bmp_truncate_class %}{% comment %}BMP-HOOK-END:title-truncate{% endcomment %}
+  </a>
+{% endif %}{% comment %}BMP-HOOK-START:pdp-title-fit-close{% endcomment %}{%- if bmp_title_fit_on or bmp_title_fit_msize != blank -%}</bmp-title-fit>{%- endif -%}{%- if bmp_title_fit_on -%}{%- render 'bmp-title-fit' -%}{%- endif -%}{% comment %}BMP-HOOK-END:pdp-title-fit-close{% endcomment %}
+{% comment %}BMP-HOOK-START:card-global-title-close{%- endcomment -%}
+{%- if block.settings.bmp_use_global_style -%}</div>{%- endif -%}
+{%- comment -%}BMP-HOOK-END:card-global-title-close{%- endcomment -%}
+
+{%- comment -%}
+  BMP-SCHEMA:card-global-title — the schema JSON below carries a BMP delta:
+  one additive bmp_use_global_style checkbox, plus bmp-gated visible_if terms
+  appended to the native settings so local controls hide while the block
+  follows the global card style (JSON cannot carry Liquid markers).
+
+  The schema carries a SECOND, independent delta announced by the one-line
+  comment right below — bmp_truncate_lines. Since 2026-08-17 it
+  follows the same mirror pattern as the native settings: hidden while
+  bmp_use_global_style is on and replaced by the global
+  bmp_card_title_truncate_lines (recorded in the COUNTERPART map of
+  scripts/check-card-global-style.mjs). The hook computation reads
+  block-or-global through the bmp_truncate_setting alias — the same
+  alias-when-off shape as the media ratio in snippets/card-gallery.liquid, so
+  the off-state stays identical by construction. The two schema deltas still
+  stay separate comments: check-title-truncate.mjs also requires
+  its own marker on the line immediately above the schema tag, which only a
+  single-line comment can satisfy — keep the two comments apart (which is why
+  check-conventions.mjs collects N announcing blocks per file).
+{%- endcomment -%}
+{%- comment -%}
+  BMP-SCHEMA:pdp-title-fit — additive schema delta: three settings.
+  bmp_title_autofit (checkbox, default false, no visible_if so it stays
+  reachable in both style modes) engages the one-line auto-fit wrapper emitted
+  by BMP-HOOK:pdp-title-fit-open/-close for titles of 1-48 characters.
+  bmp_heading_tag (select "", h1, h2, h3, default "" = stock bytes) rebuilds
+  the title string as a real heading via BMP-HOOK:pdp-title-heading — the PDP
+  needs a literal <h1> the stock <p role="heading" aria-level="3"> cannot give.
+  bmp_font_size_mobile (select, same rem option list as native font_size,
+  default "") is the block half of the per-device size mirror; its global
+  counterpart is bmp_card_title_size_mobile.
+{%- endcomment -%}
+{%- comment -%}BMP-SCHEMA:title-truncate - additive schema delta: setting id "bmp_truncate_lines" (select: none / 1 / 2 / 3, default "none"), hidden while bmp_use_global_style is on (visible_if) in favour of the global counterpart bmp_card_title_truncate_lines; consumed by blocks/product-title.liquid BMP-HOOK:title-truncate (CSS line-clamp in assets/bmp-styles.css){%- endcomment -%}
+{% schema %}
+{
+  "name": "t:names.product_title",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.resource_reference_product_title"
+    },
+    {
+      "type": "checkbox",
+      "id": "bmp_use_global_style",
+      "label": "t:bmp.settings.bmp_use_global_style",
+      "info": "t:bmp.settings.bmp_use_global_style_info",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "fit-content",
+          "label": "t:options.fit"
+        },
+        {
+          "value": "100%",
+          "label": "t:options.fill"
+        }
+      ],
+      "default": "fit-content",
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "max_width",
+      "label": "t:settings.max_width",
+      "options": [
+        {
+          "value": "narrow",
+          "label": "t:options.narrow"
+        },
+        {
+          "value": "normal",
+          "label": "t:options.normal"
+        },
+        {
+          "value": "none",
+          "label": "t:options.none"
+        }
+      ],
+      "default": "normal",
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left",
+      "visible_if": "{{ block.settings.width == '100%' and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "bmp_truncate_lines",
+      "label": "t:bmp.settings.bmp_truncate_lines",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "1",
+          "label": "t:bmp.options.bmp_truncate_1"
+        },
+        {
+          "value": "2",
+          "label": "t:bmp.options.bmp_truncate_2"
+        },
+        {
+          "value": "3",
+          "label": "t:bmp.options.bmp_truncate_3"
+        }
+      ],
+      "default": "none",
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "bmp_title_autofit",
+      "label": "t:bmp.settings.bmp_title_autofit",
+      "info": "t:bmp.settings.bmp_title_autofit_info",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "bmp_heading_tag",
+      "label": "t:bmp.settings.bmp_heading_tag",
+      "info": "t:bmp.settings.bmp_heading_tag_info",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.h3"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "t:settings.preset",
+      "options": [
+        {
+          "value": "rte",
+          "label": "t:options.default"
+        },
+        {
+          "value": "paragraph",
+          "label": "t:options.paragraph"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.h3"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.h6"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "rte",
+      "info": "t:info.edit_presets_in_theme_settings",
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "font",
+      "label": "t:settings.font",
+      "options": [
+        {
+          "value": "var(--font-body--family)",
+          "label": "t:options.body"
+        },
+        {
+          "value": "var(--font-subheading--family)",
+          "label": "t:options.subheading"
+        },
+        {
+          "value": "var(--font-heading--family)",
+          "label": "t:options.heading"
+        },
+        {
+          "value": "var(--font-accent--family)",
+          "label": "t:options.accent"
+        }
+      ],
+      "default": "var(--font-body--family)",
+      "visible_if": "{{ block.settings.type_preset == 'custom' and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "font_size",
+      "label": "t:settings.size",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        },
+        {
+          "value": "1.25rem",
+          "label": "20px"
+        },
+        {
+          "value": "1.5rem",
+          "label": "24px"
+        },
+        {
+          "value": "2rem",
+          "label": "32px"
+        },
+        {
+          "value": "2.5rem",
+          "label": "40px"
+        },
+        {
+          "value": "3rem",
+          "label": "48px"
+        },
+        {
+          "value": "3.5rem",
+          "label": "56px"
+        },
+        {
+          "value": "4.5rem",
+          "label": "72px"
+        },
+        {
+          "value": "5.5rem",
+          "label": "88px"
+        },
+        {
+          "value": "7.5rem",
+          "label": "120px"
+        },
+        {
+          "value": "9.5rem",
+          "label": "152px"
+        },
+        {
+          "value": "11.5rem",
+          "label": "184px"
+        }
+      ],
+      "default": "1rem",
+      "visible_if": "{{ block.settings.type_preset == 'custom' and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "bmp_font_size_mobile",
+      "label": "t:settings.size_mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        },
+        {
+          "value": "1.25rem",
+          "label": "20px"
+        },
+        {
+          "value": "1.5rem",
+          "label": "24px"
+        },
+        {
+          "value": "2rem",
+          "label": "32px"
+        },
+        {
+          "value": "2.5rem",
+          "label": "40px"
+        },
+        {
+          "value": "3rem",
+          "label": "48px"
+        },
+        {
+          "value": "3.5rem",
+          "label": "56px"
+        },
+        {
+          "value": "4.5rem",
+          "label": "72px"
+        },
+        {
+          "value": "5.5rem",
+          "label": "88px"
+        },
+        {
+          "value": "7.5rem",
+          "label": "120px"
+        },
+        {
+          "value": "9.5rem",
+          "label": "152px"
+        },
+        {
+          "value": "11.5rem",
+          "label": "184px"
+        }
+      ],
+      "default": "",
+      "visible_if": "{{ block.settings.type_preset == 'custom' and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "line_height",
+      "label": "t:settings.line_height",
+      "options": [
+        {
+          "value": "tight",
+          "label": "t:options.tight"
+        },
+        {
+          "value": "normal",
+          "label": "t:options.normal"
+        },
+        {
+          "value": "loose",
+          "label": "t:options.loose"
+        }
+      ],
+      "default": "normal",
+      "visible_if": "{{ block.settings.type_preset == 'custom' and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "letter_spacing",
+      "label": "t:settings.letter_spacing",
+      "options": [
+        {
+          "value": "tight",
+          "label": "t:options.tight"
+        },
+        {
+          "value": "normal",
+          "label": "t:options.normal"
+        },
+        {
+          "value": "loose",
+          "label": "t:options.loose"
+        }
+      ],
+      "default": "normal",
+      "visible_if": "{{ block.settings.type_preset == 'custom' and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "case",
+      "label": "t:settings.case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "none",
+      "visible_if": "{{ block.settings.type_preset == 'custom' and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "select",
+      "id": "wrap",
+      "label": "t:settings.wrap",
+      "options": [
+        {
+          "value": "pretty",
+          "label": "t:options.pretty"
+        },
+        {
+          "value": "balance",
+          "label": "t:options.balance"
+        },
+        {
+          "value": "nowrap",
+          "label": "t:options.none"
+        }
+      ],
+      "visible_if": "{{ block.settings.type_preset == 'custom' and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:settings.text_color",
+      "placeholder": "t:settings.default",
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "background",
+      "label": "t:settings.background",
+      "default": false,
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "alpha": true,
+      "default": "#00000026",
+      "visible_if": "{{ block.settings.background == true and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "label": "t:settings.corner_radius",
+      "default": 0,
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "visible_if": "{{ block.settings.background == true and block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.bmp_use_global_style == false }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.title",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

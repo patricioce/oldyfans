@@ -1,0 +1,118 @@
+{% doc %}
+  BMP brand icon — renders one of the brand icons as a cacheable <img>
+  (external .svg asset, no inline SVG cost). The colorful illustrated set
+  (trust-*) is used by the homepage trust badges; the monochrome line-art
+  set (pdp-*) is used by the PDP trust row. A custom uploaded image
+  replaces the library icon and renders in the same square footprint.
+{% enddoc %}
+
+{%- if block.settings.bmp_custom_image or block.settings.icon != 'none' -%}
+  <div
+    class="bmp-icon"
+    style="--bmp-icon-width: {{ block.settings.width }}px"
+    {{ block.shopify_attributes }}
+  >
+    {%- if block.settings.bmp_custom_image -%}
+      {%- assign width_2x = block.settings.width | times: 2 -%}
+      {{
+        block.settings.bmp_custom_image
+        | image_url: width: width_2x
+        | image_tag: width: block.settings.width, height: block.settings.width, loading: 'lazy'
+      }}
+    {%- else -%}
+      <img
+        src="{{ block.settings.icon | prepend: 'bmp-icon-' | append: '.svg' | asset_url }}"
+        alt=""
+        width="{{ block.settings.width }}"
+        height="{{ block.settings.width }}"
+        loading="lazy"
+      >
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .bmp-icon {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Square footprint: library icons are square, and object-fit keeps a
+     custom image inside that same box, so swapping sources never shifts
+     the surrounding layout. */
+  .bmp-icon img {
+    width: var(--bmp-icon-width);
+    height: var(--bmp-icon-width);
+    object-fit: contain;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:bmp.names.bmp_icon",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:settings.icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "trust-shipping",
+          "label": "t:bmp.options.bmp_trust_shipping"
+        },
+        {
+          "value": "trust-checkout",
+          "label": "t:bmp.options.bmp_trust_checkout"
+        },
+        {
+          "value": "trust-materials",
+          "label": "t:bmp.options.bmp_trust_materials"
+        },
+        {
+          "value": "trust-returns",
+          "label": "t:bmp.options.bmp_trust_returns"
+        },
+        {
+          "value": "pdp-satisfaction",
+          "label": "t:bmp.options.bmp_pdp_satisfaction"
+        },
+        {
+          "value": "pdp-returns",
+          "label": "t:bmp.options.bmp_pdp_returns"
+        },
+        {
+          "value": "pdp-shipping",
+          "label": "t:bmp.options.bmp_pdp_shipping"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "bmp_custom_image",
+      "label": "t:bmp.settings.bmp_icon_custom_image",
+      "info": "t:bmp.info.bmp_icon_custom_image"
+    },
+    {
+      "type": "range",
+      "id": "width",
+      "label": "t:settings.width",
+      "min": 16,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:bmp.names.bmp_icon"
+    }
+  ]
+}
+{% endschema %}

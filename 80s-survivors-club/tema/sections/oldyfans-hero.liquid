@@ -1,0 +1,379 @@
+{%- comment -%}
+  OldyFans hero — portada estilo "Sloth": texto a la izquierda sobre fondo oscuro, foto a la derecha.
+  En celular: foto arriba y texto abajo en un bloque de color.
+  Todo se edita desde el editor de temas (imágenes, textos, botón, colores).
+{%- endcomment -%}
+
+{%- liquid
+  assign img_desktop = section.settings.image_desktop
+  assign img_mobile = section.settings.image_mobile | default: img_desktop
+  assign sid = section.id
+-%}
+
+<style>
+  #ofh-{{ sid }} {
+    --ofh-bg: {{ section.settings.color_bg }};
+    --ofh-text: {{ section.settings.color_text }};
+    --ofh-btn-bg: {{ section.settings.color_button_bg }};
+    --ofh-btn-text: {{ section.settings.color_button_text }};
+    /* Foto en celular: posición y zoom (se cambian desde el editor) */
+    --ofh-fit: cover;
+    --ofh-x: {{ section.settings.mobile_pos_x }}%;
+    --ofh-y: {{ section.settings.mobile_pos_y }}%;
+    --ofh-zoom: {{ section.settings.mobile_zoom | divided_by: 100.0 }};
+    background: var(--ofh-bg);
+    color: var(--ofh-text);
+  }
+  @media screen and (min-width: 750px) {
+    /* Foto en tablet y computadora */
+    #ofh-{{ sid }} {
+      --ofh-fit: {{ section.settings.desktop_fit }};
+      --ofh-x: {{ section.settings.desktop_pos_x }}%;
+      --ofh-y: {{ section.settings.desktop_pos_y }}%;
+      --ofh-zoom: {{ section.settings.desktop_zoom | divided_by: 100.0 }};
+    }
+  }
+  #ofh-{{ sid }} .ofh__grid { display: grid; }
+  #ofh-{{ sid }} .ofh__media { position: relative; overflow: hidden; background: var(--ofh-bg); }
+  #ofh-{{ sid }} .ofh__media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: var(--ofh-fit);
+    object-position: var(--ofh-x) var(--ofh-y);
+    transform: scale(var(--ofh-zoom));
+    transform-origin: var(--ofh-x) var(--ofh-y);
+  }
+  #ofh-{{ sid }} .ofh__content {
+    padding: 24px 18px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  #ofh-{{ sid }} .ofh__eyebrow {
+    margin: 0 0 10px;
+    font-family: 'DM Sans', var(--font-body--family, Arial), sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: var(--ofh-text);
+  }
+  #ofh-{{ sid }} .ofh__title {
+    margin: 0;
+    font-family: 'Barlow Condensed', var(--font-heading--family, 'Arial Narrow'), sans-serif;
+    font-weight: 800;
+    font-size: 46px;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--ofh-text);
+  }
+  #ofh-{{ sid }} .ofh__text {
+    margin: 12px 0 20px;
+    font-family: 'DM Sans', var(--font-body--family, Arial), sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--ofh-text);
+  }
+  #ofh-{{ sid }} .ofh__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 26px;
+    border-radius: 6px;
+    background: var(--ofh-btn-bg);
+    color: var(--ofh-btn-text);
+    font-family: 'DM Sans', var(--font-body--family, Arial), sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+  #ofh-{{ sid }} .ofh__button:hover { opacity: 0.85; }
+  #ofh-{{ sid }} .ofh__button:focus-visible { outline: 3px solid var(--ofh-btn-bg); outline-offset: 3px; }
+
+  /* Tablet: foto horizontal arriba, texto abajo */
+  @media screen and (min-width: 750px) and (max-width: 1099px) {
+    #ofh-{{ sid }} .ofh__content { align-items: flex-start; padding: 36px 48px 44px; }
+    #ofh-{{ sid }} .ofh__eyebrow { font-size: 12px; letter-spacing: 0.12em; }
+    #ofh-{{ sid }} .ofh__title { font-size: 64px; }
+    #ofh-{{ sid }} .ofh__text { font-size: 18px; }
+    #ofh-{{ sid }} .ofh__button { min-height: 52px; }
+  }
+
+  /* Computadora: texto a la izquierda, foto a la derecha */
+  @media screen and (min-width: 1100px) {
+    #ofh-{{ sid }} .ofh__grid {
+      grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+      min-height: clamp(420px, 39vw, {{ section.settings.desktop_height }}px);
+    }
+    #ofh-{{ sid }} .ofh__media { order: 2; }
+    #ofh-{{ sid }} .ofh__media img {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+    }
+    /* Fundido suave entre el bloque de color y la foto */
+    #ofh-{{ sid }} .ofh__media::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 70px;
+      z-index: 1;
+      background: linear-gradient(90deg, var(--ofh-bg), transparent);
+      pointer-events: none;
+    }
+    #ofh-{{ sid }} .ofh__content {
+      order: 1;
+      align-items: flex-start;
+      padding: 48px 40px 48px clamp(24px, 4.5vw, 64px);
+    }
+    #ofh-{{ sid }} .ofh__eyebrow { font-size: 12px; letter-spacing: 0.12em; margin-bottom: 18px; }
+    #ofh-{{ sid }} .ofh__title { font-size: clamp(56px, 6.4vw, 92px); line-height: 0.9; }
+    #ofh-{{ sid }} .ofh__text { font-size: 20px; line-height: 1.4; margin: 20px 0 28px; }
+    #ofh-{{ sid }} .ofh__button { min-height: 52px; }
+  }
+</style>
+
+<section id="ofh-{{ sid }}" class="ofh" aria-label="{{ section.settings.title | strip_html | escape }}">
+  <div class="ofh__grid">
+    <div class="ofh__media">
+      {%- if img_desktop != blank or img_mobile != blank -%}
+        <picture>
+          {%- if img_desktop != blank -%}
+            <source
+              media="(min-width: 750px)"
+              srcset="{{ img_desktop | image_url: width: 900 }} 900w, {{ img_desktop | image_url: width: 1300 }} 1300w, {{ img_desktop | image_url: width: 1800 }} 1800w"
+              sizes="(min-width: 1100px) 62vw, 100vw"
+            >
+          {%- endif -%}
+          <img
+            src="{{ img_mobile | image_url: width: 800 }}"
+            srcset="{{ img_mobile | image_url: width: 400 }} 400w, {{ img_mobile | image_url: width: 600 }} 600w, {{ img_mobile | image_url: width: 800 }} 800w, {{ img_mobile | image_url: width: 1000 }} 1000w"
+            sizes="100vw"
+            width="{{ img_mobile.width }}"
+            height="{{ img_mobile.height }}"
+            alt="{{ img_mobile.alt | default: section.settings.image_alt | escape }}"
+            fetchpriority="high"
+            loading="eager"
+          >
+        </picture>
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'ofh__placeholder' }}
+      {%- endif -%}
+    </div>
+
+    <div class="ofh__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="ofh__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="ofh__title">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <p class="ofh__text">{{ section.settings.text | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a class="ofh__button" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+          {{- section.settings.button_label | escape -}}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "OldyFans hero",
+  "tag": "div",
+  "class": "section-oldyfans-hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Imágenes"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Imagen computadora",
+      "info": "Usar hero-desktop.jpg (horizontal, el grupo completo)."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Imagen celular",
+      "info": "Usar hero-celular.jpg. Si queda vacía, se usa la de computadora."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Texto alternativo de la foto",
+      "default": "Friends laughing in a backyard, one spraying a garden hose, wearing the Raised On Hose Water tee"
+    },
+    {
+      "type": "header",
+      "content": "Foto en computadora y tablet"
+    },
+    {
+      "type": "select",
+      "id": "desktop_fit",
+      "label": "Ajuste",
+      "options": [
+        { "value": "cover", "label": "Rellenar el espacio (recorta los bordes)" },
+        { "value": "contain", "label": "Mostrar la foto entera" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "desktop_zoom",
+      "label": "Zoom",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "desktop_pos_x",
+      "label": "Posición horizontal",
+      "info": "0 = muestra el lado izquierdo de la foto, 100 = el derecho.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "desktop_pos_y",
+      "label": "Posición vertical",
+      "info": "0 = muestra la parte de arriba, 100 = la de abajo.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Foto en celular"
+    },
+    {
+      "type": "range",
+      "id": "mobile_zoom",
+      "label": "Zoom",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "mobile_pos_x",
+      "label": "Posición horizontal",
+      "info": "Se nota con zoom mayor a 100%.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "mobile_pos_y",
+      "label": "Posición vertical",
+      "info": "Se nota con zoom mayor a 100%.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Textos"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Línea chica de arriba",
+      "default": "Graphic tees for the unsupervised generation"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "We turned out fine. Mostly."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Frase",
+      "default": "Whatevering since the 80s"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Find your next favorite"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link del botón"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "Alto máximo en computadora",
+      "info": "En pantallas más chicas se achica solo para no recortar a nadie.",
+      "min": 400,
+      "max": 720,
+      "step": 20,
+      "unit": "px",
+      "default": 560
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Fondo del bloque de texto",
+      "default": "#1F1C1F"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Color del texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "color_button_bg",
+      "label": "Fondo del botón",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text",
+      "label": "Texto del botón",
+      "default": "#1F1C1F"
+    }
+  ],
+  "presets": [
+    {
+      "name": "OldyFans hero"
+    }
+  ]
+}
+{% endschema %}

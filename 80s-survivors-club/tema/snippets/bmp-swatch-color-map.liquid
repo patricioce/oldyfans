@@ -1,0 +1,406 @@
+{%- doc -%}
+  Resolves whether an option uses BMP name-based swatches or returns a validated CSS background for one option value.
+
+  @param {string} option_name - Product option name.
+  @param {string} [value] - Product option value name to resolve.
+  @param {object} [values] - Product option values, required by `option_any`.
+  @param {string} [mode] - Use `option_match` to return `true` when the configured option name matches by name alone.
+    Use `option_any` to return `true` only when the option matches AND at least one of `values` resolves to a mapped
+    row, which is what keeps a fully unmapped option from claiming swatch rendering.
+    Use `override` to resolve `value` against the merchant override rows alone: identical hex/split
+    validation, but the 241 baked-in defaults never emit, so a caller can rank a merchant row ahead
+    of native swatch.color while the defaults stay behind every native resolver. Blank
+    when no valid override row exists.
+
+  @example
+  {%- render 'bmp-swatch-color-map', option_name: product_option.name, value: product_option_value.name -%}
+  {%- render 'bmp-swatch-color-map', option_name: product_option.name, values: product_option.values, mode: 'option_any' -%}
+{%- enddoc -%}
+
+{%- liquid
+  assign bmp_swatch_enabled = true
+  if settings.bmp_swatch_fallback_enabled == false
+    assign bmp_swatch_enabled = false
+  endif
+
+  assign bmp_swatch_option_match = false
+  if bmp_swatch_enabled and option_name != blank
+    assign bmp_swatch_option_key = option_name | strip | replace: '"', '' | downcase
+    assign bmp_swatch_option_names = settings.bmp_swatch_option_names | default: 'Color,Colour' | split: ','
+    for bmp_swatch_configured_option in bmp_swatch_option_names
+      assign bmp_swatch_configured_key = bmp_swatch_configured_option | strip | replace: '"', '' | downcase
+      if bmp_swatch_configured_key == bmp_swatch_option_key
+        assign bmp_swatch_option_match = true
+        break
+      endif
+    endfor
+  endif
+
+  # `option_match` answers by name alone and never needs the default map, so it
+  # stays free. Every other mode has to build the map, so gate the expensive
+  # branch on one precomputed boolean rather than a compound `and`/`or` test —
+  # Liquid has no parentheses and evaluates those right-to-left.
+  assign bmp_swatch_needs_map = false
+  if bmp_swatch_option_match
+    if mode == 'option_any'
+      assign bmp_swatch_needs_map = true
+    elsif value != blank
+      assign bmp_swatch_needs_map = true
+    endif
+  endif
+-%}
+
+{%- if mode == 'option_match' -%}
+  {%- if bmp_swatch_option_match -%}true{%- endif -%}
+{%- elsif bmp_swatch_needs_map -%}
+  {%- capture bmp_swatch_default_value_list -%}
+Antique Cherry Red:#A82235
+Antique Heliconia:#B92972
+Antique Irish Green:#018E54
+Antique Jade Dome:#0D8581
+Antique Orange:#D96538
+Antique Sapphire:#0082AE
+Aqua:#348FB8
+Army:#5C564A
+Ash:#F2F2F2
+Asphalt:#525455
+Athletic Heather:#C7C7C5
+Autumn:#A64B1F
+Azalea:#EF8FBC
+Baby Blue:#BFD2EB
+Banana:#FFECB9
+Bay:#C3CFC1
+Berry:#C13969
+Black:#000000
+Black Heather:#080706
+Blackberry:#221C35
+Blossom:#F8D1E2
+Blue:#2563EB
+Blue Jean:#636D82
+Blue Spruce:#536758
+Brick:#914A4A
+Bright Salmon:#FF6B50
+Brown:#2E241F
+Brown Savana:#948272
+Burnt Orange:#E6814A
+Butter:#F5E1A4
+Canvas Red:#961623
+Cardinal:#742123
+Cardinal Red:#911A30
+Carolina Blue:#7BA4DB
+Chalky Mint:#A7DCD4
+Chambray:#E2F7FF
+Charcoal:#585559
+Charity Pink:#F0819A
+Cherry Red:#B41A29
+Chili:#853F44
+China Blue:#43516E
+Citron:#EDEDDF
+Citrus:#FFC86E
+Cobalt:#2A2E7B
+Columbia Blue:#3669A1
+Coral:#F97052
+Coral Silk:#E67376
+Cornsilk:#F7EF8F
+Crimson:#B65858
+Crunchberry:#EB7CA2
+Daisy:#FED141
+Dark Chocolate:#31221D
+Dark Grey:#2A2930
+Dark Grey Heather:#1C1B1C
+Dark Heather:#454545
+Dark Heather Grey:#3A3D42
+Dark Olive:#2C2E21
+Deep Heather:#8A8C88
+Deep Teal:#334D5C
+Denim:#4E5064
+Dusty Blue:#AFC9BF
+Electric Green:#4FB039
+Espresso:#846B5B
+Evergreen:#315436
+Flo Blue:#7682C2
+Forest:#20362F
+Forest Green:#223B26
+Fuchsia:#DC3165
+Garnet:#6D222D
+Gold:#FFB81C
+Granite:#8A8E90
+Grape:#645C81
+Graphite:#373231
+Graphite Heather:#797C7E
+Gravel:#9CA1A3
+Green:#16A34A
+Grey:#909090
+Heather Aqua:#5DB5CF
+Heather Autumn:#BD5228
+Heather Berry:#E775BF
+Heather Blue:#BABCD4
+Heather Blue Lagoon:#9BB5B7
+Heather Brown:#4B331F
+Heather Bubble Gum:#FFCCE9
+Heather Cardinal:#B54557
+Heather Cement:#F7F4EF
+Heather Charity Pink:#FF88AE
+Heather Clay:#D27B66
+Heather Columbia Blue:#7791DB
+Heather Cool Grey:#D1C5C0
+Heather Deep Teal:#4D7C8C
+Heather Dust:#F0E8E1
+Heather Dusty Blue:#7EA393
+Heather Forest:#394E38
+Heather Forest Green:#3A5F4F
+Heather Galapagos Blue:#509AA0
+Heather Grass Green:#1C6644
+Heather Green:#899850
+Heather Grey:#9CA3AF
+Heather Heliconia:#FA74A6
+Heather Ice Blue:#F3FFFF
+Heather Indigo:#6A798E
+Heather Irish Green:#6DEDA5
+Heather Kelly:#00BF85
+Heather Maroon:#743A4C
+Heather Mauve:#D18786
+Heather Midnight Navy:#3A3A48
+Heather Military Green:#828067
+Heather Mint:#BBE1CA
+Heather Mustard:#DFA944
+Heather Navy:#424753
+Heather Olive:#8C7555
+Heather Orange:#FF8B4A
+Heather Orchid:#E6A8AE
+Heather Peach:#FFCAAC
+Heather Prism Blue:#E5ECFF
+Heather Prism Dusty Blue:#B0C7BA
+Heather Prism Ice Blue:#E9FFFF
+Heather Prism Lilac:#FDD6FF
+Heather Prism Mint:#CFE8DB
+Heather Prism Natural:#F4EDDA
+Heather Prism Peach:#E3BCAF
+Heather Prism Sunset:#F5A58F
+Heather Purple:#6A4398
+Heather Radiant Orchid:#D58EBB
+Heather Raspberry:#D56280
+Heather Red:#E3525F
+Heather Royal:#7C8CD9
+Heather Sand Dune:#FADEBF
+Heather Sapphire:#59A1CE
+Heather Sea Green:#43EDCF
+Heather Slate:#6F7F8A
+Heather Stone:#B0AC98
+Heather Storm:#A7A5AD
+Heather Sunset:#FFB09C
+Heather Tan:#C0A184
+Heather Team Purple:#83558A
+Heather True Royal:#46599C
+Heather Yellow Gold:#FFC74C
+Heliconia:#DF5086
+Hemp:#676A4A
+Ice Blue:#7B8E95
+Ice Grey:#D7D6D3
+Indigo Blue:#476579
+Iris:#6C84BB
+Irish Green:#279436
+Island Green:#54B188
+Island Reef:#A2D8C2
+Ivory:#FFF7E7
+Jade Dome:#19998A
+Kelly:#026539
+Kelly Green:#009660
+Khaki:#AEA583
+Kiwi:#8FA749
+Lagoon Blue:#89E4ED
+Lavender Blue:#708AAC
+Leaf:#528A4B
+Light Blue:#D6E6F7
+Light Green:#69826A
+Light Pink:#FEE0EB
+Lilac:#E3C2DB
+Lime:#9EC46C
+Maize Yellow:#F8DE6F
+Maroon:#642838
+Mauve:#C97E7E
+Melon:#FF9A5F
+Metro Blue:#424A7E
+Midnight:#0F262B
+Military Green:#62664C
+Mint:#B8E0C2
+Mint Green:#B1E0C0
+Moss:#747F66
+Mustard:#E8A52A
+Mystic Blue:#647CA3
+Natural:#FFF6E3
+Navy:#1A2237
+Neon Blue:#004EA8
+Neon Green:#A7E163
+Ocean Blue:#86B8D5
+Old Gold:#C99B5C
+Olive:#514F18
+Orange:#EA5F22
+Orchid:#CBB3CC
+Oxblood Black:#29171C
+Paragon:#948794
+Peach:#EABEB0
+Pebble Brown:#A29291
+Pepper:#5F605B
+Periwinkle:#6570AF
+Pink:#FFCDCE
+Pistachio:#D3D590
+Purple:#3C214E
+Red:#C62A32
+Royal:#084F97
+Royal Caribe:#5D8AC7
+Rust:#7D2E1F
+Safety Green:#F2FB00
+Safety Orange:#F88D20
+Safety Pink:#FF8E9D
+Sage:#A4B09E
+Sand:#DCD2BE
+Sand Dune:#F0CFA9
+Sapphire:#0080B5
+Seafoam:#609A95
+Silver:#D6D5D1
+Sky:#8BCDEA
+Soft Cream:#F1DAB7
+Soft Pink:#FFEAE5
+Solid Athletic Grey:#CFCFCF
+Solid Black Blend:#000000
+Solid White:#FFFFFF
+Solid White Blend:#FBFBFB
+Sport Grey:#CACACA
+Steel Blue:#7B92AF
+Stone Blue:#7F909C
+Storm:#847980
+Sunset:#FEAB8D
+Synthetic Green:#4FD47A
+Tan:#D6C4B0
+Teal:#4DCFC1
+Team Navy:#2B235C
+Team Purple:#3C1F66
+Tennessee Orange:#F79B2E
+Terracotta:#DB8C76
+Texas Orange:#C26928
+Topaz Blue:#1F6171
+Tropical Blue:#0097A9
+True Navy:#1C1B32
+True Royal:#2B4DA4
+Turf Green:#297937
+Turquoise:#81C4D4
+Tweed:#4B4F54
+Vintage Black:#202125
+Vintage White:#F0ECE8
+Violet:#A88FD7
+Washed Denim:#8595B8
+Watermelon:#DA665F
+White:#FFFFFF
+Yam:#C9814F
+Yellow:#FFFB81
+Yellow Haze:#FADFA6
+  {%- endcapture -%}
+  {%- liquid
+    assign bmp_swatch_override_lookup = settings.bmp_swatch_value_list | replace: '"', '' | downcase | newline_to_br | replace: '<br />', '|' | strip_newlines | prepend: '|' | append: '|'
+    assign bmp_swatch_default_lookup = bmp_swatch_default_value_list | replace: '"', '' | downcase | newline_to_br | replace: '<br />', '|' | strip_newlines | prepend: '|' | append: '|'
+  -%}
+  {%- if mode == 'option_any' -%}
+    {%- comment -%}
+      Boundary-key presence check only, reusing the two lookup strings the value
+      branch builds. It deliberately stops at "is there a row" and does not run
+      the hex validator: the baked defaults are already pinned row-by-row by
+      scripts/check-swatch-fallback.mjs, so the only way to reach a present-but-
+      invalid row is a typo in the merchant override textarea. That value then
+      renders as Horizon's neutral unavailable swatch, which is the same thing
+      it does today — a wrong-but-safe circle, never a crash.
+
+      Breaks on the first hit, so the common mapped option costs one comparison.
+      The loop is over option values, not over the 241 defaults, which is what
+      the gate's no-Liquid-loop rule is protecting.
+    {%- endcomment -%}
+    {%- liquid
+      assign bmp_swatch_any_hit = false
+      for bmp_swatch_any_value in values
+        assign bmp_swatch_any_key = bmp_swatch_any_value.name | strip | replace: '"', '' | downcase
+        assign bmp_swatch_any_lookup_key = '|' | append: bmp_swatch_any_key | append: ':'
+        if bmp_swatch_override_lookup contains bmp_swatch_any_lookup_key
+          assign bmp_swatch_any_hit = true
+          break
+        endif
+        if bmp_swatch_default_lookup contains bmp_swatch_any_lookup_key
+          assign bmp_swatch_any_hit = true
+          break
+        endif
+      endfor
+    -%}
+    {%- if bmp_swatch_any_hit -%}true{%- endif -%}
+  {%- else -%}
+  {%- liquid
+    assign bmp_swatch_value_key = value | strip | replace: '"', '' | downcase
+    assign bmp_swatch_lookup_key = '|' | append: bmp_swatch_value_key | append: ':'
+    assign bmp_swatch_override_candidate = blank
+    assign bmp_swatch_default_candidate = blank
+
+    if bmp_swatch_override_lookup contains bmp_swatch_lookup_key
+      assign bmp_swatch_override_matches = bmp_swatch_override_lookup | split: bmp_swatch_lookup_key
+      assign bmp_swatch_override_tail = bmp_swatch_override_matches | last
+      assign bmp_swatch_override_candidate = bmp_swatch_override_tail | split: '|' | first | strip
+    endif
+
+    if bmp_swatch_default_lookup contains bmp_swatch_lookup_key
+      assign bmp_swatch_default_matches = bmp_swatch_default_lookup | split: bmp_swatch_lookup_key
+      assign bmp_swatch_default_tail = bmp_swatch_default_matches | last
+      assign bmp_swatch_default_candidate = bmp_swatch_default_tail | split: '|' | first | strip
+    endif
+
+    # Override mode reuses this whole branch but blanks the baked
+    # default so only a validated merchant row may emit. An unmatched or
+    # invalid override then renders as blank, and the caller falls through
+    # to native swatch.color.
+    if mode == 'override'
+      assign bmp_swatch_default_candidate = blank
+    endif
+  -%}
+  {%- assign bmp_swatch_candidates = bmp_swatch_override_candidate | append: '|' | append: bmp_swatch_default_candidate -%}
+  {%- assign bmp_swatch_candidate_rows = bmp_swatch_candidates | split: '|' -%}
+  {%- for bmp_swatch_candidate in bmp_swatch_candidate_rows -%}
+    {%- liquid
+      assign bmp_swatch_candidate = bmp_swatch_candidate | strip_newlines | strip | downcase
+      assign bmp_swatch_candidate_length = bmp_swatch_candidate | size
+      assign bmp_swatch_without_hashes = bmp_swatch_candidate | remove: '#'
+      assign bmp_hash_count = bmp_swatch_candidate_length | minus: bmp_swatch_without_hashes.size
+      assign bmp_invalid_chars = bmp_swatch_without_hashes | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: 'a' | remove: 'b' | remove: 'c' | remove: 'd' | remove: 'e' | remove: 'f'
+      assign bmp_swatch_first_char = bmp_swatch_candidate | slice: 0, 1
+      assign bmp_swatch_is_single = false
+      assign bmp_swatch_is_split = false
+
+      if bmp_invalid_chars == blank and bmp_swatch_first_char == '#'
+        if bmp_hash_count == 1
+          if bmp_swatch_candidate_length == 4 or bmp_swatch_candidate_length == 7
+            assign bmp_swatch_is_single = true
+          endif
+        elsif bmp_hash_count == 2
+          if bmp_swatch_candidate_length == 8
+            assign bmp_swatch_second_hash = bmp_swatch_candidate | slice: 4, 1
+            if bmp_swatch_second_hash == '#'
+              assign bmp_swatch_is_split = true
+              assign bmp_swatch_color_1 = bmp_swatch_candidate | slice: 0, 4
+              assign bmp_swatch_color_2 = bmp_swatch_candidate | slice: 4, 4
+            endif
+          elsif bmp_swatch_candidate_length == 14
+            assign bmp_swatch_second_hash = bmp_swatch_candidate | slice: 7, 1
+            if bmp_swatch_second_hash == '#'
+              assign bmp_swatch_is_split = true
+              assign bmp_swatch_color_1 = bmp_swatch_candidate | slice: 0, 7
+              assign bmp_swatch_color_2 = bmp_swatch_candidate | slice: 7, 7
+            endif
+          endif
+        endif
+      endif
+    -%}
+    {%- if bmp_swatch_is_single -%}
+      {{- bmp_swatch_candidate -}}
+      {%- break -%}
+    {%- elsif bmp_swatch_is_split -%}
+      linear-gradient(135deg, {{ bmp_swatch_color_1 }} 0 50%, {{ bmp_swatch_color_2 }} 50% 100%)
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- endif -%}
+{%- endif -%}

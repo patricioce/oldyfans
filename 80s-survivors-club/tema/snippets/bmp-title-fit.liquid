@@ -1,0 +1,15 @@
+{%- doc -%}
+  Loads the PDP title auto-fit module at its render site.
+
+  Rendered only from BMP-HOOK:pdp-title-fit-close in blocks/product-title.liquid,
+  and only when the fit actually engaged (bmp_title_autofit on, real product,
+  title 1-48 characters) — the default state ships zero bytes. Duplicate tags
+  from several engaged blocks on one page are deduplicated by the browser's
+  module map.
+
+  Feature-scoped module — the same shape as
+  snippets/bmp-countdown.liquid. All CSS for the feature is static in
+  assets/bmp-styles.css (PDP title auto-fit group); this snippet emits no
+  styles and no markup beyond the script tag.
+{%- enddoc -%}
+<script src="{{ 'bmp-title-fit.js' | asset_url }}" type="module" fetchpriority="low"></script>

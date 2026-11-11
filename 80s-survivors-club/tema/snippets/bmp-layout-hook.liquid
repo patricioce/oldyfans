@@ -1,0 +1,26 @@
+{% comment %}
+  BMP platform-instrumentation marker — FROZEN API.
+
+  Emits a hidden, inert per-route ownership marker that external BuildMyPodAI
+  platform scripts/analytics query to assert template ownership per route. The
+  emitted class name and data-* attribute names are a FROZEN contract shared
+  across customer-store themes — DO NOT rename them. Restored verbatim from the
+  v1 production theme (bmp-v1-0-11/snippets/buildmypodai-layout-hook.liquid):
+  same page-fallback chain (page | default: template | default: section.id) and
+  ambient section.id, so the emitted DOM is byte-identical to what the platform
+  already consumes. Hidden element avoids layout shifts.
+
+  The filename carries the bmp- prefix for the BMP naming convention; the
+  rendered class/attributes are the frozen API and are intentionally NOT prefixed.
+
+  @param {string} [page] - Route identifier (e.g. 'page', 'collection-list',
+    'search', 'password', 'article', 'blog', '404'). Falls back to template,
+    then the owning section id.
+{% endcomment %}
+{% assign buildmypodai_page = page | default: template | default: section.id %}
+<div
+  class="buildmypodai-layout-hook"
+  data-buildmypodai-page="{{ buildmypodai_page }}"
+  data-buildmypodai-section="{{ section.id }}"
+  hidden
+></div>

@@ -1,0 +1,57 @@
+{%- doc -%}
+  bmp-org-sameas — emits ONLY the `"sameAs": [ ... ],` fragment injected into the
+  core Organization JSON-LD object in sections/header.liquid via a BMP-HOOK.
+  Reads the global setting settings.bmp_seo_social_profiles (one absolute URL
+  per line; blank lines and "#"-comment lines are ignored).
+
+  4.1.3 has no global social-profile setting to reuse: the native social links
+  (blocks/social-links.liquid, blocks/_social-link.liquid) are per-block-
+  instance settings scoped to wherever the merchant places the block (header/
+  footer), not readable from sections/header.liquid's own Liquid scope, and
+  they serve a different purpose (rendering clickable icons) than a stable,
+  site-wide sameAs list for search engines. bmp_seo_social_profiles is an
+  additive bmp_* setting, not a duplicate of those per-instance ids.
+
+  Emits NOTHING when no valid URL is configured, so the core Organization
+  object stays byte-equivalent to stock for stores with no socials set. The
+  fragment carries a trailing comma and is placed immediately BEFORE the
+  existing `"url"` key in sections/header.liquid, so the object is valid JSON
+  in both the empty and populated states.
+
+  Validity: only lines that survive strip/blank checks AND start with "http"
+  (case-insensitive) are emitted — this keeps the sameAs array to valid
+  absolute URLs only, per schema.org's expectations, and skips comment lines
+  ("#...") or stray text without ever emitting an empty string.
+
+  Escaping: each URL is piped through the built-in `json` filter — the same
+  filter the core Organization node uses for shop.name — which serializes it
+  as an escaped JSON string literal. Safe for merchant-entered text: quotes,
+  backslashes, and other JSON-significant characters are escaped, so a
+  merchant pasting `"><script>...` into the setting cannot break out of the
+  JSON string context.
+{%- enddoc -%}
+{%- liquid
+  assign bmp_seo_lines = settings.bmp_seo_social_profiles | newline_to_br | split: '<br />'
+  assign bmp_seo_count = 0
+  for bmp_seo_line in bmp_seo_lines
+    assign bmp_seo_clean = bmp_seo_line | strip | strip_newlines
+    assign bmp_seo_prefix = bmp_seo_clean | slice: 0, 4 | downcase
+    if bmp_seo_clean != blank and bmp_seo_prefix == 'http'
+      assign bmp_seo_count = bmp_seo_count | plus: 1
+    endif
+  endfor
+-%}
+{%- if bmp_seo_count > 0 -%}
+"sameAs": [
+{%- assign bmp_seo_emitted = 0 -%}
+{%- for bmp_seo_line in bmp_seo_lines -%}
+  {%- assign bmp_seo_clean = bmp_seo_line | strip | strip_newlines -%}
+  {%- assign bmp_seo_prefix = bmp_seo_clean | slice: 0, 4 | downcase -%}
+  {%- if bmp_seo_clean != blank and bmp_seo_prefix == 'http' -%}
+    {%- if bmp_seo_emitted > 0 -%},{%- endif -%}
+    {{ bmp_seo_clean | json }}
+    {%- assign bmp_seo_emitted = bmp_seo_emitted | plus: 1 -%}
+  {%- endif -%}
+{%- endfor -%}
+],
+{%- endif -%}

@@ -1,0 +1,264 @@
+{%- doc -%}
+  BMP product labels — the global overlay label system.
+
+  Absorbs Horizon's native Sale/Sold-out overlay, which bmp-styles.css
+  suppresses while this container is present. See the theme-labels
+  simplification design spec.
+
+  Everything is computed here, server-side, from theme settings. The custom
+  element in assets/bmp-product-labels.js only swaps this markup on variant
+  change — it does no price math of its own.
+
+  Three label types, emitted tag -> new -> sale. There is no cap: every label
+  whose condition the product meets renders, and a merchant who does not want a
+  type turns that type off (spec D2). The order therefore only fixes vertical
+  stacking within the anchor corner.
+
+  @param {object} [product] - Defaults to closest.product
+  @param {object} [variant] - Selected variant; the product page passes it so
+    the discount label follows the shopper's selection
+  @param {string} [context] - 'card' (default) or 'pdp'. Does NOT change the
+    anchor: both surfaces use settings.badge_position (Theme settings > Badges).
+    It selects the CSS inset scale.
+
+  @example
+  {% render 'bmp-product-labels', product: product, context: 'card' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign bmp_product = product | default: closest.product
+  assign bmp_context = context | default: 'card'
+-%}
+
+{%- if settings.bmp_badges_enabled and bmp_product != blank -%}
+  {%- liquid
+    comment
+      Position follows Horizon's native badge_position (Theme settings > Badges),
+      so there is exactly one position control in the theme and BMP labels never
+      diverge from the native pill placement. Native offers top-left, top-right
+      and bottom-left (spec D1 amended 2026-08-07).
+    endcomment
+    assign bmp_position = settings.badge_position | default: 'top-left'
+
+    comment
+      Discount scope: compare THIS variant's own compare_at_price against THIS
+      variant's own price. product.compare_at_price is the MINIMUM across every
+      variant, so falling back to it would repaint another variant's discount
+      onto this one - a $20 variant with no compare_at would read as "-75% off"
+      because a sibling variant has a compare_at of $80. If the variant has no
+      compare_at_price there is no discount to report. Full stop.
+    endcomment
+    assign bmp_variant = variant | default: bmp_product.selected_or_first_available_variant
+    if bmp_variant != blank
+      assign bmp_compare = bmp_variant.compare_at_price
+      assign bmp_price = bmp_variant.price
+    else
+      assign bmp_compare = bmp_product.compare_at_price
+      assign bmp_price = bmp_product.price
+    endif
+  -%}
+
+  {%- capture bmp_pills -%}
+    {%- comment -%}
+      1. Curated tags, from standard Shopify product tags. Only allowlisted
+      tags render, so operational and automation tags never leak onto the
+      storefront. The allowlist is split, stripped and compacted first: an
+      entry of ", ," must not produce an empty pill.
+
+      The New-in tag is excluded when the New label is using the tag method:
+      otherwise a product tagged `new`, with `new` also allowlisted, paints two
+      pills that say the same thing (spec D7).
+    {%- endcomment -%}
+    {%- liquid
+      assign bmp_tag_matches = ''
+      if settings.bmp_label_tags_show
+        assign bmp_new_tag_excluded = ''
+        if settings.bmp_label_new_show and settings.bmp_label_new_method == 'tag'
+          assign bmp_new_tag_excluded = settings.bmp_label_new_tag | default: 'new' | strip | upcase
+        endif
+
+        assign bmp_allow_raw = settings.bmp_label_tags_allowlist | default: '' | split: ','
+        assign bmp_allow = ''
+        for bmp_entry in bmp_allow_raw
+          assign bmp_entry_clean = bmp_entry | strip | upcase
+          if bmp_entry_clean != blank and bmp_entry_clean != bmp_new_tag_excluded
+            assign bmp_allow = bmp_allow | append: bmp_entry_clean | append: '~|~'
+          endif
+        endfor
+        assign bmp_allow = bmp_allow | split: '~|~'
+
+        for bmp_tag in bmp_product.tags
+          assign bmp_tag_up = bmp_tag | strip | upcase
+          if bmp_allow contains bmp_tag_up
+            assign bmp_tag_matches = bmp_tag_matches | append: bmp_tag | append: '~|~'
+          endif
+        endfor
+        assign bmp_tag_matches = bmp_tag_matches | split: '~|~'
+      endif
+    -%}
+    {%- for bmp_tag in bmp_tag_matches -%}
+      <span
+        class="bmp-label bmp-label--tag"
+        style="--bmp-label-text: {{ settings.bmp_label_tags_text_color }}; --bmp-label-bg: {{ settings.bmp_label_tags_bg }};"
+      >
+        <span class="bmp-label__text">{{ bmp_tag | strip | escape_once }}</span>
+      </span>
+    {%- endfor -%}
+
+    {%- comment -%}
+      2. New. Uses published_at, not created_at: a product can sit as a draft
+      for weeks, and created_at would burn its New window before a shopper ever
+      saw it. Symmetry uses created_at; this is deliberate divergence.
+    {%- endcomment -%}
+    {%- liquid
+      assign bmp_is_new = false
+      if settings.bmp_label_new_show
+        assign bmp_method = settings.bmp_label_new_method | default: 'date'
+        if bmp_method == 'date'
+          assign bmp_now_s = 'now' | date: '%s' | plus: 0
+          assign bmp_pub_s = bmp_product.published_at | date: '%s' | plus: 0
+          assign bmp_age = bmp_now_s | minus: bmp_pub_s | divided_by: 86400
+          assign bmp_limit = settings.bmp_label_new_days | default: 30
+          if bmp_age >= 0 and bmp_age < bmp_limit
+            assign bmp_is_new = true
+          endif
+        elsif bmp_method == 'tag'
+          assign bmp_new_tag = settings.bmp_label_new_tag | default: 'new' | downcase | strip
+          for bmp_t in bmp_product.tags
+            comment
+              Normalized into its own assign rather than piping inline into the
+              comparison: theme-check's UnusedAssign check false-positives on
+              `filter | chain == var` and does not register the read. Same
+              runtime result either way.
+            endcomment
+            assign bmp_t_norm = bmp_t | downcase | strip
+            if bmp_t_norm == bmp_new_tag
+              assign bmp_is_new = true
+              break
+            endif
+          endfor
+        else
+          assign bmp_frag = settings.bmp_label_new_collection | default: 'new' | downcase | strip
+          for bmp_col in bmp_product.collections
+            if bmp_col.handle contains bmp_frag
+              assign bmp_is_new = true
+              break
+            endif
+          endfor
+        endif
+      endif
+    -%}
+    {%- if bmp_is_new -%}
+      <span
+        class="bmp-label bmp-label--new"
+        style="--bmp-label-text: {{ settings.bmp_label_new_text_color }}; --bmp-label-bg: {{ settings.bmp_label_new_bg }};"
+      >
+        <span class="bmp-label__text">{{ settings.bmp_label_new_text | default: 'New in' | escape_once }}</span>
+      </span>
+    {%- endif -%}
+
+    {%- comment -%}
+      3. Discount — merchant-facing name for the price-derived label; its
+      setting ids stay bmp_label_sale_* (spec D10).
+
+      strip_html on the money output, escape_once at render: a store's
+      money_format is merchant-authored and entity-bearing for several
+      currencies (GBP "&pound;{{amount}}"). strip_html removes TAGS but not
+      ENTITIES, and plain `escape` would re-escape the ampersand and ship a
+      literal "-&pound;10.00". escape_once leaves a valid entity alone while
+      still escaping merchant-typed text.
+
+      Integer division truncates, so a sub-1% markdown computes to 0 and would
+      render "-0%". Below 1%, fall back to the static text.
+
+      2026-08-17: this block used to re-run `bmp-price-variation`
+      and force `bmp_format` to static text whenever the "From" label was
+      live. That was correct when it shipped:
+      snippets/price.liquid then SUPPRESSED the compare-at span under the
+      identical predicate, so a quantified badge would have named a number
+      that was not on the page. The price side was later reversed by PM
+      direction - the capture hook now forces `show_sale_price_first`, the
+      line reads `From $min <struck compare-at>`, and the struck price stays
+      VISIBLE. The gate's justification died with the suppression, so it was
+      deleted; keeping it only erased a format the merchant had configured.
+
+      Substantiation still holds, now by construction instead of by
+      cross-snippet agreement. `bmp_compare` above is
+      `selected_or_first_available_variant.compare_at_price`, and
+      snippets/price.liquid:13-15 derives its own `compare_at_price` from
+      that same variant - so the number this badge quantifies IS the struck
+      number rendered beside it.
+
+      Known and accepted: while "From $min" shows, `bmp_price` is
+      the selected variant's price, not `price_min`. Whenever those two
+      differ the percent is computed against a price the shopper cannot see -
+      `From $24.99 <struck $29.99>` beside `-6%`. Two ways they differ, not
+      one: the cheapest variant is unavailable (price_min spans every
+      variant, selected_or_first_available_variant skips sold-out ones), or
+      Shopify relevance-selected a dearer variant on a filtered collection or
+      search card, where bmp-price-variation.liquid:34-44 keeps the label up
+      on purpose. The struck reference stays exact either way, which is the
+      claim the badge actually makes.
+
+      Do not re-introduce a `bmp-price-variation` capture here. Besides being
+      obsolete it was never faithful: price.liquid threads `bmp_show_from`
+      (the per-block override resolved at blocks/price.liquid:11-16,74) into
+      its capture and this snippet never did, so a block with the override
+      off under a global on showed no "From" on the price line and collapsed
+      the badge anyway.
+    {%- endcomment -%}
+    {%- liquid
+      assign bmp_on_sale = false
+      if settings.bmp_label_sale_show and bmp_compare > bmp_price
+        assign bmp_on_sale = true
+      endif
+      assign bmp_sale_text = settings.bmp_label_sale_text | default: 'Sale'
+      if bmp_on_sale
+        assign bmp_format = settings.bmp_label_sale_format | default: 'percent'
+
+        if bmp_format == 'value'
+          assign bmp_amount = bmp_compare | minus: bmp_price | money | strip_html
+          assign bmp_sale_text = '-' | append: bmp_amount
+        elsif bmp_format == 'percent'
+          assign bmp_pct = bmp_compare | minus: bmp_price | times: 100 | divided_by: bmp_compare
+          if bmp_pct >= 1
+            assign bmp_sale_text = '-' | append: bmp_pct | append: '%'
+          endif
+        endif
+      endif
+    -%}
+    {%- if bmp_on_sale -%}
+      <span
+        class="bmp-label bmp-label--sale"
+        style="--bmp-label-text: {{ settings.bmp_label_sale_text_color }}; --bmp-label-bg: {{ settings.bmp_label_sale_bg }};"
+      >
+        <span class="bmp-label__text">{{ bmp_sale_text | escape_once }}</span>
+      </span>
+    {%- endif -%}
+  {%- endcapture -%}
+
+{%- comment -%}
+    The element is emitted whenever the system is enabled, even with no pills
+    inside. Two reasons:
+
+    1. It gives the custom element a stable morph target, so a variant switch
+       that ADDS a label — selecting the one variant that is on sale — has
+       something to morph into.
+    2. The CSS second-layer suppression (.product-badges { display: none } in
+       bmp-styles.css) still applies whether or not a container is present,
+       so the container's presence does not affect the native overlay. The
+       primary stop is the Liquid gate in blocks/_product-card-gallery.liquid
+       (BMP-HOOK:native-badge-off).
+
+    An empty custom element costs one tag per card. The `:empty` rule is not
+    needed: with no children the flex container has zero content and paints
+    nothing.
+  {%- endcomment -%}
+  <bmp-product-labels
+    class="bmp-product-labels bmp-product-labels--{{ bmp_context }} bmp-product-labels--{{ bmp_position }}"
+    data-context="{{ bmp_context }}"
+    style="--bmp-label-radius: {{ settings.badge_corner_radius }}px; --bmp-label-font-family: var(--font-{{ settings.badge_font_family }}--family); --bmp-label-font-weight: var(--font-{{ settings.badge_font_family }}--weight); --bmp-label-text-transform: {{ settings.badge_text_transform }};"
+  >
+    {{- bmp_pills -}}
+  </bmp-product-labels>
+{%- endif -%}

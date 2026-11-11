@@ -1,0 +1,81 @@
+{%- doc -%}
+  The single server-side decision for the forced-size-selection gate.
+
+  Echoes ONE token, nothing else:
+
+    (empty)  this product is not gated — no size option, a single-value size
+             option, or the feature is off
+    open     gated, and the shopper's intent is already on the record
+    closed   gated, and no size has been chosen
+
+  Both core edit sites capture this rather than re-deriving the condition:
+  blocks/buy-buttons.liquid (the wrapper state attributes + the Layer-2
+  `disabled` on the hidden input) and blocks/accelerated-checkout.liquid
+  (hiding express checkout). Two copies of this Liquid is how the two halves of
+  a feature end up disagreeing — the failure mode the card-hover nil-safe
+  precedent records, where one half normalised an unset setting
+  and the other did not.
+
+  `open` comes from `product_resource.selected_variant` being non-blank, which
+  on a PRODUCT PAGE happens only when `?variant=` was in the actual request — a
+  shared link, an ad, a collection swatch click (D7 signal 1). It is the same
+  signal snippets/bmp-price-variation.liquid:40 already uses to decide whether
+  a shopper has chosen, so this is an established convention in this tree
+  rather than a new one. Shopify also populates selected_variant by relevance
+  in filtered-collection and search contexts (documented at
+  snippets/variant-swatches.liquid:78); that is a card surface and never
+  reaches the product page, the only surface this gate renders on.
+
+  This snippet READS selected_variant and never writes it — spec §7.4, or
+  scripts/check-price-variation.mjs breaks.
+
+  D7 signal 2 (a trusted interaction inside a size control) is a runtime signal
+  and lives in assets/bmp-size-required.js. `location.search` is never read at
+  runtime: a swatch app pushes `?variant=` into the URL on selection — measured
+  again in the §9.1 probe, where clicking Globo's `M` rewrote the URL to
+  `?variant=51536967762226` without ever touching the native size radio — so a
+  runtime URL read cannot tell a shared link from a client-side rewrite. Only
+  the server render can.
+
+  @param {object} product_resource - the product being rendered
+
+  @example
+  {%- capture bmp_size_state -%}
+    {%- render 'bmp-size-required-state', product_resource: product -%}
+  {%- endcapture -%}
+  {%- assign bmp_size_state = bmp_size_state | strip -%}
+{%- enddoc -%}
+{%- liquid
+  # Nil-safe: an unmaterialised checkbox reads as nil, and the schema default is
+  # true (D3), so nil must mean ON here — otherwise this snippet and
+  # snippets/variant-main-picker.liquid would disagree about whether the gate is
+  # on for exactly the stores that never opened the Theme Editor (the
+  # bmp-card-hover.liquid precedent, which normalises the same way).
+  assign bmp_required = true
+  if settings.bmp_size_required == false
+    assign bmp_required = false
+  endif
+  assign bmp_size_option = settings.bmp_size_guide_option | strip | default: 'Size'
+  assign bmp_gated = false
+
+  if bmp_required
+    for bmp_option in product_resource.options_with_values
+      if bmp_option.name == bmp_size_option and bmp_option.values.size > 1
+        # values.size > 1 mirrors the render half exactly. A size option with
+        # ONE value offers nothing to choose: gating it would leave the hidden
+        # input[name="id"] disabled forever and break add-to-cart outright on
+        # that product.
+        assign bmp_gated = true
+        break
+      endif
+    endfor
+  endif
+
+  if bmp_gated
+    if product_resource.selected_variant != blank
+      echo 'open'
+    else
+      echo 'closed'
+    endif
+  endif
+-%}

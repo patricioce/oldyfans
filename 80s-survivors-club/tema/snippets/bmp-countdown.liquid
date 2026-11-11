@@ -1,0 +1,239 @@
+{% doc %}
+  Announcement-block countdown — dual mode: state token or timer markup.
+
+  All date arithmetic runs in the store's timezone ('now' | date: '%z') and is
+  shared by both modes, per the announcement-customizations design spec
+  (Feature 3). Behavioral model copied from Symmetry theme v8.2.0's
+  countdown-timer.liquid / announcement-bar.liquid — code not reused, only the
+  end-date/hide-on-end/expiry semantics.
+
+  @param {object} settings - A block's settings object (e.g. block.settings),
+    read for bmp_countdown_show / bmp_countdown_end_date / bmp_countdown_end_time
+    / bmp_countdown_hide_on_end.
+  @param {string} [mode] - When 'state', outputs ONE token and nothing else:
+    'off' (countdown disabled, or the configured end date/time is unusable —
+    an unparseable date or an unparseable time must degrade to "no
+    countdown", never to "expired"), 'active' (counting down), 'expired'
+    (time is up, bmp_countdown_hide_on_end is false — the announcement text
+    stays, no timer), 'hidden' (time is up, bmp_countdown_hide_on_end is
+    true — the caller must skip the whole slide). When 'fallback', outputs
+    ONLY the <script> tag for assets/bmp-countdown-fallback.js — the caller
+    must render this mode exactly when its OWN state (from an earlier
+    mode: 'state' call) is 'hidden', so the module never loads at any
+    default render. Any other value (the default)
+    renders the timer markup, and ONLY when the state is 'active'; every
+    other state renders nothing from this snippet.
+
+  ACCESSIBILITY: the timer element carries an EXPLICIT aria-live="off".
+  role="timer" is specified to imply aria-live="off", but Blink does not
+  implement that implication (measured 2026-08-13 in chrome://accessibility:
+  a role="timer" subtree reports liveStatus=(none) and inherits
+  containerLiveStatus=polite; status/alert/log do get their implicit value).
+  Horizon puts aria-live="polite" on <announcement-bar-component> whenever
+  section.blocks.size > 1, so without the explicit attribute a screen reader
+  speaks the changing digit once per second. Do not remove it. Note that CDP
+  Accessibility.getFullAXTree cannot detect the regression -- it reports
+  `live` only on live-region roots -- so re-verify in chrome://accessibility,
+  not through CDP.
+
+  Usage:
+    {% capture bmp_cd_state %}{% render 'bmp-countdown', settings: block.settings, mode: 'state' %}{% endcapture %}
+    {% assign bmp_cd_state = bmp_cd_state | strip %}
+    ...
+    {% render 'bmp-countdown', settings: block.settings %}
+    ...
+    {% if bmp_cd_state == 'hidden' %}{% render 'bmp-countdown', settings: block.settings, mode: 'fallback' %}{% endif %}
+{% enddoc %}
+{%- liquid
+  assign bmp_cd_state = 'off'
+  assign bmp_cd_end_iso = blank
+  assign bmp_cd_days = 0
+  assign bmp_cd_hours = '00'
+  assign bmp_cd_minutes = '00'
+  assign bmp_cd_seconds = '00'
+
+  if settings.bmp_countdown_show
+    assign bmp_cd_end_date = settings.bmp_countdown_end_date | strip
+    assign bmp_cd_end_time = settings.bmp_countdown_end_time | strip
+
+    if bmp_cd_end_date == blank
+      assign bmp_cd_end_date = 'now' | date: '%Y-%m-%d'
+    endif
+
+    # Validate the DATE structurally, the same way the time is validated
+    # below, and for a directly analogous reason. Liquid's date filter is
+    # backed by Ruby's Time.parse, which accepts plenty of non-ISO forms —
+    # "2026/12/31" (slashes), "December 31, 2026", "31-12-2026" — and still
+    # returns a real, non-zero epoch for them, so the epoch check further
+    # below cannot by itself catch a date that parses "successfully" into a
+    # shape the client's `new Date()` then rejects. Measured live:
+    # bmp_countdown_end_date "2026/12/31" with a valid time computes ACTIVE
+    # server-side and renders plausible digits, but emits
+    # data-bmp-end="2026/12/31T18:00:00±ZZZZ" — slashes are not part of the
+    # ECMAScript date-time string format — so the timer freezes silently
+    # client-side with no error anywhere, same route and symptom as the
+    # single-digit-hour bug the time walker below fixes. Walked the same
+    # way: split on '-', require exactly three parts, require every
+    # character in each part to be a digit (the same ten-filter `remove`
+    # trick), require YYYY/MM/DD lengths 4/2/2 exactly (no single-digit
+    # forgiveness here — unlike the hour below, the setting's own info text
+    # gives no non-padded example), then range-check month 1-12 and day
+    # 1-31. This is an ADDED gate in front of the epoch check below, not a
+    # replacement for it: the epoch check is the second line of defence
+    # against strings the parser cannot latch onto at all, NOT against
+    # impossible calendar dates.
+    #
+    # KNOWN LIMITATION, deliberate: the day range is coarse, so a calendrically
+    # impossible date -- 2027-02-29, 2026-04-31 -- passes both gates and
+    # simply rolls forward to the next real day. That is safe here, and the
+    # reason is specific: Ruby's Time.parse on the server and ECMAScript
+    # MakeDay in the client's new Date() BOTH normalise day overflow in the
+    # same direction, so the server-rendered digits and the client tick
+    # agree on the same instant. The failure this whole walk exists to
+    # prevent is server-active / client-frozen divergence (slashes, a
+    # single-digit hour -- see the time walker below), and an impossible
+    # date does not produce it: either both sides roll identically, or the
+    # epoch comes back 0 and the guard below already degrades to 'off'.
+    # Month-length and leap-year arithmetic in Liquid is out of scope for
+    # v1 per the ticket's "lean countdown, Symmetry model" framing;
+    # Symmetry has no calendar validation either.
+    assign bmp_cd_date_valid = false
+    assign bmp_cd_date_parts = bmp_cd_end_date | split: '-'
+    if bmp_cd_date_parts.size == 3
+      assign bmp_cd_yyyy_raw = bmp_cd_date_parts[0]
+      assign bmp_cd_mo_raw = bmp_cd_date_parts[1]
+      assign bmp_cd_dd_raw = bmp_cd_date_parts[2]
+      assign bmp_cd_yyyy_digits = bmp_cd_yyyy_raw | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+      assign bmp_cd_mo_digits = bmp_cd_mo_raw | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+      assign bmp_cd_dd_digits = bmp_cd_dd_raw | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+      if bmp_cd_yyyy_digits == '' and bmp_cd_mo_digits == '' and bmp_cd_dd_digits == '' and bmp_cd_yyyy_raw.size == 4 and bmp_cd_mo_raw.size == 2 and bmp_cd_dd_raw.size == 2
+        assign bmp_cd_mo_num = bmp_cd_mo_raw | plus: 0
+        assign bmp_cd_dd_num = bmp_cd_dd_raw | plus: 0
+        if bmp_cd_mo_num >= 1 and bmp_cd_mo_num <= 12 and bmp_cd_dd_num >= 1 and bmp_cd_dd_num <= 31
+          assign bmp_cd_date_valid = true
+        endif
+      endif
+    endif
+
+    # Second line of defence, kept as-is: a bare garbage string with no
+    # time/offset fragment for the parser to latch onto fails cleanly here
+    # too (verified live against this store). Its job stops at unparseable
+    # strings, though -- see the walk above for why a structurally-valid-
+    # but-impossible date rolls forward instead of being rejected here.
+    assign bmp_cd_date_check = bmp_cd_end_date | date: '%s' | plus: 0
+
+    # Deliberate deviation from Symmetry, which falls back to 00:00 when the
+    # time is blank: a date with no time set must mean END of that day, to
+    # match the empty-date "tonight 23:59" fallback the spec mandates.
+    # Falling back to 00:00 here would expire a same-day countdown the
+    # instant the merchant saves it.
+    if bmp_cd_end_time == blank
+      assign bmp_cd_end_time = '23:59'
+      assign bmp_cd_time_valid = true
+    else
+      # Validate the TIME structurally, the same way the date is validated
+      # above — and for a related but distinct reason. The date-filter
+      # combine-then-parse trick above cannot double as a time validator: a
+      # single-digit hour like "7:00" combined with a real date still
+      # parses to a REAL, non-zero timestamp server-side (the underlying
+      # date parser accepts a one-digit hour), so bmp_cd_end_ts would never
+      # come back 0 for it and this would sail through as "active" — but
+      # the resulting ISO string ("...T7:00:00±ZZZZ") is not valid per the
+      # ECMAScript date-time string format the client's `new Date()` in
+      # assets/bmp-countdown.js requires (a 2-digit hour), so the timer
+      # freezes silently client-side with no error anywhere (verified live:
+      # server renders plausible digits, the element never ticks). Liquid
+      # has no regex filter, so this walks the string manually: split on
+      # ':', require exactly two parts, require every character in each
+      # part to be a digit (removing all ten digit characters must leave
+      # nothing), require a 1-2 digit hour and an exactly-2-digit minute,
+      # then range-check. A single-digit hour that passes is normalized to
+      # 2 digits so the emitted ISO string is always client-parseable.
+      assign bmp_cd_time_valid = false
+      assign bmp_cd_time_parts = bmp_cd_end_time | split: ':'
+      if bmp_cd_time_parts.size == 2
+        assign bmp_cd_hh_raw = bmp_cd_time_parts[0]
+        assign bmp_cd_mm_raw = bmp_cd_time_parts[1]
+        assign bmp_cd_hh_digits = bmp_cd_hh_raw | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+        assign bmp_cd_mm_digits = bmp_cd_mm_raw | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+        if bmp_cd_hh_digits == '' and bmp_cd_mm_digits == '' and bmp_cd_hh_raw != '' and bmp_cd_hh_raw.size <= 2 and bmp_cd_mm_raw.size == 2
+          assign bmp_cd_hh_num = bmp_cd_hh_raw | plus: 0
+          assign bmp_cd_mm_num = bmp_cd_mm_raw | plus: 0
+          if bmp_cd_hh_num <= 23 and bmp_cd_mm_num <= 59
+            assign bmp_cd_time_valid = true
+            assign bmp_cd_hh_padded = bmp_cd_hh_num
+            if bmp_cd_hh_num < 10
+              assign bmp_cd_hh_padded = bmp_cd_hh_num | prepend: '0'
+            endif
+            assign bmp_cd_end_time = bmp_cd_hh_padded | append: ':' | append: bmp_cd_mm_raw
+          endif
+        endif
+      endif
+    endif
+
+    assign bmp_cd_offset = 'now' | date: '%z'
+    assign bmp_cd_end_iso = bmp_cd_end_date | append: 'T' | append: bmp_cd_end_time | append: ':00' | append: bmp_cd_offset
+
+    # 'now' | date: '%s' and <iso> | date: '%s' both return STRINGS. Coerce
+    # both to integers once, here, and use only the coerced values below —
+    # for the zero/invalid check, the <= comparison, and the digit math —
+    # so nothing downstream depends on Liquid's string-vs-number comparison
+    # behavior (same-length numeric strings happen to compare correctly
+    # lexicographically, but that is an accident this code no longer needs).
+    assign bmp_cd_now_ts = 'now' | date: '%s' | plus: 0
+    assign bmp_cd_end_ts = bmp_cd_end_iso | date: '%s' | plus: 0
+
+    if bmp_cd_date_check == 0 or bmp_cd_end_ts == 0 or bmp_cd_time_valid == false or bmp_cd_date_valid == false
+      # Blank, non-numeric (an unparseable merchant date), a literal 0, a
+      # date that failed the structural YYYY-MM-DD check, or a time that
+      # failed the structural HH:MM check all collapse here on purpose —
+      # see the @param note above.
+      assign bmp_cd_state = 'off'
+      assign bmp_cd_end_iso = blank
+    elsif bmp_cd_end_ts <= bmp_cd_now_ts
+      if settings.bmp_countdown_hide_on_end
+        assign bmp_cd_state = 'hidden'
+      else
+        assign bmp_cd_state = 'expired'
+      endif
+    else
+      assign bmp_cd_state = 'active'
+      assign bmp_cd_diff = bmp_cd_end_ts | minus: bmp_cd_now_ts
+      assign bmp_cd_days = bmp_cd_diff | divided_by: 86400
+      assign bmp_cd_secs_in_days = bmp_cd_days | times: 86400
+      assign bmp_cd_rem1 = bmp_cd_diff | minus: bmp_cd_secs_in_days
+      assign bmp_cd_hours_n = bmp_cd_rem1 | divided_by: 3600
+      assign bmp_cd_secs_in_hours = bmp_cd_hours_n | times: 3600
+      assign bmp_cd_rem2 = bmp_cd_rem1 | minus: bmp_cd_secs_in_hours
+      assign bmp_cd_minutes_n = bmp_cd_rem2 | divided_by: 60
+      assign bmp_cd_secs_in_minutes = bmp_cd_minutes_n | times: 60
+      assign bmp_cd_seconds_n = bmp_cd_rem2 | minus: bmp_cd_secs_in_minutes
+
+      assign bmp_cd_hours = bmp_cd_hours_n
+      if bmp_cd_hours_n < 10
+        assign bmp_cd_hours = bmp_cd_hours_n | prepend: '0'
+      endif
+
+      assign bmp_cd_minutes = bmp_cd_minutes_n
+      if bmp_cd_minutes_n < 10
+        assign bmp_cd_minutes = bmp_cd_minutes_n | prepend: '0'
+      endif
+
+      assign bmp_cd_seconds = bmp_cd_seconds_n
+      if bmp_cd_seconds_n < 10
+        assign bmp_cd_seconds = bmp_cd_seconds_n | prepend: '0'
+      endif
+    endif
+  endif
+-%}
+{%- if mode == 'state' -%}{{ bmp_cd_state }}{%- elsif mode == 'fallback' -%}
+<script src="{{ 'bmp-countdown-fallback.js' | asset_url }}" type="module"></script>
+{%- elsif bmp_cd_state == 'active' -%}
+<bmp-countdown-timer class="bmp-countdown" role="timer" aria-live="off" aria-label="{{ 'bmp.accessibility.bmp_countdown_timer' | t }}" data-bmp-end="{{ bmp_cd_end_iso | escape }}">
+  <span class="bmp-countdown__part"><span class="bmp-countdown__value" data-bmp-countdown="days">{{ bmp_cd_days }}</span><span class="bmp-countdown__unit">{{ 'bmp.content.bmp_countdown_days' | t }}</span></span>
+  <span class="bmp-countdown__part"><span class="bmp-countdown__value" data-bmp-countdown="hours">{{ bmp_cd_hours }}</span><span class="bmp-countdown__unit">{{ 'bmp.content.bmp_countdown_hours' | t }}</span></span>
+  <span class="bmp-countdown__part"><span class="bmp-countdown__value" data-bmp-countdown="minutes">{{ bmp_cd_minutes }}</span><span class="bmp-countdown__unit">{{ 'bmp.content.bmp_countdown_minutes' | t }}</span></span>
+  <span class="bmp-countdown__part"><span class="bmp-countdown__value" data-bmp-countdown="seconds">{{ bmp_cd_seconds }}</span><span class="bmp-countdown__unit">{{ 'bmp.content.bmp_countdown_seconds' | t }}</span></span>
+</bmp-countdown-timer>
+<script src="{{ 'bmp-countdown.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}

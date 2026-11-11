@@ -1,0 +1,203 @@
+{%- comment -%}
+  BMP global loader — the single entry point for the BuildMyPOD layer.
+  Rendered from layout/theme.liquid inside the BMP-HOOK:globals block.
+  Loaded AFTER Horizon's stylesheets/fonts/
+  variables so BMP CSS wins by source order, never by !important.
+
+  This render line is LOAD-BEARING: losing it silently
+  un-styles the theme — pre-commit and the visual-regression canaries guard
+  it. Everything BMP adds globally (styles, scripts, widgets) is wired
+  here — never directly in core files.
+{%- endcomment -%}
+{%- comment -%}
+  Preload: bmp-styles.css is above-the-fold global chrome, so fetch it at high
+  priority (emits <link rel=preload as=style> + the stylesheet link) alongside
+  Horizon's base.css. Precedent: snippets/stylesheets.liquid uses the same
+  `stylesheet_tag: preload: true` on base.css. NOT deferred — deferring it
+  would flash the whole page unstyled.
+{%- endcomment -%}
+{{ 'bmp-styles.css' | asset_url | stylesheet_tag: preload: true }}
+{% comment %}
+  Global product-card style tokens (Plan 1: Title + Price). A settings-driven
+  :root token block, same shape as Horizon's own head-emitted settings vars,
+  PLUS the token-gated rules for typography, case and weight — those cannot be
+  static, because their baseline is a per-instance preset class no var()
+  fallback can reproduce (rationale in the snippet's own doc block and in the
+  GLOBAL CARD STYLE section of bmp-styles.css).
+  Layout rules DO stay static in bmp-styles.css.
+  Placed AFTER the stylesheet link, and that ordering is LOAD-BEARING, not just
+  tidy: the gated rules tie the always-on card rules on specificity ((0,2,1)
+  title / (0,1,1) price) and win only by source order. Do not move this render
+  above the link.
+{% endcomment %}
+<style>{% render 'bmp-card-style-vars' %}</style>
+{%- comment -%}
+  Global CTA colors. The snippet owns its conditional <style> wrapper
+  and emits zero bytes while all six settings are blank. Each property is
+  independent: a blank Add to Cart global releases the native block Custom
+  value for that property, while configured globals take precedence. Buy Now
+  is scoped to Shopify's unbranded button so wallet branding stays untouched.
+{%- endcomment -%}
+{%- render 'bmp-cta-button-style-vars' -%}
+{%- comment -%}
+  a11y-slideshow-aria: keep the slideshow pagination dots/thumbnails on the
+  VALID `aria-current` attribute. The snippet markup + bmp-styles.css already
+  use aria-current, but the core slideshow.js controller (kept byte-identical)
+  writes the invalid `aria-selected` at runtime on slide change; this module
+  mirrors it back to aria-current and strips the invalid attribute. Global
+  because slideshow-controls renders on many surfaces (hero, PDP gallery,
+  zoom dialog, predictive carousel). fetchpriority=low — a post-paint a11y
+  correction that never blocks render.
+{%- endcomment -%}
+<script src="{{ 'bmp-aria-current.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- comment -%}
+  bmp-size-guide-portal: keeps the size-guide
+  chart openable from inside quick-add's popup by guaranteeing its dialog is a
+  <body> child rather than a DOM descendant of the open quick-add dialog
+  (nesting breaks both the event routing and the fixed-position containing
+  block — see the asset header); relocates the trigger out of a swatch-app-
+  hidden variant picker; and applies the size-guide block's link text (published
+  as a data attribute on the dialog element) to the trigger. The icon is not its
+  job — a :has() rule in the trigger's stylesheet resolves that with no JS. Global, and NOT loaded from blocks/bmp-size-guide.liquid,
+  because the surface that needs it most is the collection/search page, where
+  that block never renders — quick-add clones the trigger in from a fetched
+  product page, and a <script> inside morph-injected markup does not execute.
+  fetchpriority=low, and it stays accurate: the trigger is gated server-side on
+  the option name and revealed by CSS, so it is present and readable in the
+  first paint without this module, icon included. What arrives late is a
+  CUSTOMISED label, and only on stores that changed it.
+{%- endcomment -%}
+<script src="{{ 'bmp-size-guide-portal.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- comment -%}
+  bmp-dialog-close-guard: routes a NATIVE dialog close request - the
+  Android back button, which Chrome sends through CloseWatcher straight to the
+  native <dialog> close with no keydown - back into the owning component's own
+  close method, and releases the scroll lock outright when nothing can stop
+  that close. Without it the lock acquired in dialog.js's showDialog() /
+  theme-drawer.js's open() is never released, html[scroll-lock] stays on, and
+  the page is frozen until a reload. Zero core JS is
+  patched: the guard only calls core's public closeDialog() / close(), the same
+  way bmp-card-hover.js calls previewVariant() / resetVariant(). Global and
+  UNCONDITIONAL because every dialog surface is affected - cart drawer, search
+  modal, quick-add, size guide, zoom, filters drawer - and the two listeners
+  are document-level, so surfaces injected later (quick-add clones, filter
+  morphs) are covered with no per-instance wiring. fetchpriority=low: it only
+  runs on a close request, never during first paint.
+{%- endcomment -%}
+<script src="{{ 'bmp-dialog-close-guard.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- comment -%}
+  bmp-drawer-focus-scope: releases the global focus trap while a drawer is
+  showing a NON-modal dialog. At >= 990px core theme-drawer.js opens the panel
+  with show() - the page beside it stays visible and interactive - but still
+  installs focus.js's trap, a capturing document `focusin` listener that pulls
+  focus back into the panel from anywhere on the page. In the header that is
+  fatal: the yank blurs the open submenu, core closes it, and a closed submenu
+  is inert, so the pressed link or group toggle stops being hit-testable
+  between mousedown and mouseup and the click lands on an ancestor instead.
+  It also leaves keyboard users unable to Tab out of a dialog that is not
+  modal. Modal mode below 990px is untouched: there the native top-layer trap
+  applies and is correct. Zero core JS is patched - the module only calls
+  core's exported removeTrapFocus(), the same way bmp-dialog-close-guard.js
+  calls closeDialog() / close(). Global because every theme-drawer surface is
+  affected - cart, filters, chat. fetchpriority=low: it only runs when a
+  drawer opens or the viewport crosses the breakpoint, never during first paint.
+{%- endcomment -%}
+<script src="{{ 'bmp-drawer-focus-scope.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- comment -%}
+  bmp-product-labels: keeps the overlay label in sync with the selected variant
+  on both the product page and product cards, by riding the same
+  StandardEvents.productSelect the stock product-price component uses. Global
+  because labels render on every card surface as well as the product page.
+  fetchpriority=low — it only runs on a variant change, never during first
+  paint. Self-gated: the module is inert on pages with no label element.
+{%- endcomment -%}
+<script src="{{ 'bmp-product-labels.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- comment -%}
+  bmp-card-hover: applies the server-computed hover-target map from
+  snippets/bmp-card-hover.liquid to core's own public previewVariant()/
+  resetVariant() (assets/product-card.js) — never patches core JS. Global,
+  not rendered from the card itself, because cards render on collection,
+  search, home and recommendation surfaces alike, and only delegated
+  document-level listeners cover cards injected later by infinite scroll,
+  filter morphs and quick-add, with no per-card wiring. Gated on
+  settings.bmp_card_hover_effect so it emits ZERO bytes at the theme default
+  ('zoom', stock behavior) — it only has anything to do at 'second_image' or
+  'next_variant'.
+{%- endcomment -%}
+{%- if settings.bmp_card_hover_effect == 'second_image' or settings.bmp_card_hover_effect == 'next_variant' -%}
+  <script src="{{ 'bmp-card-hover.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}
+{%- comment -%}
+  bmp-header-menu: drives the content-sized desktop nav dropdown
+  card rendered by snippets/bmp-nav-dropdown.liquid — click to open, outside
+  click / Escape / second click to close, plus the collapsible level-3 groups.
+  Global and delegated on document, NOT a custom element and NOT loaded from
+  the snippet: the nodes it drives live inside the header's
+  data-hydration-key subtree, which is re-rendered through the Section
+  Rendering API right after load, diffed by morph.js, re-rendered on every
+  theme-editor change, and re-slotted by overflow-list on resize. Delegated
+  listeners registered once at import survive all of that with no
+  re-initialisation (R5) — which is exactly what v1.1.5 got wrong by binding
+  per-node listeners in layout/theme.liquid. Unconditional: the markup it
+  drives is unconditional too. fetchpriority=low — it only runs on a click or
+  a keypress, never during first paint.
+{%- endcomment -%}
+<script src="{{ 'bmp-header-menu.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- comment -%}
+  bmp-size-required: Layer 1 of the forced-size-selection gate — it
+  refuses an add-to-cart interaction until the shopper has deliberately chosen a
+  size, and flips the state attributes the presentations in bmp-styles.css key
+  off. The render half is snippets/variant-main-picker.liquid
+  #size-required-unselected; Layer 2 (the no-JS floor) is
+  blocks/buy-buttons.liquid#size-required-layer2.
+
+  Global and delegated, NOT a custom element and NOT loaded from the product
+  template: quick-add fetches the product page and lifts product-form-component
+  into its modal after load (assets/quick-add.js:214-256), and variant changes
+  morph subtrees, so only listeners registered once at import cover every
+  surface with no re-initialisation.
+
+  Bound to `window` in capture phase rather than `document`, because Horizon's
+  own on:submit/on:click dispatcher is ALREADY a document capture listener
+  (assets/component.js:239-323, installed from Component.connectedCallback) and
+  snippets/scripts.liquid loads product-form.js AHEAD of this file — so a
+  document listener of ours would fire second, after handleSubmit had already
+  sent the fetch. window is the first node in the capture path.
+
+  Gated on settings.bmp_size_required so an unchecked box emits ZERO bytes, the
+  discipline bmp-card-hover.js already follows. fetchpriority=low — it only runs
+  on a click, change or submit, never during first paint.
+
+  `!= false`, not a truthiness test: an unmaterialised checkbox reads as nil,
+  the schema default is true (D3), and a store that never opened the Theme
+  Editor still renders the gate — so nil has to load the module, and a plain
+  `if settings.bmp_size_required` would skip it and leave that store with the
+  render and Layer 2 but no Layer 1. Same normalisation as
+  snippets/bmp-size-required-state.liquid and
+  snippets/variant-main-picker.liquid, so all three halves agree.
+{%- endcomment -%}
+{%- if settings.bmp_size_required != false -%}
+  <script src="{{ 'bmp-size-required.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}
+{%- comment -%}
+  The manifest render emits NOTHING (the snippet is one whole-file trimmed
+  comment) — it keeps the deployed theme carrying the grep-able contract and
+  theme check quiet about bmp-manifest being orphaned.
+{%- endcomment -%}
+{%- render 'bmp-manifest' -%}
+{%- comment -%}
+  bmp-structured-data: SEO JSON-LD (WebSite + SearchAction). Self-gated to
+  request.page_type == 'index' inside the snippet, so it adds zero bytes on
+  every other page. The Phase-6 opt-in was approved by the owner 2026-08-03 —
+  see also snippets/bmp-org-sameas.liquid,
+  injected into the core Organization node in sections/header.liquid
+  (BMP-HOOK:org-sameas), which keeps SEO structured data to exactly ONE
+  Organization node site-wide.
+{%- endcomment -%}
+{%- render 'bmp-structured-data' -%}
+{%- comment -%}
+  Intentionally absent (vs the official BMP layer this loader is adapted from):
+  - bmp-style-vars: superseded — the settings-driven card tokens now ship as
+    bmp-card-style-vars (rendered above, Plan 1), and optional CTA tokens ship
+    through bmp-cta-button-style-vars.
+{%- endcomment -%}
