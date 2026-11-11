@@ -7,13 +7,17 @@
 >
   <head>
 
+    {%- comment -%}80s Survivors Club: poné acá el ID de GTM propio (ej. GTM-XXXXXXX). Vacío = desactivado. El de OldyFans era GTM-WD2HNPKW.{%- endcomment -%}
+    {%- assign gtm_id = '' -%}
+    {%- if gtm_id != blank -%}
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WD2HNPKW');</script>
+    })(window,document,'script','dataLayer','{{ gtm_id }}');</script>
     <!-- End Google Tag Manager -->
+    {%- endif -%}
 
     {%- if settings.favicon != blank -%}
       <link
@@ -217,17 +221,19 @@
     {%- render 'bmp-body' -%}
     {%- comment -%}BMP-HOOK-END:body{%- endcomment -%}
 
+    {%- if gtm_id != blank -%}
     <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe
         loading="lazy"
-        src="https://www.googletagmanager.com/ns.html?id=GTM-WD2HNPKW"
+        src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}"
         height="0"
         width="0"
         style="display:none;visibility:hidden"
       ></iframe>
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
+    {%- endif -%}
 
 
     <!-- ========================================= -->
@@ -733,7 +739,7 @@
             </span>
 
 <span class="shc-guarantee-text">
-  <strong>Less than 1% of customers use our <a href="https://oldyfans.store/policies/refund-policy" style="color: inherit; text-decoration: underline;">30-day money-back guarantee</a>.</strong>
+  <strong>Less than 1% of customers use our <a href="https://80ssurvivorsclub.com/policies/refund-policy" style="color: inherit; text-decoration: underline;">30-day money-back guarantee</a>.</strong>
 </span>
           `;
 
