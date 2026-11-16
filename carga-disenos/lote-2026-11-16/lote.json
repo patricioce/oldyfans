@@ -1,0 +1,46 @@
+{
+ "80s Survivor": {
+  "titulo": "80s Survivor T-Shirt",
+  "colores": [
+   "Ice Grey",
+   "Light Blue",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ },
+ "Bad Decision": {
+  "titulo": "Bad Decision T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy"
+  ]
+ },
+ "Crushing It": {
+  "titulo": "Crushing It T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Hairless Snail": {
+  "titulo": "Hairless Snail T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ }
+}
