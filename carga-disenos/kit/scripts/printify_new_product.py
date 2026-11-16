@@ -117,7 +117,9 @@ def png_con_color(path, color):
 def areas_esperadas(p, light_cols):
     """Reparte las variantes de las areas actuales: una area por color claro y el resto en la primera."""
     color_of = colores(p)
-    todas = [v for pa in p["print_areas"] for v in pa["variant_ids"]]
+    # todas las variantes del producto (no solo las que estan en alguna area): si alguna queda afuera,
+    # Printify la tira en la ultima area, que es la de Navy
+    todas = list(dict.fromkeys([v["id"] for v in p["variants"]] + [v for pa in p["print_areas"] for v in pa["variant_ids"]]))
     def ph_de(cond):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
@@ -131,8 +133,8 @@ def areas_esperadas(p, light_cols):
     for a in areas:
         if a["placeholders"]:
             a["placeholders"] = [ph for ph in a["placeholders"] if ph.get("images")]
-    # el area general va ultima: ahi es donde Printify tira las variantes que no reconoce
-    areas = areas[1:] + areas[:1]
+    # el area general va PRIMERA: el editor de Printify toma la primera como diseno general
+    # (si va primera la de Black, el editor muestra la clara en todos los colores y en blanco no se ve nada)
     return [a for a in areas if a["variant_ids"] and a["placeholders"]]
 
 
@@ -148,6 +150,8 @@ def problemas_areas(p, light_cols):
         otros = sorted({color_of.get(v, "?") for v in con_c[0]["variant_ids"]} - {c})
         if otros:
             out.append(f"el area de {c} tambien tiene {len(otros)} colores mas ({', '.join(otros[:4])}{'...' if len(otros) > 4 else ''})")
+    if p["print_areas"] and any(color_of.get(v) in light_cols for v in p["print_areas"][0]["variant_ids"]):
+        out.append("la primera area (la que el editor toma como diseno general) es la de un color claro")
     return out
 
 
@@ -275,9 +279,8 @@ def main():
     # "specific design for Black" / "for Navy" (con Black y Navy juntos en una area no lo reconoce)
     for c in light_cols:
         groups.append((a.image_light, [v for v in todas if color_of[v] == c], c))
-    # el area general va ultima: Printify tira ahi las variantes que no estan en el catalogo
-    # (si quedaran en el area de Navy, el editor la tomaria como diseno general)
-    groups = groups[1:] + groups[:1]
+    # el area general va PRIMERA (el editor la toma como diseno general). Printify tira en la ultima area
+    # (Navy) las variantes que no estan en el catalogo: normalizar_areas las pasa a la general despues de crear.
     en = set(enabled)
     for img, vids, _ in groups:
         cols = sorted({color_of[i] for i in vids if i in en})

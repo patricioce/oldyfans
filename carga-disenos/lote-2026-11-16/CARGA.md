@@ -16,7 +16,11 @@ Al crear Record y Warrant, Printify volvió a deduplicar la clara de Black y Nav
 en el área de Navy 17 colores que el catálogo de la API no lista; la corrección automática fallaba porque mandaba la
 espalda vacía. Se borraron esos dos borradores y se recrearon con el script corregido:
 - cada copia de la clara lleva un píxel casi invisible (alfa 1) distinto por color → imagen distinta para Printify;
-- el área general va última (ahí Printify tira las variantes que no reconoce);
+- ~~el área general va última~~ ERROR: el editor de Printify toma la **primera** área como diseño general.
+  Con Black primera, el editor mostraba la clara como diseño general y en la remera blanca no se veía nada
+  (lo marcó Patricio). Corregido con `--fix-areas --apply`: general primera, después Black y Navy (igual que
+  I Take Pills), y el PUT asigna TODAS las variantes del producto para que Printify no tire las que no están
+  en el catálogo en el área de Navy;
 - el PUT de `--fix-areas` omite placeholders sin imágenes;
 - la verificación corta si los colores claros comparten imagen.
 
@@ -25,3 +29,7 @@ espalda vacía. Se borraron esos dos borradores y se recrearon con el script cor
 D=../lote-2026-11-16
 python3 scripts/publicar_existente.py --printify-id <id> --mockups "$D/mockups/<Diseño>" --apply
 ```
+
+## Verificación (2026-11-16)
+Se bajaron las vistas previas de Printify (images.printify.com) y se compararon color por color con los mockups:
+los 5 productos coinciden (Record y Warrant: blanca en Black y Navy, negra en el resto).
