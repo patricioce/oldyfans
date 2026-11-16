@@ -6,3 +6,4 @@
 - Fijar / sacar un producto: agregarle / quitarle el tag `pin-new` en Shopify (tarda unos segundos en reflejarse).
 - `main-collection.original.liquid`: la sección del tema activo antes del cambio (para volver atrás).
 - Probado 2026-11-16 en el tema "Pin New Arrivals - Test" (189024141357), copia de "Cart Mobile Fix - 21 Oct 2026" (188814426157, el activo).
+- **Aplicado en vivo 2026-11-16 14:19** sobre el tema activo 188814426157 (se verificó antes que la sección no había cambiado). Para volver atrás: subir `main-collection.original.liquid` como `sections/main-collection.liquid` del tema activo.
