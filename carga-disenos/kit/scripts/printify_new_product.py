@@ -98,8 +98,19 @@ def png_con_color(path, color):
     from PIL import Image, PngImagePlugin
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
+    im = Image.open(path).convert("RGBA")
+    # Printify tambien deduplica por pixeles (ignora el metadato): un pixel casi invisible (alfa 1)
+    # en una esquina distinta segun el color hace que cada copia sea una imagen distinta
+    seed = sum(color.encode())
+    w, h = im.size
+    pos = [(0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)][seed % 4]
+    r, g, b, al = im.getpixel(pos)
+    if al == 0:
+        im.putpixel(pos, (seed % 256, (seed * 7) % 256, (seed * 13) % 256, 1))
+    else:
+        im.putpixel(pos, (r, g, b ^ 1, al))
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -116,6 +127,12 @@ def areas_esperadas(p, light_cols):
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
         areas.append({"variant_ids": [v for v in todas if color_of.get(v) == c], "placeholders": ph_de(lambda x, c=c: x == c)})
+    # Printify rechaza placeholders sin imagenes (ej. la espalda vacia): mandar solo los que tienen
+    for a in areas:
+        if a["placeholders"]:
+            a["placeholders"] = [ph for ph in a["placeholders"] if ph.get("images")]
+    # el area general va ultima: ahi es donde Printify tira las variantes que no reconoce
+    areas = areas[1:] + areas[:1]
     return [a for a in areas if a["variant_ids"] and a["placeholders"]]
 
 
@@ -177,6 +194,10 @@ def verificar_areas(pid, esperado, light_cols):
             print(f"  ERROR area de {cols}: imagenes {ids} (esperada {fname})")
         else:
             print(f"  OK {cols} -> {fname}")
+    ids_claras = [img_id for _, img_id, _, color in esperado if color]
+    if len(ids_claras) != len(set(ids_claras)):
+        ok = False
+        print("  ERROR los colores claros comparten la misma imagen subida (Printify la deduplico)")
     sin_area = habilitadas - {v for pa in p["print_areas"] for v in pa["variant_ids"]}
     if sin_area:
         ok = False
@@ -254,6 +275,9 @@ def main():
     # "specific design for Black" / "for Navy" (con Black y Navy juntos en una area no lo reconoce)
     for c in light_cols:
         groups.append((a.image_light, [v for v in todas if color_of[v] == c], c))
+    # el area general va ultima: Printify tira ahi las variantes que no estan en el catalogo
+    # (si quedaran en el area de Navy, el editor la tomaria como diseno general)
+    groups = groups[1:] + groups[:1]
     en = set(enabled)
     for img, vids, _ in groups:
         cols = sorted({color_of[i] for i in vids if i in en})

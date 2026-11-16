@@ -1,0 +1,59 @@
+{
+ "Night Owl": {
+  "titulo": "Night Owl T-Shirt",
+  "colores": [
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Purple",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ },
+ "Pickles": {
+  "titulo": "Pickles T-Shirt",
+  "colores": [
+   "Ice Grey",
+   "Light Blue",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ },
+ "Record": {
+  "titulo": "Record T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Warrant": {
+  "titulo": "Warrant T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Patience": {
+  "titulo": "Patience T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy"
+  ]
+ }
+}
