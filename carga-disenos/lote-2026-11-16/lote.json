@@ -1,0 +1,37 @@
+{
+ "Big Wheel": {
+  "titulo": "Big Wheel T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Call Me": {
+  "titulo": "Call Me T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Bigfoot": {
+  "titulo": "Bigfoot T-Shirt",
+  "colores": [
+   "Ice Grey",
+   "Light Blue",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ }
+}

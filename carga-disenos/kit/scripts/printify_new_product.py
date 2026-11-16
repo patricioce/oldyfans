@@ -98,8 +98,20 @@ def png_con_color(path, color):
     from PIL import Image, PngImagePlugin
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
+    # Printify ya no distingue por metadatos: ademas se cambia el RGB de un pixel totalmente
+    # transparente (sigue invisible), asi el contenido de la imagen es distinto para cada color.
+    im = Image.open(path).convert("RGBA")
+    px, (w, h) = im.load(), im.size
+    seed = sum(color.encode())
+    rgb = (seed % 256, (seed * 7) % 256, (seed * 13) % 256)
+    for xy in [(0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)] + [(x, 0) for x in range(w)]:
+        if px[xy][3] == 0:
+            px[xy] = rgb + (0,)
+            break
+    else:
+        px[0, 0] = rgb + (1,)  # sin pixeles transparentes en el borde: alpha 1/255, imperceptible
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -111,7 +123,8 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # Printify rechaza placeholders sin imagenes (ej. la espalda vacia): se mandan solo los que tienen
+        return [ph for ph in pa["placeholders"] if ph["images"]] if en & set(pa["variant_ids"]) else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
