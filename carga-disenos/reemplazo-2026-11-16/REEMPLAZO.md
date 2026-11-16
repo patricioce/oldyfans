@@ -11,3 +11,10 @@ Mismo producto en Printify y en Shopify: no se crea nada nuevo, el handle/link n
 
 Diseños recortados al dibujo (bbox común de las dos tintas). Mockups originales numerados: 1 Black, 2 Navy, 3 White, 4 Sport Grey, 5 Military Green, 6 Charcoal, 7 Ice Grey (renombrados con el color y llevados a 2500 px).
 Backup de áreas y fotos anteriores: `kit/backups/reemplazo-2026-11-16/`.
+
+3. Publicar en Printify sin pisar Shopify: `scripts/republicar_activo.py <printify_id> [--apply]`
+   (publica solo variantes: sin fotos, título, descripción ni tags; no pasa a borrador). Vigila 8 min:
+   borra fotos que agregue Printify, restaura estado/visibilidad si cambian y deja 29.99/42.85 + Vendor OldyFans.
+   Necesita `SHOPIFY_SHOP_DOMAIN=s0vk8m-gj.myshopify.com SHOPIFY_API_VERSION=2024-10` en el entorno o en `.env`.
+   Publicado 2026-11-16: Printify volvió a poner Vendor "Printify" en los tres (corregido) y sacó Personal Space
+   de la tienda online porque figura oculto en Printify (restaurado).
