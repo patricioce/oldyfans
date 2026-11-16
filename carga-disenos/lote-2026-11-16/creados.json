@@ -1,7 +1,47 @@
 {
- "Night Owl": {"titulo": "Night Owl T-Shirt", "printify_id": "6afaf813441a7c896a03ed42", "shopify_id": null, "estado": "creado en Printify, sin publicar", "nota": "unica.png en todos los colores"},
- "Pickles":   {"titulo": "Pickles T-Shirt",   "printify_id": "6afaf82e441a7c896a03ed6b", "shopify_id": null, "estado": "creado en Printify, sin publicar", "nota": "unica.png en todos los colores"},
- "Record":    {"titulo": "Record T-Shirt",    "printify_id": "6afaf8bacf49c2bf390f90c2", "shopify_id": null, "estado": "creado en Printify, sin publicar", "nota": "Black y Navy con clara.png, cada uno en su area y con su imagen subida"},
- "Warrant":   {"titulo": "Warrant T-Shirt",   "printify_id": "6afaf8d8638f53d6020754c3", "shopify_id": null, "estado": "creado en Printify, sin publicar", "nota": "Black y Navy con clara.png, cada uno en su area y con su imagen subida"},
- "Patience":  {"titulo": "Patience T-Shirt",  "printify_id": "6afaf87bcf49c2bf390f906b", "shopify_id": null, "estado": "creado en Printify, sin publicar", "nota": "unica.png (a color) en todos los colores"}
+ "Night Owl": {
+  "titulo": "Night Owl T-Shirt",
+  "printify_id": "6afaf813441a7c896a03ed42",
+  "shopify_id": "15460167090221",
+  "estado": "draft",
+  "nota": "unica.png en todos los colores",
+  "shopify_handle": "night-owl-t-shirt",
+  "mockups": 8
+ },
+ "Pickles": {
+  "titulo": "Pickles T-Shirt",
+  "printify_id": "6afaf82e441a7c896a03ed6b",
+  "shopify_id": "15460166893613",
+  "estado": "draft",
+  "nota": "unica.png en todos los colores",
+  "shopify_handle": "pickles-t-shirt",
+  "mockups": 6
+ },
+ "Record": {
+  "titulo": "Record T-Shirt",
+  "printify_id": "6afaf8bacf49c2bf390f90c2",
+  "shopify_id": "15460166991917",
+  "estado": "draft",
+  "nota": "Black y Navy con clara.png, cada uno en su area y con su imagen subida; area general primera (corregido con --fix-areas antes de publicar)",
+  "shopify_handle": "record-t-shirt",
+  "mockups": 7
+ },
+ "Warrant": {
+  "titulo": "Warrant T-Shirt",
+  "printify_id": "6afaf8d8638f53d6020754c3",
+  "shopify_id": "15460166959149",
+  "estado": "draft",
+  "nota": "Black y Navy con clara.png, cada uno en su area y con su imagen subida; area general primera (corregido con --fix-areas antes de publicar)",
+  "shopify_handle": "warrant-t-shirt",
+  "mockups": 7
+ },
+ "Patience": {
+  "titulo": "Patience T-Shirt",
+  "printify_id": "6afaf87bcf49c2bf390f906b",
+  "shopify_id": "15460167188525",
+  "estado": "draft",
+  "nota": "unica.png (a color) en todos los colores",
+  "shopify_handle": "patience-t-shirt",
+  "mockups": 4
+ }
 }
