@@ -1,0 +1,60 @@
+{
+ "Invaders": {
+  "titulo": "Invaders T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Odd Duck": {
+  "titulo": "Odd Duck T-Shirt",
+  "colores": [
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Purple",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ },
+ "Bigfoot": {
+  "titulo": "Bigfoot T-Shirt",
+  "colores": [
+   "Ice Grey",
+   "Light Blue",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ },
+ "Old Dog": {
+  "titulo": "Old Dog T-Shirt",
+  "colores": [
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Purple",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ },
+ "Mona Lisa Trick": {
+  "titulo": "Mona Lisa Trick T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy"
+  ]
+ }
+}
