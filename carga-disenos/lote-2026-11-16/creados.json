@@ -2,31 +2,41 @@
  "Invaders": {
   "titulo": "Invaders T-Shirt",
   "printify_id": "6afaf8f2e7bc5ec6b70962dd",
-  "shopify_id": null,
-  "estado": "creado en Printify (sin publicar)"
+  "shopify_id": "15460166369325",
+  "estado": "draft",
+  "shopify_handle": "invaders-t-shirt",
+  "mockups": 7
  },
  "Odd Duck": {
   "titulo": "Odd Duck T-Shirt",
   "printify_id": "6afaf8eccf49c2bf390f9109",
-  "shopify_id": null,
-  "estado": "creado en Printify (sin publicar)"
+  "shopify_id": "15460166271021",
+  "estado": "draft",
+  "shopify_handle": "odd-duck-t-shirt",
+  "mockups": 8
  },
  "Bigfoot": {
   "titulo": "Bigfoot T-Shirt",
   "printify_id": "6afaf8f08f5ca27fcd069df0",
-  "shopify_id": null,
-  "estado": "creado en Printify (sin publicar)"
+  "shopify_id": "15460166500397",
+  "estado": "draft",
+  "shopify_handle": "bigfoot-t-shirt",
+  "mockups": 6
  },
  "Old Dog": {
   "titulo": "Old Dog T-Shirt",
   "printify_id": "6afaf8ee8bde6743870fc164",
-  "shopify_id": null,
-  "estado": "creado en Printify (sin publicar)"
+  "shopify_id": "15460166303789",
+  "estado": "draft",
+  "shopify_handle": "old-dog-t-shirt",
+  "mockups": 8
  },
  "Mona Lisa Trick": {
   "titulo": "Mona Lisa Trick T-Shirt",
   "printify_id": "6afaf8ee8f5ca27fcd069deb",
-  "shopify_id": null,
-  "estado": "creado en Printify (sin publicar)"
+  "shopify_id": "15460166402093",
+  "estado": "draft",
+  "shopify_handle": "mona-lisa-trick-t-shirt",
+  "mockups": 4
  }
 }
