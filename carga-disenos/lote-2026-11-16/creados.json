@@ -1,5 +1,6 @@
 {
- "Big Wheel": {"titulo": "Big Wheel T-Shirt", "printify_id": "6afaf97f18a3e67f950bd4af", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "Bigfoot": {"titulo": "Bigfoot T-Shirt", "printify_id": "6afaf929e2ed0832910c2010", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
- "Call Me": {"titulo": "Call Me T-Shirt", "printify_id": "6afaf9a1638f53d6020755a2", "shopify_id": null, "estado": "creado en Printify, sin publicar"}
+ "Big Wheel": {"titulo": "Big Wheel T-Shirt", "printify_id": "6afaf97f18a3e67f950bd4af", "shopify_id": "15460166565933", "estado": "draft", "shopify_handle": "big-wheel-t-shirt", "mockups": 7},
+ "Bigfoot": {"titulo": "Bigfoot T-Shirt", "printify_id": "6afaf929e2ed0832910c2010", "shopify_id": "15460166598701", "estado": "draft", "shopify_handle": "bigfoot-t-shirt-1", "mockups": 6,
+  "nota": "Hay otro Bigfoot T-Shirt creado por fuera de esta carga (Printify 6afaf8f08f5ca27fcd069df0 -> Shopify 15460166500397, handle bigfoot-t-shirt), tambien en draft. Definir cual queda."},
+ "Call Me": {"titulo": "Call Me T-Shirt", "printify_id": "6afaf9a1638f53d6020755a2", "shopify_id": "15460166533165", "estado": "draft", "shopify_handle": "call-me-t-shirt", "mockups": 7}
 }
