@@ -1,4 +1,38 @@
 {
- "Smart Ass": {"titulo": "Smart Ass T-Shirt", "colores": ["White", "Purple", "Sage", "Stone Blue", "Sport Grey", "Military Green", "Charcoal", "Ice Grey"]},
- "Sasquatch": {"titulo": "Sasquatch T-Shirt", "colores": ["Light Blue", "Sage", "White", "Sport Grey", "Stone Blue", "Ice Grey"]}
+ "Smart Ass": {
+  "titulo": "Smart Ass T-Shirt",
+  "colores": [
+   "White",
+   "Purple",
+   "Sage",
+   "Stone Blue",
+   "Sport Grey",
+   "Military Green",
+   "Charcoal",
+   "Ice Grey"
+  ]
+ },
+ "Sasquatch": {
+  "titulo": "Sasquatch T-Shirt",
+  "colores": [
+   "Light Blue",
+   "Sage",
+   "White",
+   "Sport Grey",
+   "Stone Blue",
+   "Ice Grey"
+  ]
+ },
+ "Heart": {
+  "titulo": "Heart T-Shirt",
+  "colores": [
+   "Black",
+   "Navy",
+   "White",
+   "Sport Grey",
+   "Military Green",
+   "Charcoal",
+   "Ice Grey"
+  ]
+ }
 }

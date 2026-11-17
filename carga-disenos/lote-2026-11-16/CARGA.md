@@ -6,5 +6,12 @@
 - Mockups (numerados en los zips):
   - Smart Ass: 1 White, 2 Purple, 3 Sage, 4 Stone Blue, 5 Sport Grey, 6 Military Green, 7 Charcoal, 8 Ice Grey.
   - Sasquatch: 1 Light Blue, 2 Sage, 3 White, 4 Sport Grey, 5 Stone Blue, 6 Ice Grey.
-- Heart: llegaron solo los mockups (1 Black, 2 Navy, 3 White, 4 Sport Grey, 5 Military Green, 6 Charcoal, 7 Ice Grey), falta el diseño.
+- Heart: dos tintas (diseño llegó aparte el 17/11: 8.png = oscura, 9.png = clara). Clara en Black y Navy.
+  Mockups: 1 Black, 2 Navy, 3 White, 4 Sport Grey, 5 Military Green, 6 Charcoal, 7 Ice Grey.
+
+## Arreglo del script (17/11)
+Printify devolvió el MISMO id para clara-black y clara-navy: ahora deduplica por píxeles e ignora el metadato PNG.
+`png_con_color` ahora también cambia el alfa de un píxel de la esquina (1–3, invisible) distinto por color.
+Además `--fix-areas` fallaba (error 8150) porque reenviaba la espalda con `images` vacío: ahora se omite.
+Heart se corrigió en el lugar (sin recrearlo): nueva subida para Black y Navy y PUT de las áreas.
 - Tamaño: 85% del modelo (escala por defecto).
