@@ -35,14 +35,14 @@ ratio=np.where(band,np.minimum(ratio,fill),ratio)
 # alpha: soft edge
 a=cv2.GaussianBlur(m.astype(np.float32),(0,0),1.0)
 a=np.clip(a,0,1)[...,None]
-COLORS={'navy':(38,49,71),'sport-grey':(151,153,155),'military-green':(94,116,97)}
+COLORS={'navy':(38,49,71),'sport-grey':(151,153,155),'military-green':(94,116,97),'charcoal':(102,103,108)}
 for name,rgb in COLORS.items():
     t=s2l(np.array(rgb,float))
     tY=t@np.array([0.2126,0.7152,0.0722])
     # lighter fabrics reflect more diffuse light: soften extreme contrast slightly
-    k={'navy':1.0,'sport-grey':0.85,'military-green':0.92}[name]
+    k={'navy':1.0,'sport-grey':0.85,'military-green':0.92,'charcoal':0.9}[name]
     r=np.clip(ratio,0,None)**k
-    hc={'navy':0.8,'sport-grey':0.55,'military-green':0.7}[name]
+    hc={'navy':0.8,'sport-grey':0.55,'military-green':0.7,'charcoal':0.65}[name]
     r=np.where(r>1,1+(r-1)*hc,r)
     r=r/np.median(r[mb])
     if name=='sport-grey':
