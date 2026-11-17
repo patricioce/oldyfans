@@ -1,0 +1,57 @@
+/* =====================================================================
+   OldyFans — Barra fija "Add to cart" (aparece al scrollear el producto)
+   ---------------------------------------------------------------------
+   Problema: en el celular la barra pone foto | título+variante | precio |
+   botón en una sola fila. El botón y el precio se comen el ancho y la
+   columna del medio queda tan angosta que "Ice Grey / S" se parte en
+   una palabra por línea y el título queda en "P..".
+
+   Arreglo (solo < 750px): la barra pasa a una grilla de 3 columnas
+     [foto] [título / variante / precio] [botón]
+   El precio baja debajo de la variante, la columna del medio usa todo
+   el espacio libre y cada línea queda en un solo renglón (con "…" si
+   no entra). La barra queda compacta y con la misma altura que la foto.
+
+   Dónde va: Shopify → Tienda online → Temas → Personalizar →
+   Configuración del tema → CSS personalizado (o al final de
+   assets/tipografia-sloth.css).
+   ===================================================================== */
+
+/* Variante siempre en una línea (también en desktop) */
+.sticky-add-to-cart__variant{
+  white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;
+}
+
+@media screen and (max-width:749px){
+  .sticky-add-to-cart__bar{
+    display:grid!important;
+    grid-template-columns:auto minmax(0,1fr) auto;
+    grid-template-areas:"img info btn" "img price btn";
+    column-gap:12px;row-gap:2px;align-items:center;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))!important;
+  }
+  .sticky-add-to-cart__image{grid-area:img;height:52px!important;width:52px}
+  .sticky-add-to-cart__info{grid-area:info;align-self:end;min-width:0}
+  .sticky-add-to-cart__price{grid-area:price;align-self:start;min-width:0}
+  .sticky-add-to-cart__button{grid-area:btn;padding:0 18px!important;white-space:nowrap}
+
+  .sticky-add-to-cart__title{
+    display:block;font-size:14px!important;line-height:1.25!important;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .sticky-add-to-cart__variant{
+    font-size:13px!important;line-height:1.25!important;margin-top:0!important;
+  }
+  .sticky-add-to-cart__price,
+  .sticky-add-to-cart__price *{font-size:14px!important;line-height:1.25!important}
+  .sticky-add-to-cart__price [ref="priceContainer"]{
+    display:flex;align-items:baseline;gap:6px;white-space:nowrap;overflow:hidden;
+  }
+  .sticky-add-to-cart__price .volume-pricing-note{display:none}
+}
+
+/* Celulares muy angostos (< 390px): el tema escondía el título y el
+   precio tachado; el título vuelve (recortado con "…") y el botón se achica */
+@media screen and (max-width:389px){
+  .sticky-add-to-cart__button{padding:0 14px!important}
+}
