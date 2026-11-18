@@ -19,3 +19,8 @@ python3 scripts/printify_new_product.py --tienda survivors --image "$D/disenos/W
   --image-light "$D/disenos/Wise Man/clara.png" --title "Wise Man T-Shirt" --colors "$C"   # agregar --create para crear
 python3 scripts/publicar_existente.py --tienda survivors --printify-id <id> --mockups "$D/mockups/Wise Man" --apply
 ```
+
+## Publicación
+Printify (cuenta de Survivors) tardó más de los 10 min de espera de `publicar_existente.py` en crear los productos en
+Shopify: el script cortó y los productos quedaron ACTIVOS. Se pasaron a borrador y se completaron a mano
+(precio/vendor, mockups, vigilancia 15 min). Se subió la espera del script a 30 min.

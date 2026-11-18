@@ -31,7 +31,7 @@ def publicar(printify_id, mockups):
                  "keyfeatures": True, "shipping_template": True})
     print("Publicacion a Shopify solicitada:", r)
     # Printify publica de forma asincronica: esperar a que el producto tenga external.id (id en Shopify)
-    sid = sm.shopify_id_from_printify(printify_id, wait=600)
+    sid = sm.shopify_id_from_printify(printify_id, wait=1800)  # en Survivors Printify tarda mas de 10 min
     print("Producto en Shopify:", sid, "- esperando a que Printify termine de publicar...")
     if not sm.wait_printify_done(sid):
         print("AVISO: Printify no termino en 5 minutos; sigo igual y vigilo el estado.")

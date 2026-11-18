@@ -3,40 +3,50 @@
   "titulo": "Wise Man T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afd9f475d18cea8e70b12f3",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)",
-  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+  "shopify_id": "11072067338524",
+  "estado": "draft",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png. Printify tardo >10 min en crearlo en Shopify y lo dejo activo; se paso a borrador y se completo (mockups, precio, vendor) con las funciones de shopify_mockups.py.",
+  "shopify_handle": "wise-man-t-shirt",
+  "mockups": 6
  },
  "I Had Potential": {
   "titulo": "I Had Potential T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afd9f6b1cb1d74e0a01b929",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)",
-  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+  "shopify_id": "11072067141916",
+  "estado": "draft",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png. Printify tardo >10 min en crearlo en Shopify y lo dejo activo; se paso a borrador y se completo (mockups, precio, vendor) con las funciones de shopify_mockups.py.",
+  "shopify_handle": "i-had-potential-t-shirt",
+  "mockups": 6
  },
  "Warranty Expired": {
   "titulo": "Warranty Expired T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afd9f8e07b4e3e480032442",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)",
-  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+  "shopify_id": "11072067371292",
+  "estado": "draft",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png. Printify tardo >10 min en crearlo en Shopify y lo dejo activo; se paso a borrador y se completo (mockups, precio, vendor) con las funciones de shopify_mockups.py.",
+  "shopify_handle": "warranty-expired-t-shirt",
+  "mockups": 6
  },
  "Metal Slide": {
   "titulo": "Metal Slide T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afd9fb164b943792d07c948",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)",
-  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+  "shopify_id": "11072067207452",
+  "estado": "draft",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png. Printify tardo >10 min en crearlo en Shopify y lo dejo activo; se paso a borrador y se completo (mockups, precio, vendor) con las funciones de shopify_mockups.py.",
+  "shopify_handle": "metal-slide-t-shirt",
+  "mockups": 6
  },
  "I Can Write In Cursive": {
   "titulo": "I Can Write In Cursive T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afd9fdedfc27cd38c0bf675",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)",
-  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+  "shopify_id": "11072067272988",
+  "estado": "draft",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png. Printify tardo >10 min en crearlo en Shopify y lo dejo activo; se paso a borrador y se completo (mockups, precio, vendor) con las funciones de shopify_mockups.py.",
+  "shopify_handle": "i-can-write-in-cursive-t-shirt",
+  "mockups": 6
  }
 }
