@@ -3,24 +3,30 @@
   "titulo": "Aging Review T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afda12fdfc27cd38c0bf727",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)",
-  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+  "shopify_id": 11072066978076,
+  "estado": "publicado en Shopify en borrador, mockups propios, 29.99/42.85, vendor 80s Survivors Club",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png",
+  "handle": "aging-review-t-shirt",
+  "aviso": "Printify creo el producto en Shopify pero no registro el vinculo (external vacio en Printify)"
  },
  "Old School": {
   "titulo": "Old School T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afda1511cb1d74e0a01ba5d",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)",
-  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+  "shopify_id": 11072067076380,
+  "estado": "publicado en Shopify en borrador, mockups propios, 29.99/42.85, vendor 80s Survivors Club",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png",
+  "handle": "old-school-t-shirt",
+  "aviso": "Printify creo el producto en Shopify pero no registro el vinculo (external vacio en Printify)"
  },
  "Becoming A Legend": {
   "titulo": "Becoming A Legend T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afda17837262f37de0beedf",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)",
-  "nota": "Black, Navy y Charcoal con clara.png (cada uno en su area), resto con oscura.png; asi lo muestran los mockups"
+  "shopify_id": 11072067010844,
+  "estado": "publicado en Shopify en borrador, mockups propios, 29.99/42.85, vendor 80s Survivors Club",
+  "nota": "Black, Navy y Charcoal con clara.png (cada uno en su area), resto con oscura.png; asi lo muestran los mockups",
+  "handle": "becoming-a-legend-t-shirt",
+  "aviso": "Printify creo el producto en Shopify pero no registro el vinculo (external vacio en Printify)"
  }
 }
