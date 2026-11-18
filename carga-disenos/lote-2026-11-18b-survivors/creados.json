@@ -1,0 +1,26 @@
+{
+ "Aging Review": {
+  "titulo": "Aging Review T-Shirt",
+  "tienda": "80s Survivors Club",
+  "printify_id": "6afda12fdfc27cd38c0bf727",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+ },
+ "Old School": {
+  "titulo": "Old School T-Shirt",
+  "tienda": "80s Survivors Club",
+  "printify_id": "6afda1511cb1d74e0a01ba5d",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)",
+  "nota": "Black y Navy con clara.png, cada uno en su area e imagen propia; resto con oscura.png"
+ },
+ "Becoming A Legend": {
+  "titulo": "Becoming A Legend T-Shirt",
+  "tienda": "80s Survivors Club",
+  "printify_id": "6afda17837262f37de0beedf",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)",
+  "nota": "Black, Navy y Charcoal con clara.png (cada uno en su area), resto con oscura.png; asi lo muestran los mockups"
+ }
+}
