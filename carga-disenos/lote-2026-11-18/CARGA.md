@@ -18,3 +18,8 @@
 - Printify ya no distingue Black/Navy solo por el metadato PNG (salían con el mismo id): `png_con_color` ahora
   además cambia el alfa de un píxel transparente de una esquina (distinta por color).
 - `--fix-areas`/normalización: el PUT fallaba porque iban placeholders vacíos (espalda); ahora solo van los que tienen imágenes.
+
+## Publicación
+- Printify creó los productos en Shopify pero nunca devolvió `external.id`, así que `publicar_existente.py` cortó por timeout
+  y Printify los dejó ACTIVOS con Vendor "Printify". Se pasaron a borrador a mano y se terminó con `scripts/terminar_publicacion.py`.
+- SKUs de Shopify = SKUs de Printify (36/36 en Antisocial). Colección manual "80s-survivors-club" con los 4, sin publicar en canales.
