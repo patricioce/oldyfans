@@ -1,0 +1,49 @@
+{
+ "Antisocial": {
+  "titulo": "Antisocial T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Hang In There": {
+  "titulo": "Hang In There T-Shirt",
+  "colores": [
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Hose Water": {
+  "titulo": "Hose Water T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Slow Me Down": {
+  "titulo": "Slow Me Down T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Wise Man": {
+  "titulo": "Wise Man T-Shirt",
+  "colores": [
+   "Sport Grey",
+   "White"
+  ]
+ }
+}

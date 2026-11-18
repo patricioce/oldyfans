@@ -98,8 +98,16 @@ def png_con_color(path, color):
     from PIL import Image, PngImagePlugin
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
+    # Printify ya no distingue solo por metadatos (Black y Navy salian con el mismo id): ademas se cambia un pixel
+    # transparente de una esquina (alfa 0 -> 1, invisible), distinto para cada color.
+    im = Image.open(path).convert("RGBA")
+    w, h = im.size
+    esquinas = [(0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)]
+    xy = esquinas[sum(map(ord, color)) % 4]
+    r, g, b, al = im.getpixel(xy)
+    im.putpixel(xy, (r, g, b, 1 if al == 0 else max(al - 1, 0)))
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -111,7 +119,8 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # Printify rechaza el PUT si va un placeholder sin imagenes (la espalda vacia): se mandan solo los que tienen
+        return [ph for ph in pa["placeholders"] if ph.get("images")] if en & set(pa["variant_ids"]) else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):

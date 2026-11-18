@@ -1,0 +1,17 @@
+Modelo: 10 p.m T-Shirt | variantes habilitadas: 36 | precio en Printify: $29.99
+Colores: Black, Charcoal, Military Green, Navy, Sport Grey, White
+Ubicacion frente: x=0.500 y=0.281 scale=0.733 angle=0
+  oscura.png -> Charcoal, Military Green, Sport Grey, White  (470 variantes en el area, 24 habilitadas)
+  clara.png -> Black  (9 variantes en el area, 6 habilitadas)
+  clara.png -> Navy  (9 variantes en el area, 6 habilitadas)
+Imagen subida: oscura.png 6afd99fe767c515407e9020c 1968x1611
+Imagen subida: clara-black.png 6afd9a3b5038ac8ee2216a80 1926x1585
+Imagen subida: clara-navy.png 6afd9a3dc545d7cd9d8598bc 1926x1585
+Producto creado en Printify: 6afd9a40e6ba52c5810c0876
+  A CORREGIR: el area de Navy tambien tiene 17 colores mas (Berry, Dark Chocolate, Fan Candy Pink, Fan Dark Green...)
+  Areas reacomodadas.
+  OK Charcoal, Military Green, Sport Grey, White -> oscura.png
+  OK Black -> clara-black.png
+  OK Navy -> clara-navy.png
+Editor: https://printify.com/app/editor/6afd9a40e6ba52c5810c0876
+No publicado. Revisa los mockups en Printify y luego publica con publicar_existente.py.
