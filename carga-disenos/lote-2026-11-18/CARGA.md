@@ -23,3 +23,10 @@
 - Printify creó los productos en Shopify pero nunca devolvió `external.id`, así que `publicar_existente.py` cortó por timeout
   y Printify los dejó ACTIVOS con Vendor "Printify". Se pasaron a borrador a mano y se terminó con `scripts/terminar_publicacion.py`.
 - SKUs de Shopify = SKUs de Printify (36/36 en Antisocial). Colección manual "80s-survivors-club" con los 4, sin publicar en canales.
+
+## Causa del "publishing error" (respuesta de soporte de Printify)
+En la Shopify de 80s Survivors Club ya existía un perfil de envío llamado
+"Standard: Printify Choice - US Facility, T-Shirt, Tank Top, V-neck, Kids clothes, Long-sleeve, Bags"
+(de la conexión anterior). Printify no podía crear el suyo y cortaba justo después de crear el producto.
+Patricio le agregó "old" al nombre; desde ahí Printify vincula en ~20 s. Se borraron los productos de Shopify
+sin vincular y se republicaron los 4 con `publicar_existente.py` (mockups, 29.99/42.85, Vendor, borrador).

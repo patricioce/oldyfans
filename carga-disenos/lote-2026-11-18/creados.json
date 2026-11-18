@@ -1,7 +1,46 @@
 {
- "Antisocial": {"titulo": "Antisocial T-Shirt", "printify_id": "6afd9ba83454cf868401f9b0", "shopify_id": "11072055836956", "estado": "draft", "shopify_handle": "antisocial-t-shirt", "mockups": 6, "tienda": "80s Survivors Club"},
- "Hose Water": {"titulo": "Hose Water T-Shirt", "printify_id": "6afd9ba51cb1d74e0a01b6c8", "shopify_id": "11072055804188", "estado": "draft", "shopify_handle": "hose-water-t-shirt", "mockups": 6, "tienda": "80s Survivors Club"},
- "Hang In There": {"titulo": "Hang In There T-Shirt", "printify_id": "6afd9ba4dfc27cd38c0bf381", "shopify_id": "11072055705884", "estado": "draft", "shopify_handle": "hang-in-there-t-shirt", "mockups": 2, "tienda": "80s Survivors Club"},
- "Slow Me Down": {"titulo": "Slow Me Down T-Shirt", "printify_id": "6afd9ba45d18cea8e70b10a4", "shopify_id": "11072055902492", "estado": "draft", "shopify_handle": "slow-me-down-t-shirt", "mockups": 6, "tienda": "80s Survivors Club"},
- "Wise Man": {"titulo": "Wise Man T-Shirt", "estado": "pendiente: Patricio manda version corregida"}
+ "Antisocial": {
+  "titulo": "Antisocial T-Shirt",
+  "printify_id": "6afd9ba83454cf868401f9b0",
+  "shopify_id": "11072167772444",
+  "estado": "draft",
+  "shopify_handle": "antisocial-t-shirt",
+  "mockups": 6,
+  "tienda": "80s Survivors Club",
+  "nota": "Vinculado en Printify (external.id) tras renombrar el perfil de envio duplicado."
+ },
+ "Hose Water": {
+  "titulo": "Hose Water T-Shirt",
+  "printify_id": "6afd9ba51cb1d74e0a01b6c8",
+  "shopify_id": "11072167641372",
+  "estado": "draft",
+  "shopify_handle": "hose-water-t-shirt",
+  "mockups": 6,
+  "tienda": "80s Survivors Club",
+  "nota": "Vinculado en Printify (external.id) tras renombrar el perfil de envio duplicado."
+ },
+ "Hang In There": {
+  "titulo": "Hang In There T-Shirt",
+  "printify_id": "6afd9ba4dfc27cd38c0bf381",
+  "shopify_id": "11072166232348",
+  "estado": "draft",
+  "shopify_handle": "hang-in-there-t-shirt",
+  "mockups": 2,
+  "tienda": "80s Survivors Club",
+  "nota": "Vinculado en Printify (external.id) tras renombrar el perfil de envio duplicado."
+ },
+ "Slow Me Down": {
+  "titulo": "Slow Me Down T-Shirt",
+  "printify_id": "6afd9ba45d18cea8e70b10a4",
+  "shopify_id": "11072167837980",
+  "estado": "draft",
+  "shopify_handle": "slow-me-down-t-shirt",
+  "mockups": 6,
+  "tienda": "80s Survivors Club",
+  "nota": "Vinculado en Printify (external.id) tras renombrar el perfil de envio duplicado."
+ },
+ "Wise Man": {
+  "titulo": "Wise Man T-Shirt",
+  "estado": "pendiente: Patricio manda version corregida"
+ }
 }
