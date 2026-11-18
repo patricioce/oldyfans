@@ -76,6 +76,9 @@ def call(method, path, body=None):
 
 
 def find_template():
+    # tienda sin modelo propio (ej. 80s Survivors Club): el modelo se lee de un JSON exportado del producto de OldyFans
+    if os.environ.get("PRINTIFY_TEMPLATE_JSON"):
+        return json.load(open(os.environ["PRINTIFY_TEMPLATE_JSON"]))
     page = 1
     while True:
         d = call("GET", f"/shops/{SHOP_ID}/products.json?limit=50&page={page}")

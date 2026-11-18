@@ -19,7 +19,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import printify_new_product as pf
 
 MAX_BYTES = 20 * 1024 * 1024  # limite de Shopify por imagen
-PRECIO, TACHADO, VENDOR = "29.99", "42.85", "OldyFans"  # precio de venta, compare_at y marca (Google Shopping / Meta)
+PRECIO, TACHADO = "29.99", "42.85"
+VENDOR = os.environ.get("SHOPIFY_VENDOR", "OldyFans")  # precio de venta, compare_at y marca (Google Shopping / Meta)
 EXTS = (".jpg", ".jpeg", ".png", ".webp")
 
 
