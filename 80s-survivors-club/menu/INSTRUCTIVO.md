@@ -28,33 +28,37 @@ Antes de tocar nada: en el tema, **… → Duplicar**. Si algo sale mal, volvés
 
 ---
 
-## Paso 1 · Cargar los ítems del menú
+## Paso 1 · Cargar los ítems del menú y conectarlo al header
 
-1. En el admin: **Contenido → Menús → Menú principal** (`main-menu`).
+### 1a · Armar el menú
+
+1. En el admin: **Contenido → Menús → Main menu** (o el menú que hayas creado).
 2. Dejalo así (arrastrá los subítems debajo de "Shop" para que queden adentro):
 
 ```
 Shop                 → /collections
-  ├ Sale             → /collections/sale
-  ├ Bestsellers      → /collections/best-sellers
-  ├ Gen X            → /collections/gen-x
-  ├ Sarcastic & Dad Jokes → /collections/sarcastic-dad-jokes
-  ├ Retro Nostalgia  → /collections/retro-nostalgia
-  ├ Bald & Bold      → /collections/bald-bold
+  ├ Sale             → Colección "Sale"          (/collections/sale)
+  ├ Bestsellers      → Colección "Bestsellers"   (/collections/bestsellers)
+  ├ New Arrivals     → Colección "New Arrivals"  (/collections/new-arrivals)
   └ All collections  → /collections
-Bestsellers          → /collections/best-sellers
-New Arrivals         → /collections/all?sort_by=created-descending
-Sale                 → /collections/sale
+Bestsellers          → Colección "Bestsellers"
+New Arrivals         → Colección "New Arrivals"
+Sale                 → Colección "Sale"
 Help                 → /pages/contact?view=help
 ```
 
 3. **Guardar menú.**
 
-Tres cosas a tener en cuenta:
+En 80s Survivors Club hoy existen solo estas colecciones: **Sale** (`sale`), **Bestsellers** (`bestsellers`, sin guión) y **New Arrivals** (`new-arrivals`). Las de OldyFans (Gen X, Sarcastic & Dad Jokes, Retro Nostalgia, Bald & Bold) no existen en 80SC: si las agregás al menú van a dar error 404. Sumalas al desplegable de "Shop" cuando las crees.
 
-- **Las colecciones tienen que existir en 80s Survivors Club** con esos mismos identificadores (`sale`, `best-sellers`, `gen-x`, etc.). Si una colección todavía no existe, cargá el enlace como dirección web escribiendo la ruta (por ejemplo `/collections/gen-x`); va a funcionar cuando crees la colección. Si las colecciones de 80SC van a ser otras, cambiá los subítems de "Shop": el desplegable muestra lo que pongas.
-- **El rojo de "Sale" depende del enlace.** El CSS pinta de rojo cualquier ítem que lleve a `/collections/sale`. Si la colección de ofertas de 80SC se llama distinto, avisame y cambio el CSS.
-- **New Arrivals:** en OldyFans ese ítem lleva a `/collections/sale?sort_by=created-descending`, o sea a Sale ordenado por fecha, no a las novedades. Para 80SC te propongo `/collections/all?sort_by=created-descending` (todos los productos, los más nuevos primero). Si en OldyFans era a propósito, copiá el de OldyFans.
+### 1b · Elegir ese menú en el header (sin esto no aparece nada)
+
+El tema clonado busca un menú llamado `bmp-main-menu`, que existe en OldyFans pero no en 80SC. Por eso el header sale vacío. Hay que decirle qué menú usar:
+
+1. **Tienda online → Temas → Personalizar** (en el tema publicado, `tema-80s-survivors-club`).
+2. En la columna de la izquierda, en **Encabezado**, hacé clic en el bloque **Menú**.
+3. En el panel de la derecha, en **Menú**, tocá **Cambiar** y elegí **Main menu** (o el menú que armaste en el paso 1a).
+4. **Guardar** (arriba a la derecha).
 
 ---
 
@@ -97,7 +101,7 @@ Abrí la tienda en una ventana de incógnito (o con Ctrl+Shift+R para recargar s
 - **Computadora:** las palabras del menú en semibold (más gruesas que antes), separadas parejo, unos 35px entre cada una en una pantalla grande. "Shop" con la flechita al lado; al hacer clic se abre el desplegable con las colecciones. "Sale" en rojo.
 - **Celular:** abrí el menú hamburguesa; "Sale" tiene que estar en rojo y en negrita.
 
-Si no cambia nada: revisá que la línea del paso 2A esté **debajo** de la de `tipografia-sloth.css` y que el tema que estás mirando sea el publicado (o usá **Vista previa** sobre el tema que editaste).
+Si el header sigue vacío, revisá el paso 1b. Si los ítems aparecen pero sin el estilo, revisá que la línea del paso 2A esté **debajo** de la de `tipografia-sloth.css` y que el tema que estás mirando sea el publicado (o usá **Vista previa** sobre el tema que editaste).
 
 ## Qué hace el CSS, en detalle
 
