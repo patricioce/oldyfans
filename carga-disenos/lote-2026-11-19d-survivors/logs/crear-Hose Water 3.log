@@ -1,0 +1,24 @@
+Tienda: 80s Survivors Club | Printify 29697371 | Shopify drysff-xt.myshopify.com | modelo leido de Printify 27342731 | Vendor '80s Survivors Club'
+Modelo: 10 p.m T-Shirt | variantes habilitadas: 36 | precio en Printify: $29.99
+Colores: Black, Charcoal, Military Green, Navy, Sport Grey, White
+Ubicacion frente: x=0.500 y=0.281 scale=0.733 angle=0
+  oscura.png -> Sport Grey, White  (454 variantes en el area, 12 habilitadas)
+  clara.png -> Black  (9 variantes en el area, 6 habilitadas)
+  roja.png -> Charcoal  (9 variantes en el area, 6 habilitadas)
+  roja.png -> Military Green  (7 variantes en el area, 6 habilitadas)
+  naranja.png -> Navy  (9 variantes en el area, 6 habilitadas)
+Imagen subida: oscura.png 6afeef92f9129506af92507f 1879x725
+Imagen subida: clara-black.png 6afeef93def3bf732c672bca 1879x725
+Imagen subida: roja-charcoal.png 6afeef958b9397f795897953 1879x725
+Imagen subida: roja-military-green.png 6afeef9739ae7b06ee6a9efc 1879x725
+Imagen subida: naranja-navy.png 6afeef98d4a87c5c8a8a36d1 1879x725
+Producto creado en Printify: 6afeef9a0e0ec6c282057253
+  A CORREGIR: el area de Navy tambien tiene 17 colores mas (Berry, Dark Chocolate, Fan Candy Pink, Fan Dark Green...)
+  Areas reacomodadas.
+  OK Sport Grey, White -> oscura.png
+  OK Black -> clara-black.png
+  OK Charcoal -> roja-charcoal.png
+  OK Military Green -> roja-military-green.png
+  OK Navy -> naranja-navy.png
+Editor: https://printify.com/app/editor/6afeef9a0e0ec6c282057253
+No publicado. Revisa los mockups en Printify y luego publica con publicar_existente.py.

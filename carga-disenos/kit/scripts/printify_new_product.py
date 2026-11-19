@@ -196,6 +196,8 @@ def main():
     ap.add_argument("--title")
     ap.add_argument("--image-light", default=None, help="version clara del diseno, para los colores de --light-colors")
     ap.add_argument("--light-colors", default="Black,Navy", help="colores que llevan --image-light (por defecto Black,Navy)")
+    ap.add_argument("--image-color", action="append", default=[], metavar="COLOR=PNG",
+                    help="imagen propia para un color (repetible), con su area; pisa a --image-light en ese color")
     ap.add_argument("--description", default=None)
     ap.add_argument("--tags", default=None, help="tags separados por coma; por defecto los del modelo")
     ap.add_argument("--colors", default=None, help="colores separados por coma (ej. \"White,Sport Grey\"); por defecto los del modelo")
@@ -254,12 +256,21 @@ def main():
     light_cols = sorted({color_of[v] for v in enabled if a.image_light and color_of[v].lower() in light})
     if a.image_light and not light_cols:
         sys.exit(f"Ninguno de los colores elegidos esta en --light-colors ({a.light_colors}).")
+    # imagen por color: --image-light para los claros y --image-color COLOR=PNG para los que se pidan
+    img_de = {c: a.image_light for c in light_cols}
+    for item in a.image_color:
+        c, _, path = item.partition("=")
+        c = next((col for col in {color_of[v] for v in enabled} if col.lower() == c.strip().lower()), None)
+        if not c or not os.path.isfile(path):
+            sys.exit(f"--image-color invalido (color no habilitado o archivo inexistente): {item}")
+        img_de[c] = path
+    light_cols = sorted(img_de)
     todas = [v["id"] for v in cat]
     groups = [(a.image, [v for v in todas if color_of[v] not in light_cols], None)]
     # un area por cada color claro, con todos sus talles: asi el editor de Printify lo muestra como
     # "specific design for Black" / "for Navy" (con Black y Navy juntos en una area no lo reconoce)
     for c in light_cols:
-        groups.append((a.image_light, [v for v in todas if color_of[v] == c], c))
+        groups.append((img_de[c], [v for v in todas if color_of[v] == c], c))
     en = set(enabled)
     for img, vids, _ in groups:
         cols = sorted({color_of[i] for i in vids if i in en})
