@@ -1,0 +1,37 @@
+{
+ "Father": {
+  "titulo": "Father T-Shirt",
+  "tienda": "80s Survivors Club",
+  "printify_id": "6afeed320a7dfee6d0007752",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Invaders": {
+  "titulo": "Invaders T-Shirt",
+  "tienda": "80s Survivors Club",
+  "printify_id": "6afeed5eb823005a2b034cee",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Music Helps": {
+  "titulo": "Music Helps T-Shirt",
+  "tienda": "80s Survivors Club",
+  "printify_id": "6afeed810c722318ad004380",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Retirement Definition": {
+  "titulo": "Retirement Definition T-Shirt",
+  "tienda": "80s Survivors Club",
+  "printify_id": "6afeeda90c722318ad00439d",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ },
+ "Social Vegan": {
+  "titulo": "Social Vegan T-Shirt",
+  "tienda": "80s Survivors Club",
+  "printify_id": "6afeedcacb848203a307763e",
+  "shopify_id": null,
+  "estado": "creado en Printify, sin publicar (esperando OK)"
+ }
+}
