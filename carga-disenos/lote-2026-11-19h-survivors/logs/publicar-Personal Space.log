@@ -20,3 +20,23 @@ Producto Shopify 11074215444764 'Personal Space T-Shirt' | estado: active | foto
 Producto pasado a borrador y sacado de la tienda online.
 Borradas 0 fotos anteriores.
 Fallo la subida de Black: {'errors': 'Exceeded 2 calls per second for api client. Reduce request rates to resume uninterrupted service.'}
+Tienda: 80s Survivors Club | Printify 29697371 | Shopify drysff-xt.myshopify.com | modelo leido de Printify 27342731 | Vendor '80s Survivors Club'
+Precio y marca en Shopify: personal-space-t-shirt | variantes: 36 | actualizadas: 0 | vendor: 80s Survivors Club -> 80s Survivors Club | errores: ninguno
+Producto Shopify 11074215444764 'Personal Space T-Shirt' | estado: active | fotos actuales: 0
+  Black                    Personal Space - Black.jpg
+  Charcoal                 Personal Space - Charcoal.jpg
+  Military Green           Personal Space - Military Green.jpg
+  Navy                     Personal Space - Navy.jpg
+  Sport Grey               Personal Space - Sport Grey.jpg
+  White                    Personal Space - White.jpg
+Producto pasado a borrador y sacado de la tienda online.
+Borradas 0 fotos anteriores.
+  Black: foto 53979469349148 -> 6 variantes
+  Charcoal: foto 53979469381916 -> 6 variantes
+  Military Green: foto 53979469414684 -> 6 variantes
+  Navy: foto 53979469545756 -> 6 variantes
+  Sport Grey: foto 53979470037276 -> 6 variantes
+  White: foto 53979470102812 -> 6 variantes
+Listo. El producto queda en borrador: revisalo en Shopify y activalo a mano.
+Precio y marca en Shopify: personal-space-t-shirt | variantes: 36 | actualizadas: 0 | vendor: 80s Survivors Club -> 80s Survivors Club | errores: ninguno
+Verificado en Shopify: Personal Space T-Shirt (personal-space-t-shirt) | estado: draft | en tienda online: no | fotos: 6 | vendor: 80s Survivors Club | precio/tachado: OK
