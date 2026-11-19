@@ -1,0 +1,53 @@
+{
+ "Big Wheel": {
+  "titulo": "Big Wheel T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "I'll Be In The Garage 2": {
+  "titulo": "I'll Be In The Garage 2 T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy"
+  ]
+ },
+ "I'll Be In The Garage 4": {
+  "titulo": "I'll Be In The Garage 4 T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy"
+  ]
+ },
+ "Morons": {
+  "titulo": "Morons T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Personal Space": {
+  "titulo": "Personal Space T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ }
+}
