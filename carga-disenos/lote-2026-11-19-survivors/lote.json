@@ -1,0 +1,44 @@
+{
+ "867": {
+  "titulo": "867 T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Babysitter": {
+  "titulo": "Babysitter T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Black Sheep": {
+  "titulo": "Black Sheep T-Shirt",
+  "colores": [
+   "Charcoal",
+   "Military Green",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Insert Coin": {
+  "titulo": "Insert Coin T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ }
+}
