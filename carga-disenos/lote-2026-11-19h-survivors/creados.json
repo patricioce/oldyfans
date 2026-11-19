@@ -3,35 +3,36 @@
   "titulo": "Bigfoot T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afef952d9c1f4bb4b0eed1c",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "11074214986012",
+  "estado": "publicado en Shopify en borrador con mockups propios"
  },
  "No Photos Please": {
   "titulo": "No Photos Please T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afef9740c722318ad004d84",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "11074215051548",
+  "estado": "publicado en Shopify en borrador con mockups propios"
  },
  "Odd Duck": {
   "titulo": "Odd Duck T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afef9943ea2512a5a0313a4",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "11074214953244",
+  "estado": "publicado en Shopify en borrador con mockups propios"
  },
  "Retirement Definition": {
   "titulo": "Retirement Definition T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afef9b93ea2512a5a0313b6",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "11074215084316",
+  "estado": "publicado en Shopify en borrador con mockups propios",
+  "nota": "handle retirement-definition-t-shirt-1: ya existe otro 'Retirement Definition T-Shirt' (diseño 'Full-time whatevering', lote 19c, Shopify 11074213183772)"
  },
  "Retirement Review": {
   "titulo": "Retirement Review T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afef9e43ea2512a5a0313d6",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "11074215149852",
+  "estado": "publicado en Shopify en borrador con mockups propios"
  }
 }

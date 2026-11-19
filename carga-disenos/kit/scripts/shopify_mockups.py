@@ -36,12 +36,17 @@ def shopify(method, path, body=None):
         tmp.close()
         cmd += ["--data", f"@{tmp.name}"]
     try:
-        for intento in range(5):
+        for intento in range(8):
             r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
             if method == "DELETE" and r.returncode == 0 and not r.stdout.strip():
                 return {}
             try:
-                return json.loads(r.stdout)
+                data = json.loads(r.stdout)
+                # limite de llamadas por segundo (la tienda Survivors tiene 2/s): esperar y reintentar
+                if isinstance(data, dict) and "Exceeded" in str(data.get("errors", "")) and intento < 7:
+                    time.sleep(2 + 2 ** min(intento, 4))
+                    continue
+                return data
             except json.JSONDecodeError:
                 if intento < 4:
                     time.sleep(2 ** intento)
