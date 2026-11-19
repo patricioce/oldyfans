@@ -1,0 +1,18 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "0124c6c9f9db6da059fa7fa74727f9cf"
+application_url = "https://example.com"
+embedded = true
+name = "Claude222"
+
+[webhooks]
+api_version = "2026-07"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_themes,write_themes,read_content,write_content,read_products,write_products,read_orders,read_all_orders,read_discounts,write_discounts,read_files,write_files,read_online_store_navigation,write_online_store_navigation"
+optional_scopes = [ ]
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [ "https://example.com/auth/callback" ]

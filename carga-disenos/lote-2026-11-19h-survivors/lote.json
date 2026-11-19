@@ -1,0 +1,50 @@
+{
+ "Bigfoot": {
+  "titulo": "Bigfoot T-Shirt",
+  "colores": [
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "No Photos Please": {
+  "titulo": "No Photos Please T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Odd Duck": {
+  "titulo": "Odd Duck T-Shirt",
+  "colores": [
+   "Military Green",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Retirement Definition": {
+  "titulo": "Retirement Definition T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Retirement Review": {
+  "titulo": "Retirement Review T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ }
+}
