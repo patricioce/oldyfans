@@ -5,3 +5,14 @@ Ubicacion frente: x=0.500 y=0.281 scale=0.733 angle=0
   oscura.png -> Charcoal, Military Green, Sport Grey, White  (470 variantes en el area, 24 habilitadas)
   clara.png -> Black  (9 variantes en el area, 6 habilitadas)
   clara.png -> Navy  (9 variantes en el area, 6 habilitadas)
+Imagen subida: oscura.png 6afef3b082d51a8c8015005f 1003x824
+Imagen subida: clara-black.png 6afef3b11463e97c229a8148 1161x683
+Imagen subida: clara-navy.png 6afef3b139190922e8f26e6f 1161x683
+Producto creado en Printify: 6afef3b30e0ec6c282057615
+  A CORREGIR: el area de Navy tambien tiene 17 colores mas (Berry, Dark Chocolate, Fan Candy Pink, Fan Dark Green...)
+  Areas reacomodadas.
+  OK Charcoal, Military Green, Sport Grey, White -> oscura.png
+  OK Black -> clara-black.png
+  OK Navy -> clara-navy.png
+Editor: https://printify.com/app/editor/6afef3b30e0ec6c282057615
+No publicado. Revisa los mockups en Printify y luego publica con publicar_existente.py.
