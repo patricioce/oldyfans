@@ -3,32 +3,38 @@
   "titulo": "867 T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afee49a21938886cc0bfe33",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar",
-  "nota": "clara (roja) en Black, Navy y Sport Grey, cada uno en su area; oscura (violeta) en Charcoal, Military Green y White; y=0.406 (diseno alto 1:1.14)"
+  "shopify_id": 11074146664732,
+  "estado": "publicado en Shopify en borrador, mockups propios, 29.99/42.85, vendor 80s Survivors Club",
+  "nota": "clara (roja) en Black, Navy y Sport Grey, cada uno en su area; oscura (violeta) en Charcoal, Military Green y White; y=0.406 (diseno alto 1:1.14)",
+  "handle": "867-t-shirt",
+  "aviso": "Printify lo reactivo en la tienda despues del script; se volvio a pasar a borrador"
  },
  "Babysitter": {
   "titulo": "Babysitter T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afee477f18bc37b130a8db1",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar",
-  "nota": "clara en Black y Navy, cada uno en su area; oscura en el resto; ubicacion estandar"
+  "shopify_id": 11074146795804,
+  "estado": "publicado en Shopify en borrador, mockups propios, 29.99/42.85, vendor 80s Survivors Club",
+  "nota": "clara en Black y Navy, cada uno en su area; oscura en el resto; ubicacion estandar",
+  "handle": "babysitter-t-shirt",
+  "aviso": "Printify lo reactivo en la tienda despues del script; se volvio a pasar a borrador"
  },
  "Black Sheep": {
   "titulo": "Black Sheep T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afee4ba21938886cc0bfe74",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar",
-  "nota": "unica (negra) en los 4 colores; scale 0.61 y=0.462 (diseno alto 1:1.58); diseno de 899x1422 px: Printify puede avisar baja resolucion"
+  "shopify_id": 11074164162844,
+  "estado": "publicado en Shopify en borrador, mockups propios, 29.99/42.85, vendor 80s Survivors Club",
+  "nota": "unica (negra) en los 4 colores; scale 0.61 y=0.462 (diseno alto 1:1.58); diseno de 899x1422 px: Printify puede avisar baja resolucion",
+  "handle": "black-sheep-t-shirt"
  },
  "Insert Coin": {
   "titulo": "Insert Coin T-Shirt",
   "tienda": "80s Survivors Club",
   "printify_id": "6afee4dc0c722318ad0037d8",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar",
-  "nota": "clara en Black y Navy, cada uno en su area; oscura en el resto; y=0.386 (diseno alto 1:1.08); FALTAN mockups"
+  "shopify_id": 11074213478684,
+  "estado": "publicado en Shopify en borrador, mockups propios, 29.99/42.85, vendor 80s Survivors Club",
+  "nota": "solo Sport Grey y White (los unicos mockups que vinieron); Black, Navy, Charcoal y Military Green deshabilitados en Printify; y=0.386",
+  "handle": "insert-coin-t-shirt"
  }
 }
