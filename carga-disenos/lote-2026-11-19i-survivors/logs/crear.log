@@ -1,0 +1,28 @@
+Tienda: 80s Survivors Club | Printify 29697371 | Shopify drysff-xt.myshopify.com | modelo leido de Printify 27342731 | Vendor '80s Survivors Club'
+Modelo: 10 p.m T-Shirt | variantes habilitadas: 36 | precio en Printify: $29.99
+Colores: Black, Charcoal, Military Green, Navy, Sport Grey, White
+Ubicacion frente: x=0.500 y=0.281 scale=0.733 angle=0
+  oscura.png -> Charcoal, Military Green, Sport Grey, White  (470 variantes en el area, 24 habilitadas)
+  clara.png -> Black  (9 variantes en el area, 6 habilitadas)
+  clara.png -> Navy  (9 variantes en el area, 6 habilitadas)
+Imagen subida: oscura.png 6afefc6bd557ef514c79d30b 1197x659
+Imagen subida: clara-black.png 6afefc6c245a1344fd9517e7 1200x659
+Imagen subida: clara-navy.png 6afefc6d1f92b3fc4ab51538 1200x659
+Producto creado en Printify: 6afefc6ebf6e4ae4070b003f
+  A CORREGIR: el area de Navy tambien tiene 17 colores mas (Berry, Dark Chocolate, Fan Candy Pink, Fan Dark Green...)
+  Areas reacomodadas.
+  OK Charcoal, Military Green, Sport Grey, White -> oscura.png
+  OK Black -> clara-black.png
+  OK Navy -> clara-navy.png
+Editor: https://printify.com/app/editor/6afefc6ebf6e4ae4070b003f
+No publicado. Revisa los mockups en Printify y luego publica con publicar_existente.py.
+Tienda: 80s Survivors Club | Printify 29697371 | Shopify drysff-xt.myshopify.com | modelo leido de Printify 27342731 | Vendor '80s Survivors Club'
+Modelo: 10 p.m T-Shirt | variantes habilitadas: 12 | precio en Printify: $29.99
+Colores: Sport Grey, White
+Ubicacion frente: x=0.500 y=0.424 scale=0.733 angle=0
+  unica.png -> Sport Grey, White  (488 variantes en el area, 12 habilitadas)
+Imagen subida: unica.png 6afefc8d337629a46b5ed062 991x1200
+Producto creado en Printify: 6afefc8eb823005a2b0358f8
+  OK Sport Grey, White -> unica.png
+Editor: https://printify.com/app/editor/6afefc8eb823005a2b0358f8
+No publicado. Revisa los mockups en Printify y luego publica con publicar_existente.py.
