@@ -41,7 +41,12 @@ def shopify(method, path, body=None):
             if method == "DELETE" and r.returncode == 0 and not r.stdout.strip():
                 return {}
             try:
-                return json.loads(r.stdout)
+                data = json.loads(r.stdout)
+                # limite de llamadas de la API REST (2/seg): esperar y reintentar
+                if isinstance(data, dict) and "Exceeded" in str(data.get("errors", "")) and intento < 4:
+                    time.sleep(2 + 2 ** intento)
+                    continue
+                return data
             except json.JSONDecodeError:
                 if intento < 4:
                     time.sleep(2 ** intento)
