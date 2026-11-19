@@ -26,3 +26,11 @@ python3 scripts/printify_new_product.py --tienda survivors --image "$D/Hose Wate
   --title "Hose Water 3 T-Shirt" --colors "$C"     # --create para crear
 python3 scripts/publicar_existente.py --tienda survivors --printify-id <id> --mockups "../lote-2026-11-19d-survivors/mockups/<Diseño>" --apply
 ```
+
+## Publicación
+- Se publicaron los 5 en paralelo con `publicar_existente.py`. Printify los vinculó a Shopify, pero la carga de fotos falló en los 5:
+  la REST API de Shopify contestó "Exceeded 2 calls per second" y `shopify()` no reintentaba (en 4 eso se vio como "No encontre el producto").
+- Arreglo: `shopify_mockups.shopify()` ahora reintenta ante ese error. Las fotos se cargaron después, de a un producto por vez, con
+  `shopify_mockups.py --tienda survivors --shopify-id <id> --dir mockups/<Diseño> --replace --apply`.
+- Verificado: los 5 en `draft`, fuera de la tienda online, 6 fotos (una por color), Vendor "80s Survivors Club",
+  `repair_products.py --handle` → "Nada para corregir".
