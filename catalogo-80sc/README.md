@@ -220,4 +220,4 @@ python3 crear_colecciones.py            # simulación
 python3 crear_colecciones.py --apply    # agrega tags y crea colecciones
 ```
 
-Usa `SURVIVORS_SHOPIFY_ACCESS_TOKEN` y `SURVIVORS_SHOPIFY_SHOP_DOMAIN` del entorno (scopes `read_products`, `write_products`). Es idempotente: no duplica tags ni colecciones existentes con el mismo handle. Las colecciones se crean publicadas en la tienda online; agregar `--unpublished` para dejarlas ocultas.
+Genera el token con `SURVIVORS_SHOPIFY_CLIENT_ID` + `SURVIVORS_SHOPIFY_CLIENT_SECRET` (client credentials, vence a las 24 h; si no están, usa `SURVIVORS_SHOPIFY_ACCESS_TOKEN`). Dominio: `SURVIVORS_SHOPIFY_SHOP_DOMAIN` (scopes `read_products`, `write_products`). Es idempotente: no duplica tags ni colecciones existentes con el mismo handle. Las colecciones se crean publicadas en la tienda online; agregar `--unpublished` para dejarlas ocultas.

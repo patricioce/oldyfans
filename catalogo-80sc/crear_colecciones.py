@@ -6,14 +6,31 @@
 - Publica las colecciones en la tienda online (salvo --unpublished).
 
 Simulación por defecto; --apply escribe.
-Env: SURVIVORS_SHOPIFY_ACCESS_TOKEN, SURVIVORS_SHOPIFY_SHOP_DOMAIN (default drysff-xt.myshopify.com).
+Env: SURVIVORS_SHOPIFY_CLIENT_ID + SURVIVORS_SHOPIFY_CLIENT_SECRET (genera el token; si no están, usa SURVIVORS_SHOPIFY_ACCESS_TOKEN), SURVIVORS_SHOPIFY_SHOP_DOMAIN (default drysff-xt.myshopify.com).
 """
-import argparse, json, os, sys, time, urllib.request, urllib.error
+import argparse, json, os, sys, time, urllib.parse, urllib.request, urllib.error
 from pathlib import Path
 
 API = "2024-10"
 DOMAIN = os.environ.get("SURVIVORS_SHOPIFY_SHOP_DOMAIN", "drysff-xt.myshopify.com")
 TOKEN = os.environ.get("SURVIVORS_SHOPIFY_ACCESS_TOKEN", "")
+CLIENT_ID = os.environ.get("SURVIVORS_SHOPIFY_CLIENT_ID", "")
+CLIENT_SECRET = os.environ.get("SURVIVORS_SHOPIFY_CLIENT_SECRET", "")
+
+
+def token_nuevo():
+    """Pide un token de Admin API con client credentials (app del Dev Dashboard; vence a las 24 h)."""
+    body = urllib.parse.urlencode({"grant_type": "client_credentials", "client_id": CLIENT_ID,
+                                   "client_secret": CLIENT_SECRET}).encode()
+    req = urllib.request.Request(f"https://{DOMAIN}/admin/oauth/access_token", data=body,
+                                 headers={"Content-Type": "application/x-www-form-urlencoded"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            d = json.load(r)
+    except urllib.error.HTTPError as e:
+        sys.exit(f"No pude generar el token (HTTP {e.code}): {e.read()[:300]!r}")
+    print(f"Token generado con client credentials · scopes: {d.get('scope', '?')}")
+    return d["access_token"]
 
 
 def gql(query, variables=None, tries=5):
@@ -41,8 +58,11 @@ def main():
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--unpublished", action="store_true", help="no publicar las colecciones en la tienda online")
     a = ap.parse_args()
+    global TOKEN
+    if CLIENT_ID and CLIENT_SECRET:
+        TOKEN = token_nuevo()
     if not TOKEN:
-        sys.exit("Falta SURVIVORS_SHOPIFY_ACCESS_TOKEN")
+        sys.exit("Falta SURVIVORS_SHOPIFY_CLIENT_ID + SURVIVORS_SHOPIFY_CLIENT_SECRET (o SURVIVORS_SHOPIFY_ACCESS_TOKEN)")
     cat = json.load(open(Path(__file__).with_name("colecciones.json")))
     shop = gql("{ shop { name } }")["shop"]["name"]
     print(f"Tienda: {shop} ({DOMAIN})  modo: {'APPLY' if a.apply else 'simulación'}\n")
