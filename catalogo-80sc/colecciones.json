@@ -1,0 +1,754 @@
+{
+ "tienda": "80s Survivors Club",
+ "printify_shop_id": 29697371,
+ "shopify_domain": "drysff-xt.myshopify.com",
+ "generado": "2026-11-20",
+ "colecciones": [
+  {
+   "handle": "playground-survivors",
+   "titulo": "Playground Survivors",
+   "descripcion": "Rusty slides, metal see-saws, dodgeball and hose water. Tees for the kids who survived the 80s playground with zero supervision and all their teeth (mostly).",
+   "tag": "col-playground-survivors",
+   "disenos": [
+    "Dodge Ball Survivor",
+    "Red Rover Survivor",
+    "Big Wheel",
+    "Metal Slide",
+    "See-Saw",
+    "Merry-Go-Round",
+    "Hose Water",
+    "Hose Water 2",
+    "Hose Water 3",
+    "Latchkey Kid",
+    "Babysitter",
+    "Still Alive",
+    "80s Survivor"
+   ]
+  },
+  {
+   "handle": "gen-x-pride",
+   "titulo": "Gen X Pride",
+   "descripcion": "The forgotten generation, and proud of it. Independent, unimpressed and still figuring it out without a tutorial.",
+   "tag": "col-gen-x-pride",
+   "disenos": [
+    "The Forgotten Gen",
+    "We Do Not Subscribe",
+    "Level Up",
+    "Figureoutability",
+    "Latchkey Kid",
+    "Still Alive",
+    "I Can Write In Cursive",
+    "80s Survivor",
+    "Black Sheep",
+    "Old School",
+    "Babysitter"
+   ]
+  },
+  {
+   "handle": "retro-80s-nostalgia",
+   "titulo": "80s Nostalgia",
+   "descripcion": "Cassettes, VHS, arcades and the songs you still know by heart. Pure 80s and 90s throwback tees.",
+   "tag": "col-retro-80s-nostalgia",
+   "disenos": [
+    "Be Kind, Rewind",
+    "Insert Coin",
+    "Invaders",
+    "Level Up",
+    "What Happened",
+    "Father",
+    "867",
+    "Sponge-Worthy",
+    "No Ragrets",
+    "Music Helps",
+    "The Forgotten Gen",
+    "Big Wheel"
+   ]
+  },
+  {
+   "handle": "retirement-aging",
+   "titulo": "Retirement & Aging",
+   "descripcion": "Fixed incomes, five-star pain reviews and expired warranties. Honest tees about getting older, and getting better at it.",
+   "tag": "col-retirement-aging",
+   "disenos": [
+    "Retirement Review",
+    "Fixed Income Retirement",
+    "Retirement Plan",
+    "Retirement Definition",
+    "Pain",
+    "Aging Review",
+    "50 Years",
+    "Warranty Expired",
+    "Becoming A Legend",
+    "I Had Potential",
+    "Second Rodeo",
+    "Processing",
+    "Hairless Snail",
+    "Slow Me Down",
+    "Do Not Bend"
+   ]
+  },
+  {
+   "handle": "sarcasm-attitude",
+   "titulo": "Sarcasm & Attitude",
+   "descripcion": "For introverts, eye-rollers and people who already said no. Dry humor tees with zero apologies.",
+   "tag": "col-sarcasm-attitude",
+   "disenos": [
+    "Antisocial",
+    "Personal Space",
+    "No Photos Please",
+    "How Do You Want Your No",
+    "Nobody Owes You",
+    "Morons",
+    "Social Vegan",
+    "Night Owl",
+    "Odd Duck",
+    "Black Sheep",
+    "My Dog",
+    "Wise Man",
+    "How Eye Roll",
+    "Hang In There",
+    "The Light",
+    "Do Not Bend",
+    "Processing",
+    "No Ragrets"
+   ]
+  },
+  {
+   "handle": "dad-grandpa",
+   "titulo": "Dad & Grandpa",
+   "descripcion": "Dad jokes, garage time and hard-earned wisdom. Gift-ready tees for fathers and grandfathers who've seen it all.",
+   "tag": "col-dad-grandpa",
+   "disenos": [
+    "How Eye Roll",
+    "Father",
+    "I'll Be In The Garage 2",
+    "I'll Be In The Garage 4",
+    "Wise Man",
+    "Old School",
+    "Becoming A Legend",
+    "50 Years",
+    "Warranty Expired",
+    "My Dog",
+    "Second Rodeo"
+   ]
+  },
+  {
+   "handle": "garage-cars",
+   "titulo": "Garage & Car Guys",
+   "descripcion": "Muscle cars, motorcycles and stick shifts. For the ones who'll be in the garage.",
+   "tag": "col-garage-cars",
+   "disenos": [
+    "I'll Be In The Garage 2",
+    "I'll Be In The Garage 4",
+    "Old School",
+    "I Can Write In Cursive",
+    "80s Survivor"
+   ]
+  },
+  {
+   "handle": "bigfoot-outdoors",
+   "titulo": "Bigfoot & Outdoors",
+   "descripcion": "World champion of hide and seek. Sasquatch, Bigfoot and retro outdoor vibes.",
+   "tag": "col-bigfoot-outdoors",
+   "disenos": [
+    "Bigfoot",
+    "Bigfoot 2",
+    "Sasquatch"
+   ]
+  }
+ ],
+ "disenos": {
+  "Dodge Ball Survivor": {
+   "titulo": "Dodge Ball Survivor T-Shirt",
+   "printify_id": "6b005c06ed3f3a04530119ed",
+   "shopify_id": "11076676092188",
+   "shopify_handle": "dodge-ball-survivor-t-shirt",
+   "colecciones": [
+    "playground-survivors"
+   ]
+  },
+  "Personal Space": {
+   "titulo": "Personal Space T-Shirt",
+   "printify_id": "6afefc9bb4c4600f7e026070",
+   "shopify_id": "11074215444764",
+   "shopify_handle": "personal-space-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "Night Owl": {
+   "titulo": "Night Owl T-Shirt",
+   "printify_id": "6afefc8eb823005a2b0358f8",
+   "shopify_id": "11074214560028",
+   "shopify_handle": "night-owl-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "Second Rodeo": {
+   "titulo": "Second Rodeo T-Shirt",
+   "printify_id": "6afefc6ebf6e4ae4070b003f",
+   "shopify_id": "11074214756636",
+   "shopify_handle": "second-rodeo-t-shirt",
+   "colecciones": [
+    "retirement-aging",
+    "dad-grandpa"
+   ]
+  },
+  "Morons": {
+   "titulo": "Morons T-Shirt",
+   "printify_id": "6afefc6bbf6e4ae4070b003a",
+   "shopify_id": "11074215346460",
+   "shopify_handle": "morons-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "I'll Be In The Garage 4": {
+   "titulo": "I'll Be In The Garage 4 T-Shirt",
+   "printify_id": "6afefc4bde5893894100f001",
+   "shopify_id": "11074215313692",
+   "shopify_handle": "ill-be-in-the-garage-4-t-shirt",
+   "colecciones": [
+    "dad-grandpa",
+    "garage-cars"
+   ]
+  },
+  "I'll Be In The Garage 2": {
+   "titulo": "I'll Be In The Garage 2 T-Shirt",
+   "printify_id": "6afefc283ea2512a5a0315aa",
+   "shopify_id": "11074215248156",
+   "shopify_handle": "ill-be-in-the-garage-2-t-shirt",
+   "colecciones": [
+    "dad-grandpa",
+    "garage-cars"
+   ]
+  },
+  "Big Wheel": {
+   "titulo": "Big Wheel T-Shirt",
+   "printify_id": "6afefc06b4c4600f7e025fc9",
+   "shopify_id": "11074215543068",
+   "shopify_handle": "big-wheel-t-shirt",
+   "colecciones": [
+    "playground-survivors",
+    "retro-80s-nostalgia"
+   ]
+  },
+  "Retirement Review": {
+   "titulo": "Retirement Review T-Shirt",
+   "printify_id": "6afef9e43ea2512a5a0313d6",
+   "shopify_id": "11074215149852",
+   "shopify_handle": "retirement-review-t-shirt",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  },
+  "Fixed Income Retirement": {
+   "titulo": "Fixed Income Retirement T-Shirt",
+   "printify_id": "6afef9b93ea2512a5a0313b6",
+   "shopify_id": "11074215084316",
+   "shopify_handle": "retirement-definition-t-shirt-1",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  },
+  "Odd Duck": {
+   "titulo": "Odd Duck T-Shirt",
+   "printify_id": "6afef9943ea2512a5a0313a4",
+   "shopify_id": "11074214953244",
+   "shopify_handle": "odd-duck-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "No Photos Please": {
+   "titulo": "No Photos Please T-Shirt",
+   "printify_id": "6afef9740c722318ad004d84",
+   "shopify_id": "11074215051548",
+   "shopify_handle": "no-photos-please-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "Bigfoot": {
+   "titulo": "Bigfoot T-Shirt",
+   "printify_id": "6afef952d9c1f4bb4b0eed1c",
+   "shopify_id": "11074214986012",
+   "shopify_handle": "bigfoot-t-shirt",
+   "colecciones": [
+    "bigfoot-outdoors"
+   ]
+  },
+  "The Light": {
+   "titulo": "The Light T-Shirt",
+   "printify_id": "6afef79abf6e4ae4070afcaf",
+   "shopify_id": "11074214822172",
+   "shopify_handle": "the-light-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "How Eye Roll": {
+   "titulo": "How Eye Roll T-Shirt",
+   "printify_id": "6afef774b823005a2b0354e1",
+   "shopify_id": "11074214887708",
+   "shopify_handle": "how-eye-roll-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude",
+    "dad-grandpa"
+   ]
+  },
+  "Do Not Bend": {
+   "titulo": "Do Not Bend T-Shirt",
+   "printify_id": "6afef75021938886cc0c1331",
+   "shopify_id": "11074214691100",
+   "shopify_handle": "do-not-bend-t-shirt",
+   "colecciones": [
+    "retirement-aging",
+    "sarcasm-attitude"
+   ]
+  },
+  "Be Kind, Rewind": {
+   "titulo": "Be Kind, Rewind T-Shirt",
+   "printify_id": "6afef7310e0ec6c28205790f",
+   "shopify_id": "11074214494492",
+   "shopify_handle": "be-kind-rewind-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia"
+   ]
+  },
+  "50 Years": {
+   "titulo": "50 Years T-Shirt",
+   "printify_id": "6afef70ffb40a1bdf4079ac7",
+   "shopify_id": "11074214592796",
+   "shopify_handle": "50-years-t-shirt",
+   "colecciones": [
+    "retirement-aging",
+    "dad-grandpa"
+   ]
+  },
+  "Processing": {
+   "titulo": "Processing T-Shirt",
+   "printify_id": "6afef3b3d9c1f4bb4b0ee8ed",
+   "shopify_id": "11074214166812",
+   "shopify_handle": "processing-t-shirt",
+   "colecciones": [
+    "retirement-aging",
+    "sarcasm-attitude"
+   ]
+  },
+  "We Do Not Subscribe": {
+   "titulo": "We Do Not Subscribe T-Shirt",
+   "printify_id": "6afef3b321938886cc0c1012",
+   "shopify_id": "11074214232348",
+   "shopify_handle": "we-do-not-subscribe-t-shirt",
+   "colecciones": [
+    "gen-x-pride"
+   ]
+  },
+  "What Happened": {
+   "titulo": "What Happened T-Shirt",
+   "printify_id": "6afef3b30e0ec6c282057616",
+   "shopify_id": "11074214068508",
+   "shopify_handle": "what-happened-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia"
+   ]
+  },
+  "Sponge-Worthy": {
+   "titulo": "Sponge-Worthy T-Shirt",
+   "printify_id": "6afef3b30e0ec6c282057615",
+   "shopify_id": "11074214134044",
+   "shopify_handle": "sponge-worthy-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia"
+   ]
+  },
+  "Latchkey Kid": {
+   "titulo": "Latchkey Kid T-Shirt",
+   "printify_id": "6afef3b2d9c1f4bb4b0ee8ec",
+   "shopify_id": "11074214002972",
+   "shopify_handle": "latchkey-kid-t-shirt",
+   "colecciones": [
+    "playground-survivors",
+    "gen-x-pride"
+   ]
+  },
+  "Retirement Plan": {
+   "titulo": "Retirement Plan T-Shirt",
+   "printify_id": "6afef217d9c1f4bb4b0ee781",
+   "shopify_id": "11074213806364",
+   "shopify_handle": "retirement-plan-t-shirt",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  },
+  "Pain": {
+   "titulo": "Pain T-Shirt",
+   "printify_id": "6afef1f1f18bc37b130a9d08",
+   "shopify_id": "11074213970204",
+   "shopify_handle": "pain-t-shirt",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  },
+  "Nobody Owes You": {
+   "titulo": "Nobody Owes You T-Shirt",
+   "printify_id": "6afef1cf21938886cc0c0e9a",
+   "shopify_id": "11074254930204",
+   "shopify_handle": "nobody-owes-you-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "Hose Water 2": {
+   "titulo": "Hose Water 2 T-Shirt",
+   "printify_id": "6afef1afb823005a2b03506f",
+   "shopify_id": "11074213904668",
+   "shopify_handle": "hose-water-2-t-shirt",
+   "colecciones": [
+    "playground-survivors"
+   ]
+  },
+  "Figureoutability": {
+   "titulo": "Figureoutability T-Shirt",
+   "printify_id": "6afef190b4c4600f7e0257af",
+   "shopify_id": "11074213839132",
+   "shopify_handle": "figureoutability-t-shirt",
+   "colecciones": [
+    "gen-x-pride"
+   ]
+  },
+  "My Dog": {
+   "titulo": "My Dog T-Shirt",
+   "printify_id": "6afef01f0c722318ad004557",
+   "shopify_id": "11074213511452",
+   "shopify_handle": "my-dog-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude",
+    "dad-grandpa"
+   ]
+  },
+  "Red Rover Survivor": {
+   "titulo": "Red Rover Survivor T-Shirt",
+   "printify_id": "6afeeffecb848203a30777a9",
+   "shopify_id": "11074213642524",
+   "shopify_handle": "red-rover-survivor-t-shirt",
+   "colecciones": [
+    "playground-survivors"
+   ]
+  },
+  "No Ragrets": {
+   "titulo": "No Ragrets T-Shirt",
+   "printify_id": "6afeefdcd9c1f4bb4b0ee51d",
+   "shopify_id": "11074213740828",
+   "shopify_handle": "no-ragrets-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia",
+    "sarcasm-attitude"
+   ]
+  },
+  "How Do You Want Your No": {
+   "titulo": "How Do You Want Your No T-Shirt",
+   "printify_id": "6afeefba0a7dfee6d000792c",
+   "shopify_id": "11074213576988",
+   "shopify_handle": "how-do-you-want-your-no-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "Hose Water 3": {
+   "titulo": "Hose Water 3 T-Shirt",
+   "printify_id": "6afeef9a0e0ec6c282057253",
+   "shopify_id": "11074213675292",
+   "shopify_handle": "hose-water-3-t-shirt",
+   "colecciones": [
+    "playground-survivors"
+   ]
+  },
+  "Social Vegan": {
+   "titulo": "Social Vegan T-Shirt",
+   "printify_id": "6afeedcacb848203a307763e",
+   "shopify_id": "11074213249308",
+   "shopify_handle": "social-vegan-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "Retirement Definition": {
+   "titulo": "Retirement Definition T-Shirt",
+   "printify_id": "6afeeda90c722318ad00439d",
+   "shopify_id": "11074213183772",
+   "shopify_handle": "retirement-definition-t-shirt",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  },
+  "Music Helps": {
+   "titulo": "Music Helps T-Shirt",
+   "printify_id": "6afeed810c722318ad004380",
+   "shopify_id": "11074213347612",
+   "shopify_handle": "music-helps-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia"
+   ]
+  },
+  "Invaders": {
+   "titulo": "Invaders T-Shirt",
+   "printify_id": "6afeed5eb823005a2b034cee",
+   "shopify_id": "11074213314844",
+   "shopify_handle": "invaders-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia"
+   ]
+  },
+  "Father": {
+   "titulo": "Father T-Shirt",
+   "printify_id": "6afeed320a7dfee6d0007752",
+   "shopify_id": "11074213413148",
+   "shopify_handle": "father-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia",
+    "dad-grandpa"
+   ]
+  },
+  "Bigfoot 2": {
+   "titulo": "Bigfoot 2 T-Shirt",
+   "printify_id": "6afee8f3f18bc37b130a944f",
+   "shopify_id": "11074261975324",
+   "shopify_handle": "bigfoot-2-t-shirt",
+   "colecciones": [
+    "bigfoot-outdoors"
+   ]
+  },
+  "80s Survivor": {
+   "titulo": "80s Survivor T-Shirt",
+   "printify_id": "6afee8d4f18bc37b130a9436",
+   "shopify_id": "11074261844252",
+   "shopify_handle": "80s-survivor-t-shirt",
+   "colecciones": [
+    "playground-survivors",
+    "gen-x-pride",
+    "garage-cars"
+   ]
+  },
+  "Sasquatch": {
+   "titulo": "Sasquatch T-Shirt",
+   "printify_id": "6afee8b121938886cc0c0507",
+   "shopify_id": "11074262040860",
+   "shopify_handle": "sasquatch-t-shirt",
+   "colecciones": [
+    "bigfoot-outdoors"
+   ]
+  },
+  "Hairless Snail": {
+   "titulo": "Hairless Snail T-Shirt",
+   "printify_id": "6afee890e1b614cbc50eded2",
+   "shopify_id": "11074261778716",
+   "shopify_handle": "hairless-snail-t-shirt",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  },
+  "Still Alive": {
+   "titulo": "Still Alive T-Shirt",
+   "printify_id": "6afee8655b31c9bb4d0c4b06",
+   "shopify_id": "11074262106396",
+   "shopify_handle": "still-alive-t-shirt",
+   "colecciones": [
+    "playground-survivors",
+    "gen-x-pride"
+   ]
+  },
+  "Insert Coin": {
+   "titulo": "Insert Coin T-Shirt",
+   "printify_id": "6afee4dc0c722318ad0037d8",
+   "shopify_id": "11074213478684",
+   "shopify_handle": "insert-coin-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia"
+   ]
+  },
+  "Level Up": {
+   "titulo": "Level Up T-Shirt",
+   "printify_id": "6afee4bfd694390fae00a982",
+   "shopify_id": "11074146533660",
+   "shopify_handle": "level-up-t-shirt",
+   "colecciones": [
+    "gen-x-pride",
+    "retro-80s-nostalgia"
+   ]
+  },
+  "Black Sheep": {
+   "titulo": "Black Sheep T-Shirt",
+   "printify_id": "6afee4ba21938886cc0bfe74",
+   "shopify_id": "11074164162844",
+   "shopify_handle": "black-sheep-t-shirt",
+   "colecciones": [
+    "gen-x-pride",
+    "sarcasm-attitude"
+   ]
+  },
+  "Merry-Go-Round": {
+   "titulo": "Merry-Go-Round T-Shirt",
+   "printify_id": "6afee49ccb848203a3076b57",
+   "shopify_id": "11074146599196",
+   "shopify_handle": "merry-go-round-t-shirt",
+   "colecciones": [
+    "playground-survivors"
+   ]
+  },
+  "867": {
+   "titulo": "867 T-Shirt",
+   "printify_id": "6afee49a21938886cc0bfe33",
+   "shopify_id": "11074146664732",
+   "shopify_handle": "867-t-shirt",
+   "colecciones": [
+    "retro-80s-nostalgia"
+   ]
+  },
+  "The Forgotten Gen": {
+   "titulo": "The Forgotten Gen T-Shirt",
+   "printify_id": "6afee47ccb848203a3076b3c",
+   "shopify_id": "11074146173212",
+   "shopify_handle": "the-forgotten-gen-t-shirt",
+   "colecciones": [
+    "gen-x-pride",
+    "retro-80s-nostalgia"
+   ]
+  },
+  "Babysitter": {
+   "titulo": "Babysitter T-Shirt",
+   "printify_id": "6afee477f18bc37b130a8db1",
+   "shopify_id": "11074146795804",
+   "shopify_handle": "babysitter-t-shirt",
+   "colecciones": [
+    "playground-survivors",
+    "gen-x-pride"
+   ]
+  },
+  "See-Saw": {
+   "titulo": "See-Saw T-Shirt",
+   "printify_id": "6afee45a5b31c9bb4d0c44e5",
+   "shopify_id": "11074146369820",
+   "shopify_handle": "see-saw-t-shirt",
+   "colecciones": [
+    "playground-survivors"
+   ]
+  },
+  "Becoming A Legend": {
+   "titulo": "Becoming A Legend T-Shirt",
+   "printify_id": "6afda17837262f37de0beedf",
+   "shopify_id": "11074512978204",
+   "shopify_handle": "becoming-a-legend-t-shirt",
+   "colecciones": [
+    "retirement-aging",
+    "dad-grandpa"
+   ]
+  },
+  "Old School": {
+   "titulo": "Old School T-Shirt",
+   "printify_id": "6afda1511cb1d74e0a01ba5d",
+   "shopify_id": "11074513174812",
+   "shopify_handle": "old-school-t-shirt",
+   "colecciones": [
+    "gen-x-pride",
+    "dad-grandpa",
+    "garage-cars"
+   ]
+  },
+  "Aging Review": {
+   "titulo": "Aging Review T-Shirt",
+   "printify_id": "6afda12fdfc27cd38c0bf727",
+   "shopify_id": "11074513404188",
+   "shopify_handle": "aging-review-t-shirt",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  },
+  "I Can Write In Cursive": {
+   "titulo": "I Can Write In Cursive T-Shirt",
+   "printify_id": "6afd9fdedfc27cd38c0bf675",
+   "shopify_id": "11074512781596",
+   "shopify_handle": "i-can-write-in-cursive-t-shirt",
+   "colecciones": [
+    "gen-x-pride",
+    "garage-cars"
+   ]
+  },
+  "Metal Slide": {
+   "titulo": "Metal Slide T-Shirt",
+   "printify_id": "6afd9fb164b943792d07c948",
+   "shopify_id": "11074512584988",
+   "shopify_handle": "metal-slide-t-shirt",
+   "colecciones": [
+    "playground-survivors"
+   ]
+  },
+  "Warranty Expired": {
+   "titulo": "Warranty Expired T-Shirt",
+   "printify_id": "6afd9f8e07b4e3e480032442",
+   "shopify_id": "11074512388380",
+   "shopify_handle": "warranty-expired-t-shirt",
+   "colecciones": [
+    "retirement-aging",
+    "dad-grandpa"
+   ]
+  },
+  "I Had Potential": {
+   "titulo": "I Had Potential T-Shirt",
+   "printify_id": "6afd9f6b1cb1d74e0a01b929",
+   "shopify_id": "11074512159004",
+   "shopify_handle": "i-had-potential-t-shirt",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  },
+  "Wise Man": {
+   "titulo": "Wise Man T-Shirt",
+   "printify_id": "6afd9f475d18cea8e70b12f3",
+   "shopify_id": "11074510586140",
+   "shopify_handle": "wise-man-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude",
+    "dad-grandpa"
+   ]
+  },
+  "Antisocial": {
+   "titulo": "Antisocial T-Shirt",
+   "printify_id": "6afd9ba83454cf868401f9b0",
+   "shopify_id": "11072167772444",
+   "shopify_handle": "antisocial-t-shirt",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "Hose Water": {
+   "titulo": "Hose Water T-Shirt",
+   "printify_id": "6afd9ba51cb1d74e0a01b6c8",
+   "shopify_id": "11072167641372",
+   "shopify_handle": "hose-water-t-shirt",
+   "colecciones": [
+    "playground-survivors"
+   ]
+  },
+  "Hang In There": {
+   "titulo": "Hang In There T-Shirt",
+   "printify_id": "6afd9ba4dfc27cd38c0bf381",
+   "shopify_id": "11072166232348",
+   "shopify_handle": "hang-in-there-t-shirt-1",
+   "colecciones": [
+    "sarcasm-attitude"
+   ]
+  },
+  "Slow Me Down": {
+   "titulo": "Slow Me Down T-Shirt",
+   "printify_id": "6afd9ba45d18cea8e70b10a4",
+   "shopify_id": "11072167837980",
+   "shopify_handle": "slow-me-down-t-shirt",
+   "colecciones": [
+    "retirement-aging"
+   ]
+  }
+ }
+}
