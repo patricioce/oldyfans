@@ -1,0 +1,71 @@
+/* ===== OldyFans — Barra de anuncios y footer en blanco con texto negro =====
+   Tema: Horizon. Pegar al final de Personalizar > Configuración del tema > CSS personalizado
+   (o como asset cargado desde layout/theme.liquid).
+   El footer se separa del contenido con una línea negra de 2px a todo el ancho. */
+
+/* --- Barra de anuncios ("Free shipping on orders $35+") --- */
+.shopify-section-group-header-group [class*="__header_announcements"],
+.shopify-section-group-header-group [class*="__header_announcements"] .text-block {
+  --color-background: #ffffff !important;
+  --color-background-rgb: 255 255 255 !important;
+  --color: #000000 !important;
+  --color-rgb: 0 0 0 !important;
+  --color-foreground: #000000 !important;
+  --color-foreground-rgb: 0 0 0 !important;
+  --color-border: #000000 !important;
+  --color-border-rgb: 0 0 0 !important;
+}
+.shopify-section-group-header-group .announcement-bar,
+.shopify-section-group-header-group .announcement-bar * {
+  color: #000000 !important;
+}
+/* Línea fina para que la barra no se funda con la cabecera (también blanca) */
+.shopify-section-group-header-group .announcement-bar {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* --- Footer --- */
+.shopify-section-group-footer-group .section-background,
+.shopify-section-group-footer-group [class*="color-custom"],
+.shopify-section-group-footer-group [class*="color-custom"] .text-block {
+  --color-background: #ffffff !important;
+  --color-background-rgb: 255 255 255 !important;
+  --color: #000000 !important;
+  --color-rgb: 0 0 0 !important;
+  --color-foreground: #000000 !important;
+  --color-foreground-rgb: 0 0 0 !important;
+  --color-foreground-muted: rgb(0 0 0 / 0.65) !important;
+  --color-border: #000000 !important;
+  --color-border-rgb: 0 0 0 !important;
+  --palette-lightest: #000000;
+  --palette-lightest-rgb: 0 0 0;
+}
+.shopify-section-group-footer-group .section-background {
+  background-color: #ffffff !important;
+}
+.shopify-section-group-footer-group,
+.shopify-section-group-footer-group :is(a, p, span, h1, h2, h3, h4, h5, h6, li, .h5, .email-signup__heading) {
+  color: #000000 !important;
+}
+.shopify-section-group-footer-group svg {
+  color: #000000 !important;
+}
+
+/* Separación del body: línea negra a todo el ancho arriba del footer */
+.shopify-section-group-footer-group:first-of-type {
+  border-top: 2px solid #000000;
+}
+
+/* Newsletter: el campo era blanco sobre negro; ahora necesita borde */
+.shopify-section-group-footer-group .email-signup__input-group {
+  --color-input-border: #000000 !important;
+  --color-input-text: #000000 !important;
+  --color-input-text-rgb: 0 0 0 !important;
+}
+.shopify-section-group-footer-group .email-signup__input {
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+}
+.shopify-section-group-footer-group .email-signup__input::placeholder {
+  color: rgb(0 0 0 / 0.5) !important;
+}
