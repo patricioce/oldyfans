@@ -8,6 +8,7 @@ Uso:
   python3 printify_new_product.py ... --create --publish --mockups carpeta/       # publica OCULTO con mockups propios (ver shopify_mockups.py)
   python3 printify_new_product.py ... --colors "White,Sport Grey,Ice Grey"               # elegir colores (mismos talles que el modelo)
   python3 printify_new_product.py --image oscura.png --image-light clara.png ...          # dos tintas: clara en Black y Navy, oscura en el resto
+  python3 printify_new_product.py ... --image-for "Ice Grey=roja.png"                     # tercera tinta: ese color con su propia imagen
   python3 printify_new_product.py --fix-areas <printify_id> [--apply]                   # reordena las areas de un producto ya creado
 
 Dos tintas: con --image-light cada color de --light-colors (por defecto "Black,Navy") tiene su propia area
@@ -94,12 +95,20 @@ def colores(p):
 
 
 def png_con_color(path, color):
-    """Misma imagen, con un metadato del color: bytes distintos para que Printify le de un id propio."""
+    """Misma imagen con un metadato del color y una marca invisible (alpha 1/255 en un pixel transparente
+    de la primera fila, distinto por color): Printify deduplica las subidas y con solo el metadato
+    devolvia el mismo id para Black, Navy y Charcoal (lote 2026-11-24)."""
     from PIL import Image, PngImagePlugin
     info = PngImagePlugin.PngInfo()
     info.add_text("oldyfans-color", color)
+    im = Image.open(path).convert("RGBA")
+    libres = [x for x in range(im.width) if im.getpixel((x, 0))[3] == 0]
+    if libres:
+        x = libres[sum(ord(ch) * (i + 1) for i, ch in enumerate(color)) % len(libres)]
+        r, g, b, _ = im.getpixel((x, 0))
+        im.putpixel((x, 0), (r, g, b, 1))
     buf = io.BytesIO()
-    Image.open(path).save(buf, format="PNG", pnginfo=info)
+    im.save(buf, format="PNG", pnginfo=info)
     return buf.getvalue()
 
 
@@ -111,7 +120,9 @@ def areas_esperadas(p, light_cols):
         # placeholders del area donde estan las variantes habilitadas que cumplen cond
         en = {v["id"] for v in p["variants"] if v["is_enabled"] and cond(color_of[v["id"]])}
         pa = max(p["print_areas"], key=lambda pa: len(en & set(pa["variant_ids"])))
-        return pa["placeholders"] if en & set(pa["variant_ids"]) else None
+        # sin los placeholders vacios (ej. espalda sin imagen): Printify rechaza "images" vacio en un PUT
+        phs = [ph for ph in pa["placeholders"] if ph.get("images")]
+        return phs if en & set(pa["variant_ids"]) and phs else None
     areas = [{"variant_ids": [v for v in todas if color_of.get(v) not in light_cols],
               "placeholders": ph_de(lambda c: c not in light_cols)}]
     for c in sorted(light_cols):
@@ -191,6 +202,8 @@ def main():
     ap.add_argument("--title")
     ap.add_argument("--image-light", default=None, help="version clara del diseno, para los colores de --light-colors")
     ap.add_argument("--light-colors", default="Black,Navy", help="colores que llevan --image-light (por defecto Black,Navy)")
+    ap.add_argument("--image-for", action="append", default=[], metavar="COLOR=PNG",
+                    help="otra version para un color puntual, con su propia area (repetible), ej. \"Ice Grey=roja.png\"")
     ap.add_argument("--description", default=None)
     ap.add_argument("--tags", default=None, help="tags separados por coma; por defecto los del modelo")
     ap.add_argument("--colors", default=None, help="colores separados por coma (ej. \"White,Sport Grey\"); por defecto los del modelo")
@@ -205,6 +218,16 @@ def main():
     ap.add_argument("--apply", action="store_true", help="con --fix-areas: escribe el cambio")
     a = ap.parse_args()
     light = {c.strip().lower() for c in a.light_colors.split(",") if c.strip()}
+    # color (minuscula) -> imagen propia: los de --light-colors llevan --image-light; --image-for agrega/pisa
+    especial = {c: a.image_light for c in light} if a.image_light else {}
+    for item in a.image_for:
+        if "=" not in item:
+            ap.error(f"--image-for espera COLOR=PNG: {item}")
+        c, img = item.split("=", 1)
+        if not os.path.isfile(img.strip()):
+            ap.error(f"No existe la imagen de --image-for: {img}")
+        especial[c.strip().lower()] = img.strip()
+        light.add(c.strip().lower())
 
     if a.fix_areas:
         print(f"Producto {a.fix_areas}:")
@@ -245,15 +268,18 @@ def main():
     print(f"Ubicacion frente: x={x:.3f} y={y:.3f} scale={scale:.3f} angle={angle}")
 
     # colores claros que el producto realmente tiene habilitados
-    light_cols = sorted({color_of[v] for v in enabled if a.image_light and color_of[v].lower() in light})
-    if a.image_light and not light_cols:
+    light_cols = sorted({color_of[v] for v in enabled if color_of[v].lower() in especial})
+    if a.image_light and not any(c.lower() in {x.strip().lower() for x in a.light_colors.split(",")} for c in light_cols):
         sys.exit(f"Ninguno de los colores elegidos esta en --light-colors ({a.light_colors}).")
+    pedidos_for = {i.split("=", 1)[0].strip().lower() for i in a.image_for}
+    if pedidos_for - {x.lower() for x in light_cols}:
+        sys.exit(f"--image-for con colores que el producto no tiene: {', '.join(sorted(pedidos_for - {x.lower() for x in light_cols}))}")
     todas = [v["id"] for v in cat]
     groups = [(a.image, [v for v in todas if color_of[v] not in light_cols], None)]
     # un area por cada color claro, con todos sus talles: asi el editor de Printify lo muestra como
     # "specific design for Black" / "for Navy" (con Black y Navy juntos en una area no lo reconoce)
     for c in light_cols:
-        groups.append((a.image_light, [v for v in todas if color_of[v] == c], c))
+        groups.append((especial[c.lower()], [v for v in todas if color_of[v] == c], c))
     en = set(enabled)
     for img, vids, _ in groups:
         cols = sorted({color_of[i] for i in vids if i in en})
@@ -277,6 +303,8 @@ def main():
         if "id" not in up:
             sys.exit(f"Fallo la subida: {up}")
         print("Imagen subida:", fname, up["id"], f"{up.get('width')}x{up.get('height')}")
+        if any(up["id"] == e[1] for e in esperado):
+            sys.exit(f"Printify devolvio el mismo id de imagen para {fname} que para otro color: no se crea el producto.")
         esperado.append((set(vids) & en, up["id"], fname, color))
         print_areas.append({
             "variant_ids": vids,

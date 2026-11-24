@@ -45,6 +45,10 @@ Además, Black y Navy tienen que tener **imágenes subidas distintas**: Printify
 python3 scripts/printify_new_product.py --image oscura.png --image-light clara.png --title "Nombre T-Shirt" --colors "Black,Navy,White,Sport Grey"
 ```
 
+### Tres tintas o más (ej. versión roja para Ice Grey)
+`--image-for "Ice Grey=roja.png"` (repetible) le da a ese color su propia área con esa imagen. Los colores de `--light-colors` siguen llevando `--image-light` (se puede ampliar, ej. `--light-colors "Black,Navy,Charcoal"`). Para revisar áreas de un producto así: `--fix-areas <id> --light-colors "Black,Navy,Charcoal,Ice Grey"`.
+Cada copia por color lleva un metadato y un píxel invisible (alpha 1/255) distinto: Printify deduplica las subidas y con el metadato solo ya devolvía el mismo id. Si igual se repite un id, el script corta antes de crear el producto.
+
 ### Antes de subir un diseño
 - PNG con fondo transparente. Si llega en WebP/JPG, convertirlo a PNG (si ya trae transparencia, conservarla) y recortarlo al dibujo.
 - Resolución: idealmente ~3000 px o más de alto. Con menos, Printify puede avisar baja calidad.
