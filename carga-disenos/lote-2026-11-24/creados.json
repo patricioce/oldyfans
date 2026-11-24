@@ -2,7 +2,10 @@
  "Miss You": {
   "titulo": "Miss You T-Shirt",
   "printify_id": "6b0589043deddaecb50e6617",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar (esperando OK)"
+  "shopify_id": "15465319989293",
+  "estado": "draft",
+  "shopify_handle": "miss-you-t-shirt",
+  "mockups": 12,
+  "nota": "Diseño de una sola version (unica.png) en los 12 colores. Imagen original de baja resolucion (WebP 1125 px) escalada x3."
  }
 }
