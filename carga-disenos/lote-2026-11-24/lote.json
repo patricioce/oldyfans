@@ -1,0 +1,67 @@
+{
+ "Gamer": {
+  "titulo": "Gamer T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "We Raised Ourselves": {
+  "titulo": "We Raised Ourselves T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Ice Grey",
+   "Military Green",
+   "Navy",
+   "Sport Grey",
+   "White"
+  ]
+ },
+ "Whatever": {
+  "titulo": "Whatever T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Dark Chocolate",
+   "Maroon",
+   "Military Green",
+   "Navy",
+   "Purple"
+  ]
+ },
+ "Happily Analog": {
+  "titulo": "Happily Analog T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Dark Chocolate",
+   "Maroon",
+   "Military Green",
+   "Navy",
+   "Purple"
+  ]
+ },
+ "Memories": {
+  "titulo": "Memories T-Shirt",
+  "colores": [
+   "Black",
+   "Charcoal",
+   "Dark Chocolate",
+   "Ice Grey",
+   "Maroon",
+   "Military Green",
+   "Navy",
+   "Purple",
+   "Sage",
+   "Sport Grey",
+   "Stone Blue",
+   "White"
+  ]
+ }
+}

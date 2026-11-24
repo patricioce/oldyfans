@@ -1,0 +1,7 @@
+{
+ "Gamer": {"titulo": "Gamer T-Shirt", "printify_id": "6b0588cc3deddaecb50e65d2", "shopify_id": null, "estado": "creado en Printify, sin publicar", "nota": "Dos tintas: clara en Black y Navy, cada uno con su area e imagen propia (corregido por API tras crear)."},
+ "We Raised Ourselves": {"titulo": "We Raised Ourselves T-Shirt", "printify_id": "6b0588eefb3b556d1c042782", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
+ "Whatever": {"titulo": "Whatever T-Shirt", "printify_id": "6b0589113deddaecb50e6623", "shopify_id": null, "estado": "creado en Printify, sin publicar", "nota": "Ya existen otros dos 'Whatever T-Shirt' en Shopify (gen-x-whatever, whatever-t-shirt); este es producto nuevo."},
+ "Happily Analog": {"titulo": "Happily Analog T-Shirt", "printify_id": "6b0589331a2e320a920c7c34", "shopify_id": null, "estado": "creado en Printify, sin publicar"},
+ "Memories": {"titulo": "Memories T-Shirt", "printify_id": null, "shopify_id": null, "estado": "pendiente: el zip no trae el PNG del diseno, solo 12 mockups"}
+}
