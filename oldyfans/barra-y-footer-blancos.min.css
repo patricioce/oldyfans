@@ -1,0 +1,6 @@
+[class*=__header_announcements],[class*=__header_announcements] .text-block,.shopify-section-group-footer-group [class*=color-custom],.shopify-section-group-footer-group .text-block{--color-background:#fff!important;--color:#000!important;--color-foreground:#000!important;--color-foreground-rgb:0 0 0!important;--color-border:#000!important}
+.announcement-bar *,.shopify-section-group-footer-group *{color:#000!important}
+.announcement-bar{border-bottom:1px solid #e5e5e5}
+.shopify-section-group-footer-group:first-of-type{border-top:2px solid #000}
+.email-signup__input{border:1px solid #000!important}
+.email-signup__button{color:#fff!important}
