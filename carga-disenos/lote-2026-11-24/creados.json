@@ -1,7 +1,53 @@
 {
- "First Word You See": {"titulo": "First Word You See T-Shirt", "printify_id": "6b0589531a2e320a920c7c50", "shopify_id": null, "estado": "creado en Printify, sin publicar", "escala": 0.733, "nota": "clara.png en Black, Navy, Military Green y Charcoal (como los mockups), cada uno en su area; oscura en el resto"},
- "8-Bit Bat": {"titulo": "8-Bit Bat T-Shirt", "printify_id": "6b05894125cf7e7c520df05c", "shopify_id": null, "estado": "creado en Printify, sin publicar", "escala": 0.733, "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png"},
- "Bounty Hunter": {"titulo": "Bounty Hunter T-Shirt", "printify_id": "6b0588e829eb11b76c025992", "shopify_id": null, "estado": "creado en Printify, sin publicar", "escala": 0.62, "y": 0.38, "nota": "diseno alto (1:1.39): achicado para que no se salga del area"},
- "Cool Bands 2": {"titulo": "Cool Bands 2 T-Shirt", "printify_id": "6b0588e9c326f489060e9b1e", "shopify_id": null, "estado": "creado en Printify, sin publicar", "escala": 0.733, "y": 0.30},
- "Ducks In A Row": {"titulo": "Ducks In A Row T-Shirt", "printify_id": "6b0588e8d1c8afb990043a67", "shopify_id": null, "estado": "creado en Printify, sin publicar", "escala": 0.733, "y": 0.33}
+ "First Word You See": {
+  "titulo": "First Word You See T-Shirt",
+  "printify_id": "6b0589531a2e320a920c7c50",
+  "shopify_id": "15465320120365",
+  "estado": "draft",
+  "escala": 0.733,
+  "nota": "clara.png en Black, Navy, Military Green y Charcoal (como los mockups), cada uno en su area; oscura en el resto",
+  "shopify_handle": "first-word-you-see-t-shirt",
+  "mockups": 7
+ },
+ "8-Bit Bat": {
+  "titulo": "8-Bit Bat T-Shirt",
+  "printify_id": "6b05894125cf7e7c520df05c",
+  "shopify_id": "15465320054829",
+  "estado": "draft",
+  "escala": 0.733,
+  "nota": "Black y Navy con clara.png, cada uno en su area; resto con oscura.png",
+  "shopify_handle": "8-bit-bat-t-shirt",
+  "mockups": 7
+ },
+ "Bounty Hunter": {
+  "titulo": "Bounty Hunter T-Shirt",
+  "printify_id": "6b0588e829eb11b76c025992",
+  "shopify_id": "15465320022061",
+  "estado": "draft",
+  "escala": 0.62,
+  "y": 0.38,
+  "nota": "diseno alto (1:1.39): achicado para que no se salga del area",
+  "shopify_handle": "bounty-hunter-t-shirt",
+  "mockups": 7
+ },
+ "Cool Bands 2": {
+  "titulo": "Cool Bands 2 T-Shirt",
+  "printify_id": "6b0588e9c326f489060e9b1e",
+  "shopify_id": "15465320153133",
+  "estado": "draft",
+  "escala": 0.733,
+  "y": 0.3,
+  "shopify_handle": "cool-bands-2-t-shirt",
+  "mockups": 7
+ },
+ "Ducks In A Row": {
+  "titulo": "Ducks In A Row T-Shirt",
+  "printify_id": "6b0588e8d1c8afb990043a67",
+  "shopify_id": "15465320087597",
+  "estado": "draft",
+  "escala": 0.733,
+  "y": 0.33,
+  "shopify_handle": "ducks-in-a-row-t-shirt",
+  "mockups": 8
+ }
 }
