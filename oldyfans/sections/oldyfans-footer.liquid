@@ -1,0 +1,220 @@
+{%- comment -%}
+  OldyFans — Footer (rediseño aprobado, nov 2026)
+  Estructura inspirada en el footer de slothhikingclub.com:
+  newsletter centrado arriba · logo + columnas de links · pagos y políticas abajo.
+  Todo lo editable (textos, links, logo, redes) se cambia desde Personalizar.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign logo = s.logo
+  if logo == blank
+    assign logo = settings.logo
+  endif
+-%}
+
+<style>
+  #of-footer-{{ section.id }}{
+    --of-bg:{{ s.color_bg }};--of-ink:#F4F1EC;--of-muted:#B9B5B0;--of-line:rgba(255,255,255,.12);--of-red:{{ s.color_accent }};
+    --of-head:'Barlow Condensed','Bebas Neue',Impact,sans-serif;--of-body:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+    background:var(--of-bg);color:var(--of-ink);font-family:var(--of-body)
+  }
+  #of-footer-{{ section.id }} *{box-sizing:border-box}
+  #of-footer-{{ section.id }} .of-wrap{max-width:1440px;margin:0 auto;padding:0 40px}
+  #of-footer-{{ section.id }} .of-h{font-family:var(--of-head);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;line-height:1;color:var(--of-ink);margin:0}
+
+  /* Newsletter */
+  #of-footer-{{ section.id }} .of-news{display:flex;flex-direction:column;align-items:center;text-align:center;padding:64px 0 60px;border-bottom:1px solid var(--of-line)}
+  #of-footer-{{ section.id }} .of-news h2{font-size:38px}
+  #of-footer-{{ section.id }} .of-news p{margin:12px 0 0;font-size:16px;line-height:1.45;max-width:640px;text-wrap:balance;color:var(--of-ink)}
+  #of-footer-{{ section.id }} .of-form{width:100%;max-width:520px;margin-top:24px}
+  #of-footer-{{ section.id }} .of-form-row{display:flex;gap:10px}
+  #of-footer-{{ section.id }} .of-form input[type=email]{flex:1;min-width:0;height:52px;border:0;border-radius:4px;padding:0 16px;font:16px var(--of-body);color:#222;background:#fff;margin:0}
+  #of-footer-{{ section.id }} .of-form button{height:52px;padding:0 26px;border:0;border-radius:4px;background:var(--of-red);color:#fff;font-family:var(--of-head);font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;transition:filter .15s ease}
+  #of-footer-{{ section.id }} .of-form button:hover{filter:brightness(1.1)}
+  #of-footer-{{ section.id }} .of-msg{margin-top:12px;font-size:14px}
+  #of-footer-{{ section.id }} .of-msg--error{color:#FF9A90}
+
+  /* Columnas */
+  #of-footer-{{ section.id }} .of-cols{display:grid;grid-template-columns:1.45fr 1fr 1fr 1fr;gap:24px;padding:72px 0 30px}
+  #of-footer-{{ section.id }} .of-brand>a{color:var(--of-ink);text-decoration:none;display:inline-block}
+  #of-footer-{{ section.id }} .of-brand img{width:110px;height:110px;object-fit:contain;display:block}
+  #of-footer-{{ section.id }} .of-brand .of-logo-text{font-size:40px}
+  #of-footer-{{ section.id }} .of-tag{margin-top:14px;font-size:21px;max-width:260px;line-height:1.05}
+  #of-footer-{{ section.id }} .of-sub{margin:8px 0 0;font-size:14px;color:var(--of-muted)}
+  #of-footer-{{ section.id }} .of-social{display:flex;gap:14px;margin:20px 0 0;padding:0;list-style:none}
+  #of-footer-{{ section.id }} .of-social a{width:36px;height:36px;border:1px solid rgba(255,255,255,.28);border-radius:50%;display:grid;place-items:center;transition:border-color .15s ease}
+  #of-footer-{{ section.id }} .of-social a:hover{border-color:var(--of-ink)}
+  #of-footer-{{ section.id }} .of-social svg{width:15px;height:15px;fill:var(--of-ink)}
+  #of-footer-{{ section.id }} .of-col h3{font-size:15px;letter-spacing:.01em;margin:10px 0 18px}
+  #of-footer-{{ section.id }} .of-col ul{list-style:none;margin:0;padding:0}
+  #of-footer-{{ section.id }} .of-col a{display:inline-block;color:var(--of-ink);text-decoration:none;font-size:15px;margin-bottom:13px}
+  #of-footer-{{ section.id }} .of-col a:hover,#of-footer-{{ section.id }} .of-legal a:hover{text-decoration:underline;text-underline-offset:3px}
+
+  /* Barra inferior */
+  #of-footer-{{ section.id }} .of-bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 0 28px;border-top:1px solid var(--of-line);margin-top:30px}
+  #of-footer-{{ section.id }} .of-pay{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+  #of-footer-{{ section.id }} .of-pay svg{width:28px;height:18px;display:block}
+  #of-footer-{{ section.id }} .of-legal{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--of-muted)}
+  #of-footer-{{ section.id }} .of-legal a{color:var(--of-muted);text-decoration:none}
+
+  #of-footer-{{ section.id }} a:focus-visible,#of-footer-{{ section.id }} button:focus-visible,#of-footer-{{ section.id }} input:focus-visible{outline:2px solid var(--of-ink);outline-offset:2px}
+
+  @media (max-width:749px){
+    #of-footer-{{ section.id }} .of-wrap{padding:0 20px}
+    #of-footer-{{ section.id }} .of-news{padding:44px 0 40px}
+    #of-footer-{{ section.id }} .of-news h2{font-size:34px}
+    #of-footer-{{ section.id }} .of-form button{padding:0 18px}
+    #of-footer-{{ section.id }} .of-cols{grid-template-columns:1fr 1fr;padding:44px 0 10px;row-gap:34px}
+    #of-footer-{{ section.id }} .of-brand{grid-column:1/-1}
+    #of-footer-{{ section.id }} .of-bottom{flex-direction:column;align-items:flex-start;gap:16px}
+    #of-footer-{{ section.id }} .of-legal{gap:8px 16px}
+  }
+</style>
+
+<footer id="of-footer-{{ section.id }}" class="of-footer">
+  <div class="of-wrap">
+
+    {%- comment -%} Newsletter {%- endcomment -%}
+    <section class="of-news" aria-labelledby="of-news-title-{{ section.id }}">
+      <h2 id="of-news-title-{{ section.id }}" class="of-h">{{ s.news_heading | escape }}</h2>
+      {%- if s.news_text != blank -%}<p>{{ s.news_text | escape }}</p>{%- endif -%}
+
+      {%- assign form_id = 'of-newsletter-' | append: section.id -%}
+      {%- form 'customer', id: form_id, class: 'of-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="of-form-row">
+          <label for="of-email-{{ section.id }}" class="visually-hidden">{{ s.news_placeholder | escape }}</label>
+          <input id="of-email-{{ section.id }}" type="email" name="contact[email]" placeholder="{{ s.news_placeholder | escape }}" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+          <button type="submit">{{ s.news_button | escape }}</button>
+        </div>
+        {%- if form.posted_successfully? -%}
+          <p class="of-msg" role="status">{{ s.news_success | escape }}</p>
+        {%- elsif form.errors -%}
+          <p class="of-msg of-msg--error" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+        {%- endif -%}
+      {%- endform -%}
+    </section>
+
+    {%- comment -%} Logo + columnas {%- endcomment -%}
+    <section class="of-cols">
+      <div class="of-brand">
+        <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+          {%- if logo != blank -%}
+            {{ logo | image_url: width: 300 | image_tag: alt: shop.name, width: 110, height: 110, loading: 'lazy' }}
+          {%- else -%}
+            <span class="of-h of-logo-text">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>
+        {%- if s.tagline != blank -%}<div class="of-h of-tag">{{ s.tagline | escape }}</div>{%- endif -%}
+        {%- if s.subline != blank -%}<p class="of-sub">{{ s.subline | escape }}</p>{%- endif -%}
+
+        {%- if s.facebook_url != blank or s.instagram_url != blank -%}
+          <ul class="of-social">
+            {%- if s.facebook_url != blank -%}
+              <li><a href="{{ s.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>
+              </a></li>
+            {%- endif -%}
+            {%- if s.instagram_url != blank -%}
+              <li><a href="{{ s.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/></svg>
+              </a></li>
+            {%- endif -%}
+          </ul>
+        {%- endif -%}
+      </div>
+
+      {%- for block in section.blocks -%}
+        <nav class="of-col" aria-label="{{ block.settings.heading | escape }}" {{ block.shopify_attributes }}>
+          <h3 class="of-h">{{ block.settings.heading | escape }}</h3>
+          <ul>
+            {%- if block.settings.menu != blank -%}
+              {%- for link in block.settings.menu.links -%}
+                <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+              {%- endfor -%}
+            {%- else -%}
+              {%- assign lines = block.settings.links | newline_to_br | split: '<br />' -%}
+              {%- for line in lines -%}
+                {%- assign parts = line | split: '|' -%}
+                {%- assign label = parts[0] | strip -%}
+                {%- assign url = parts[1] | strip -%}
+                {%- if label != blank and url != blank -%}
+                  <li><a href="{{ url }}"{% if url contains 'instagram.com' or url contains 'facebook.com' %} target="_blank" rel="noopener"{% endif %}>{{ label | escape }}</a></li>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endfor -%}
+    </section>
+
+    {%- comment -%} Pagos + políticas {%- endcomment -%}
+    <section class="of-bottom">
+      {%- if s.show_payment_icons -%}
+        <ul class="of-pay" aria-label="Payment methods">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <div class="of-legal">
+        <span>&copy; {{ 'now' | date: '%Y' }} {{ s.copyright_name | default: shop.name | escape }}</span>
+        {%- for policy in shop.policies -%}
+          {%- if policy != blank -%}<a href="{{ policy.url }}">{{ policy.title | escape }}</a>{%- endif -%}
+        {%- endfor -%}
+      </div>
+    </section>
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "OldyFans footer",
+  "class": "of-footer-section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "header", "content": "Newsletter" },
+    { "type": "text", "id": "news_heading", "label": "Title", "default": "Leave us your email" },
+    { "type": "textarea", "id": "news_text", "label": "Text", "default": "New drops, sales and dad jokes in your inbox. No spam, we can't be bothered." },
+    { "type": "text", "id": "news_placeholder", "label": "Email placeholder", "default": "Your email" },
+    { "type": "text", "id": "news_button", "label": "Button", "default": "Sign me up" },
+    { "type": "text", "id": "news_success", "label": "Success message", "default": "You're in. We'll try to care." },
+    { "type": "header", "content": "Brand" },
+    { "type": "image_picker", "id": "logo", "label": "Logo", "info": "Si queda vacío, usa el logo del tema." },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Whatevering since the 80s." },
+    { "type": "text", "id": "subline", "label": "Sub-line", "default": "Graphic tees for the unsupervised generation." },
+    { "type": "url", "id": "facebook_url", "label": "Facebook", "default": "https://www.facebook.com/share/1EChKPYo2L/" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram", "default": "https://www.instagram.com/_oldyfans" },
+    { "type": "header", "content": "Bottom bar" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true },
+    { "type": "text", "id": "copyright_name", "label": "Copyright name", "default": "OldyFans" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#1F1D20" },
+    { "type": "color", "id": "color_accent", "label": "Button", "default": "#E73123" }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+        { "type": "link_list", "id": "menu", "label": "Menu (opcional)", "info": "Si elegís un menú, reemplaza a los links de abajo." },
+        { "type": "textarea", "id": "links", "label": "Links", "info": "Uno por línea: Texto | /url" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "OldyFans footer",
+      "blocks": [
+        { "type": "column", "settings": { "heading": "Shop", "links": "All tees | /collections/all\nBestsellers | /collections/best-sellers\nNew arrivals | /collections/new-arrivals\nGen X | /collections/gen-x\nSarcastic & Dad Jokes | /collections/sarcastic-dad-jokes\nRetro Nostalgia | /collections/retro-nostalgia\nBald & Bold | /collections/bald-bold\nSale | /collections/sale" } },
+        { "type": "column", "settings": { "heading": "Help", "links": "Help center | /pages/contact?view=help\nWhere's my order? | /pages/contact?view=help#help-orders\nShipping | /policies/shipping-policy\nRefunds & sizing | /pages/contact?view=help#help-returns\nSize & fit | /pages/contact?view=help#help-sizing\nContact | /pages/contact" } },
+        { "type": "column", "settings": { "heading": "The Fans", "links": "Customer reviews | /pages/reviews\nInstagram | https://www.instagram.com/_oldyfans\nFacebook | https://www.facebook.com/share/1EChKPYo2L/\nContact | /pages/contact" } }
+      ]
+    }
+  ],
+  "enabled_on": { "groups": ["footer"] }
+}
+{% endschema %}
