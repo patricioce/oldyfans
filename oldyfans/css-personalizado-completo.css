@@ -1,0 +1,9 @@
+.announcement-bar.spacing-style{padding-top:7px!important;padding-bottom:7px!important;min-height:0!important}
+.announcement-bar .announcement-bar__text{font-size:11px!important;line-height:15.4px!important;letter-spacing:.04em!important}
+variant-picker .variant-option--swatches{--variant-picker-swatch-width:calc(var(--variant-picker-swatch-width-unitless,32)*.9px)!important;--variant-picker-swatch-height:calc(var(--variant-picker-swatch-height-unitless,32)*.9px)!important}
+.announcement-bar,.shopify-section-group-footer-group .section-background,.shopify-section-group-footer-group .section{--color-background:#fff!important;--color:#000!important;--color-foreground:#000!important;--color-foreground-rgb:0 0 0!important;background:#fff!important}
+.announcement-bar *,.shopify-section-group-footer-group *{color:#000!important}
+.announcement-bar{border-bottom:1px solid #e5e5e5}
+.shopify-section-group-footer-group{border-top:2px solid #000}
+.email-signup__input{border:1px solid #000!important}
+.email-signup__button{color:#fff!important}
