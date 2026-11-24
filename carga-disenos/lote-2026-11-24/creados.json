@@ -2,34 +2,44 @@
  "Gamer": {
   "titulo": "Gamer T-Shirt",
   "printify_id": "6b0588cc3deddaecb50e65d2",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar",
-  "nota": "Dos tintas: clara en Black y Navy, cada uno con su area e imagen propia (corregido por API tras crear)."
+  "shopify_id": "15465320742957",
+  "estado": "draft",
+  "nota": "Dos tintas: clara en Black y Navy, cada uno con su area e imagen propia (corregido por API tras crear).",
+  "shopify_handle": "gamer-t-shirt",
+  "mockups": 7
  },
  "We Raised Ourselves": {
   "titulo": "We Raised Ourselves T-Shirt",
   "printify_id": "6b0588eefb3b556d1c042782",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15465320808493",
+  "estado": "draft",
+  "shopify_handle": "we-raised-ourselves-t-shirt",
+  "mockups": 7
  },
  "Whatever": {
   "titulo": "Whatever T-Shirt",
   "printify_id": "6b0589113deddaecb50e6623",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar",
-  "nota": "Ya existen otros dos 'Whatever T-Shirt' en Shopify (gen-x-whatever, whatever-t-shirt); este es producto nuevo."
+  "shopify_id": "15465320841261",
+  "estado": "draft",
+  "nota": "Ya existen otros dos 'Whatever T-Shirt' en Shopify (gen-x-whatever, whatever-t-shirt); este es producto nuevo.",
+  "shopify_handle": "whatever-t-shirt-1",
+  "mockups": 7
  },
  "Happily Analog": {
   "titulo": "Happily Analog T-Shirt",
   "printify_id": "6b0589331a2e320a920c7c34",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar"
+  "shopify_id": "15465320775725",
+  "estado": "draft",
+  "shopify_handle": "happily-analog-t-shirt",
+  "mockups": 7
  },
  "Memories": {
   "titulo": "Memories T-Shirt",
   "printify_id": "6b058fd0c7365a73120b818e",
-  "shopify_id": null,
-  "estado": "creado en Printify, sin publicar",
-  "nota": "Diseno recibido aparte en WebP 1500x1500 con transparencia; recortado y ampliado x2 (2552x2068)."
+  "shopify_id": "15465321168941",
+  "estado": "draft",
+  "nota": "Diseno recibido aparte en WebP 1500x1500 con transparencia; recortado y ampliado x2 (2552x2068).",
+  "shopify_handle": "memories-t-shirt",
+  "mockups": 12
  }
 }
