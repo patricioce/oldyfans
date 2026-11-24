@@ -6,7 +6,7 @@
 - `disenos/<Diseño>/`: recortados al dibujo (venían en 5000x5000 con margen transparente).
   - Gamer: dos tintas. `oscura.png` (8.png, negra) y `clara.png` (9.png, blanca) en Black y Navy.
   - We Raised Ourselves, Whatever, Happily Analog: `unica.png`, igual en todos los colores.
-  - Memories: el zip NO trae el PNG del diseño. Pendiente.
+  - Memories: el zip no traía el diseño; llegó aparte en WebP 1500x1500 (ya transparente). Recortado y ampliado x2 a `unica.png`.
 - `mockups/<Diseño>/<Diseño> - <Color>.jpg`: venían numerados; colores identificados mirando cada foto:
   - Gamer / We Raised Ourselves: 1 Black, 2 Navy, 3 White, 4 Sport Grey, 5 Military Green, 6 Charcoal, 7 Ice Grey.
   - Whatever: 1 Black, 2 Navy, 3 Dark Chocolate, 4 Maroon, 5 Military Green, 6 Charcoal, 7 Purple.
