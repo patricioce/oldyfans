@@ -1,6 +1,9 @@
 /* ===== OldyFans — CSS adicional (Shopify) ===== */
+/* Va en layout/theme.liquid, dentro de <style>…</style>, justo antes de </head>
+   (no en el CSS personalizado de una sección: ese solo afecta a esa sección). */
 
 /* Colecciones: sin botón "Choose" / agregado rápido en las miniaturas de producto */
-quick-add-component,
-.quick-add,
-.quick-add__button{display:none!important}
+html body quick-add-component,
+html body .quick-add,
+html body .quick-add__button,
+html body .add-to-cart-button.quick-add__button{display:none!important;visibility:hidden!important;pointer-events:none!important}
