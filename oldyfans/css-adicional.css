@@ -1,0 +1,6 @@
+/* ===== OldyFans — CSS adicional (Shopify) ===== */
+
+/* Colecciones: sin botón "Choose" / agregado rápido en las miniaturas de producto */
+quick-add-component,
+.quick-add,
+.quick-add__button{display:none!important}
