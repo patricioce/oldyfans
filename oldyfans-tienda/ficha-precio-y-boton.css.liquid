@@ -1,0 +1,35 @@
+<style>
+  /* Precio en la ficha: precio final primero y grande, tachado después y más chico */
+  product-price[data-block-id] [ref="priceContainer"] {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  product-price[data-block-id] .price-item__group.price:not(.compare-at-price) {
+    order: 1;
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+  product-price[data-block-id] .compare-at-price {
+    order: 2;
+    font-size: 0.85em;
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+
+  /* ADD TO CART más grande en celular */
+  @media screen and (max-width: 749px) {
+    add-to-cart-component .add-to-cart-button:not(.sticky-add-to-cart__button) {
+      min-height: 68px !important;
+      padding-block: 20px;
+      font-size: 19px !important;
+      letter-spacing: .06em;
+    }
+    add-to-cart-component .add-to-cart-button:not(.sticky-add-to-cart__button) .svg-wrapper {
+      width: 22px;
+      height: 22px;
+    }
+  }
+</style>
